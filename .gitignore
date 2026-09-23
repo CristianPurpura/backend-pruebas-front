@@ -5,3 +5,7 @@ __pycache__/
 *.pyo
 .pytest_cache/
 .env
+.agents/
+session-*.md
+skills-lock.json
+dataset_prueba.csv
