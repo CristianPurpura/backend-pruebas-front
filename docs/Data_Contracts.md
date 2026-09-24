@@ -1,6 +1,3 @@
-En la captura se ve claro: los tres acentos graves (```) del bloque de JSON cerraron anticipadamente el bloque general de Markdown en la interfaz.
-
-Para que no se corte y puedas copiar el archivo completo con un solo clic en el botón de copiar, aquí está `DATA_CONTRACTS.md` con los delimitadores protegidos:
 
 ```markdown
 # Contratos de Datos y Schemas (Mocks Oficiales)
