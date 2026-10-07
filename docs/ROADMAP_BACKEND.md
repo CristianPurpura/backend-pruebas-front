@@ -9,14 +9,14 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
   * Crear endpoint `/api/v1/health` — *con chequeo de DB: `ok` / `error` / `not_configured`.*
 * [x] **Issue #9 (En Ready):** Definir mecanismo de carga manual de datasets[cite: 1].
   * Definir arquitectura de subida (FastAPI `UploadFile`) y parseo base con Pandas[cite: 1].
-* [ ] Desplegar esqueleto inicial en Railway o Render para pruebas conjuntas con QA y Frontend[cite: 1] — *diferido; pasos documentados en README §7.*
+* [ ] Desplegar esqueleto inicial en Railway o Render para pruebas conjuntas con QA y Frontend[cite: 1] — *diferido; pasos documentados en README §8.*
 * [x] Publicar mocks/contratos JSON iniciales para descolgar el trabajo de Frontend[cite: 1] — *`docs/mocks/`.*
 
 ## Sprint 1: Exploración e Ingesta Base (Semanas 1 y 2)
-* [ ] **Issue #18 (Backlog):** Probar conexión con APIs seleccionadas (Datos Argentina, Banco Mundial, SIMEL)[cite: 1].
+* [x] **Issue #18 (Backlog):** Probar conexión con APIs seleccionadas (Datos Argentina, Banco Mundial, SIMEL)[cite: 1] — *conectores en `app/services/connectors/` (registry `CONNECTORS`) + tests en vivo en `tests/test_connectors.py`; SIMEL/ENE vía SDMX del INE porque `www.simel.gob.cl` responde 418.*
   * Implementar clientes HTTP asíncronos con HTTPX[cite: 1].
-* [ ] **Issue #19 (Backlog):** Preparar flujo inicial para recepción y almacenamiento de datos[cite: 1].
-  * Tablas intermedias de staging o guardado de datos crudos (raw data)[cite: 1].
+* [x] **Issue #19 (Backlog):** Preparar flujo inicial para recepción y almacenamiento de datos[cite: 1] — *`app/services/ingestor.py` (`ingest`) + `app/services/storage/raw_store.py`.*
+  * Tablas intermedias de staging o guardado de datos crudos (raw data)[cite: 1] — *JSONL en `data/raw/{fuente}/YYYY-MM-DD.jsonl` con esquema `raw_data_logs`; DB diferida.*
 * [x] Endpoint básico de subida de CSV/Excel con validación de columnas mínimas[cite: 1] — *hecho en Sprint 0 (ref #9).*
 * [ ] Coordinar con equipo de Data Analytics la tabla de normalización definitiva[cite: 1].
 

@@ -30,8 +30,10 @@ app-backend/
 │   ├── services/                    # Lógica de negocio y procesamiento pesado
 │   │   ├── calculators/             # Algoritmo de Índice y proyecciones
 │   │   ├── connectors/              # Clientes HTTPX para APIs externas (AR, UY, CL)
+│   │   ├── ingestor.py              # Recepción: fetch → registro crudo
 │   │   ├── parsers/                 # Lectura y validación de CSV/Excel con Pandas
-│   │   └── scheduler/               # Tareas cron / ejecución periódica
+│   │   ├── scheduler/               # Tareas cron / ejecución periódica
+│   │   └── storage/                 # Almacenamiento crudo (JSONL por fuente)
 │   └── main.py                      # Punto de entrada de la aplicación FastAPI
 ├── migrations/                      # Versiones de base de datos con Alembic
 ├── tests/                           # Tests unitarios y de integración (Pytest)

@@ -93,10 +93,18 @@ app-backend/
 │   │   ├── dataset.py
 │   │   └── occupation.py
 │   ├── services/                     # Lógica de negocio y procesamiento
+│   │   ├── connectors/               # Clientes HTTPX de fuentes oficiales
+│   │   │   ├── base.py               # BaseConnector + ConnectorResponse
+│   │   │   ├── banco_mundial.py      # Banco Mundial API v2
+│   │   │   ├── datos_argentina.py    # Series de Tiempo datos.gob.ar
+│   │   │   └── simel_chile.py        # SIMEL/ENE vía SDMX del INE
+│   │   ├── storage/
+│   │   │   └── raw_store.py          # Crudos en data/raw/{fuente}/YYYY-MM-DD.jsonl
+│   │   ├── ingestor.py               # Flujo: recepción → almacenamiento crudo
 │   │   └── parsers/
 │   │       └── dataset_parser.py     # Parser Pandas para CSV / Excel
 │   └── main.py                       # Instancia FastAPI y middleware CORS
-├── tests/                            # Suite Pytest (integración API)
+├── tests/                            # Suite Pytest (integración API + conectores)
 ├── pytest.ini                        # Configuración de Pytest
 ├── docs/
 │   ├── mocks/                        # Contratos JSON de ejemplo para Frontend
@@ -143,10 +151,45 @@ python -m pytest -v
 * Cobertura actual: `POST /datasets/upload` (casos LOAD-001..008 de la matriz QA, incluyendo validación de país, `data_type`, `metric_value` numérico y catálogo de ocupaciones `OCUP_01..OCUP_20`), `GET /health` (3 estados del chequeo de DB) y `GET /occupations/{id}` (200/404 + trazabilidad).
 * Los casos **API-001..API-014** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
 * La matriz de casos QA (`docs/Casos_Apis_CargaDatos - 22092026.csv`) mantiene el estado de cada caso.
+* `tests/test_connectors.py`, `tests/test_raw_store.py` y `tests/test_ingestor.py` cubren los conectores (unit + en vivo), el almacenamiento crudo y el flujo de ingesta.
 
 ---
 
-## 7. Despliegue (pendiente)
+## 7. Conectores y Datos Crudos
+
+### Conectores HTTP (Issue #18)
+
+Clientes HTTPX asíncronos en `app/services/connectors/`:
+
+| `source_id` | Fuente | Endpoint | Serie por defecto |
+|---|---|---|---|
+| `datos_argentina` | Datos Argentina (Series de Tiempo) | `apis.datos.gob.ar/series/api/series/` | IPC nacional (`DATOS_AR_SERIES_IDS`, configurable) |
+| `banco_mundial` | Banco Mundial API v2 | `api.worldbank.org/v2/...` | `SL.UEM.TOTL.ZS` (desempleo) para ARG/CHL/URY |
+| `simel_chile` | SIMEL/ENE vía SDMX del INE | `sdmx.ine.gob.cl/rest/data/...` | `CL01,DF_DES_SEXO` (desocupación por sexo, fuente ENE) |
+
+* `www.simel.gob.cl` responde `418` a clientes automatizados; las series ENE se consumen por el SDMX oficial del INE (misma fuente).
+* Cada conector expone `await fetch(...) -> ConnectorResponse(source_id, ok, fetched_at, payload, points, error)`: `payload` conserva la respuesta cruda y `points` trae `(periodo, valor)`.
+* Registry: `CONNECTORS` en `app/services/connectors/__init__.py`.
+
+### Almacenamiento crudo (Issue #19)
+
+`app/services/storage/raw_store.py` appenda registros con el esquema `raw_data_logs` (SPEC §6):
+
+```json
+{"source_id": "datos_argentina", "raw_payload": {"...": "..."}, "status": "ok", "error": null, "created_at": "2026-10-07T00:00:00+00:00"}
+```
+
+* Archivos: `data/raw/{source_id}/YYYY-MM-DD.jsonl` (un registro por línea; directorio configurable con `RAW_DIR`).
+* Flujo de recepción: `await ingest(conector, **params)` (`app/services/ingestor.py`) hace fetch y guarda el registro (ok o error) → `IngestReport`.
+* `read_raw(source_id, limit)` devuelve los últimos registros para el consumo posterior (normalización pendiente de coordinar con Data).
+
+### Prueba de conexión
+
+`tests/test_connectors.py` incluye tests **en vivo** (una llamada real por fuente): sin salida a internet se omiten con *skip*; los tests unitarios cubren parseo y errores sin red.
+
+---
+
+## 8. Despliegue (pendiente)
 
 El despliegue del esqueleto en **Railway / Render** está diferido (Sprint 0 → Sprint 1). Pasos previstos:
 
@@ -158,7 +201,7 @@ Mientras `DATABASE_URL` no esté configurada, `GET /api/v1/health` responde `200
 
 ---
 
-## 8. Documentación Adicional
+## 9. Documentación Adicional
 
 Para más detalles sobre la arquitectura y contratos:
 * [Especificación Técnica (`docs/SPEC.md`)](docs/SPEC.md)
