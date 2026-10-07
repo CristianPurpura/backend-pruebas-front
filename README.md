@@ -123,6 +123,13 @@ country_code,sector_id,occupation_id,metric_name,metric_value,period,source_name
 
 Si alguna de estas columnas falta, el endpoint responde con código `400 Bad Request` indicando la lista de campos faltantes.
 
+Además de las columnas, se validan los valores de cada fila (rechazo `400` en cualquier fila inválida):
+
+* `country_code` ∈ `ARG`, `CHL`, `URY`
+* `occupation_id` ∈ catálogo `OCUP_01` … `OCUP_20`
+* `data_type` ∈ `observed`, `projected`
+* `metric_value` numérico
+
 ---
 
 ## 6. Tests
@@ -133,8 +140,7 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual: `POST /datasets/upload` (casos LOAD-001..008 de la matriz QA), `GET /health` (3 estados del chequeo de DB) y `GET /occupations/{id}` (200/404 + trazabilidad).
-* Tres tests están marcados como **XFAIL** (`LOAD-005`, `LOAD-007`, `LOAD-008`): documentan validaciones de contrato aún no implementadas en el parser (tipos, catálogo de países y catálogo de ocupaciones). Si se implementan, la suite fallará y obligará a activarlos.
+* Cobertura actual: `POST /datasets/upload` (casos LOAD-001..008 de la matriz QA, incluyendo validación de país, `data_type`, `metric_value` numérico y catálogo de ocupaciones `OCUP_01..OCUP_20`), `GET /health` (3 estados del chequeo de DB) y `GET /occupations/{id}` (200/404 + trazabilidad).
 * La matriz de casos QA (`docs/Casos_Apis_CargaDatos - 22092026.csv`) mantiene el estado de cada caso.
 
 ---

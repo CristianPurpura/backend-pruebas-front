@@ -5,12 +5,10 @@ Mapeo con docs/Casos_Apis_CargaDatos - 22092026.csv:
   LOAD-002 XLSX valido         -> pasa
   LOAD-003 archivo vacio       -> pasa
   LOAD-004 campos obligatorios -> pasa
-  LOAD-005 tipos incorrectos   -> xfail (gap: solo se valida presencia de columnas)
-  LOAD-007 codigo de pais      -> xfail (gap: sin catalogo de paises en el parser)
-  LOAD-008 occupation_id       -> xfail (gap: sin catalogo de ocupaciones en el parser)
+  LOAD-005 tipos incorrectos   -> pasa (validacion de metric_value y data_type)
+  LOAD-007 codigo de pais      -> pasa (catalogo ARG/CHL/URY)
+  LOAD-008 occupation_id       -> pasa (catalogo OCUP_01..OCUP_20)
 """
-
-import pytest
 
 from tests.conftest import REQUIRED_COLUMNS, build_rows, make_csv, make_xlsx, upload
 
@@ -89,43 +87,60 @@ def test_sin_campo_file_devuelve_422(client):
     assert response.status_code == 422
 
 
-@pytest.mark.xfail(
-    reason="LOAD-005 gap: el parser solo valida presencia de columnas, no tipos. "
-    "El contrato (Data_Contracts.md) define metric_value como Float.",
-    strict=True,
-)
 def test_load_005_metric_value_no_numerico_rechazado(client):
-    """LOAD-005: metric_value no numerico -> deberia ser rechazado (hoy devuelve 200)."""
+    """LOAD-005: metric_value no numerico -> 400 con detalle del error."""
     content = make_csv(build_rows(metric_value="no_es_un_numero"))
 
     response = upload(client, "bad_type.csv", content)
 
     assert response.status_code == 400
+    detail = response.json()["detail"]
+    assert "metric_value invalido" in detail
+    assert "no_es_un_numero" in detail
 
 
-@pytest.mark.xfail(
-    reason="LOAD-007 gap: el parser no valida country_code contra el catalogo "
-    "ARG/URY/CHL definido en Data_Contracts.md.",
-    strict=True,
-)
+def test_load_005_data_type_invalido_rechazado(client):
+    """LOAD-005: data_type fuera de observed/projected -> 400."""
+    content = make_csv(build_rows(data_type="estimado"))
+
+    response = upload(client, "bad_data_type.csv", content)
+
+    assert response.status_code == 400
+    detail = response.json()["detail"]
+    assert "data_type invalido" in detail
+    assert "estimado" in detail
+
+
 def test_load_007_pais_no_permitido_rechazado(client):
-    """LOAD-007: country_code fuera de ARG/URY/CHL -> deberia ser rechazado (hoy 200)."""
+    """LOAD-007: country_code fuera de ARG/URY/CHL -> 400."""
     content = make_csv(build_rows(country_code="BRA"))
 
     response = upload(client, "bad_country.csv", content)
 
     assert response.status_code == 400
+    detail = response.json()["detail"]
+    assert "country_code invalido" in detail
+    assert "BRA" in detail
 
 
-@pytest.mark.xfail(
-    reason="LOAD-008 gap: el parser no valida occupation_id contra el catalogo "
-    "de ocupaciones del MVP.",
-    strict=True,
-)
 def test_load_008_occupation_id_inexistente_rechazado(client):
-    """LOAD-008: occupation_id inexistente -> deberia ser rechazado (hoy 200)."""
+    """LOAD-008: occupation_id fuera del catalogo OCUP_01..OCUP_20 -> 400."""
     content = make_csv(build_rows(occupation_id="OCUP_99"))
 
     response = upload(client, "bad_occupation.csv", content)
 
     assert response.status_code == 400
+    detail = response.json()["detail"]
+    assert "occupation_id invalido" in detail
+    assert "OCUP_99" in detail
+
+
+def test_load_008_archivo_con_todas_las_ocupaciones_aceptado(client):
+    """LOAD-008 (positivo): las 20 ocupaciones del catalogo son validas."""
+    rows = [build_rows(occupation_id=f"OCUP_{n:02d}")[0] for n in range(1, 21)]
+    content = make_csv(rows)
+
+    response = upload(client, "catalogo_completo.csv", content)
+
+    assert response.status_code == 200
+    assert response.json()["rows_count"] == 20
