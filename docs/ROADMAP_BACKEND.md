@@ -3,21 +3,21 @@
 Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) con el alcance semanal del proyecto[cite: 1].
 
 ## Sprint 0: Configuración y Fundaciones (Semana 0)
-* [ ] **Issue #8 (En Ready):** Configurar backend, base de datos y estructura inicial de APIs internas[cite: 1].
-  * Configurar proyecto base en FastAPI (`pyproject.toml` o `requirements.txt`).
-  * Levantar PostgreSQL en Supabase / Docker y probar conexión asíncrona[cite: 1].
-  * Crear endpoint `/api/v1/health`.
-* [ ] **Issue #9 (En Ready):** Definir mecanismo de carga manual de datasets[cite: 1].
+* [x] **Issue #8 (En Ready):** Configurar backend, base de datos y estructura inicial de APIs internas[cite: 1] — *parcial: DB diferida a Sprint 1.*
+  * Configurar proyecto base en FastAPI (`pyproject.toml` o `requirements.txt`).[cite: 1]
+  * Levantar PostgreSQL en Supabase / Docker y probar conexión asíncrona[cite: 1] — *código listo (`app/core/database.py`); conexión real pendiente de `DATABASE_URL` (Sprint 1).*
+  * Crear endpoint `/api/v1/health` — *con chequeo de DB: `ok` / `error` / `not_configured`.*
+* [x] **Issue #9 (En Ready):** Definir mecanismo de carga manual de datasets[cite: 1].
   * Definir arquitectura de subida (FastAPI `UploadFile`) y parseo base con Pandas[cite: 1].
-* [ ] Desplegar esqueleto inicial en Railway o Render para pruebas conjuntas con QA y Frontend[cite: 1].
-* [ ] Publicar mocks/contratos JSON iniciales para descolgar el trabajo de Frontend[cite: 1].
+* [ ] Desplegar esqueleto inicial en Railway o Render para pruebas conjuntas con QA y Frontend[cite: 1] — *diferido; pasos documentados en README §7.*
+* [x] Publicar mocks/contratos JSON iniciales para descolgar el trabajo de Frontend[cite: 1] — *`docs/mocks/`.*
 
 ## Sprint 1: Exploración e Ingesta Base (Semanas 1 y 2)
 * [ ] **Issue #18 (Backlog):** Probar conexión con APIs seleccionadas (Datos Argentina, Banco Mundial, SIMEL)[cite: 1].
   * Implementar clientes HTTP asíncronos con HTTPX[cite: 1].
 * [ ] **Issue #19 (Backlog):** Preparar flujo inicial para recepción y almacenamiento de datos[cite: 1].
   * Tablas intermedias de staging o guardado de datos crudos (raw data)[cite: 1].
-* [ ] Endpoint básico de subida de CSV/Excel con validación de columnas mínimas[cite: 1].
+* [x] Endpoint básico de subida de CSV/Excel con validación de columnas mínimas[cite: 1] — *hecho en Sprint 0 (ref #9).*
 * [ ] Coordinar con equipo de Data Analytics la tabla de normalización definitiva[cite: 1].
 
 ## Sprint 2: Core de Métricas e Índice (Semanas 3 y 4)

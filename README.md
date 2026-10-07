@@ -67,7 +67,7 @@ python3 -m uvicorn app.main:app --reload
 
 | Método | Ruta | Tag | Descripción |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/v1/health` | `Health` | Comprobación de estado del servicio (`200 OK`) |
+| `GET` | `/api/v1/health` | `Health` | Estado del servicio y chequeo de DB (`200 OK`; `503` si la DB está caída) |
 | `GET` | `/api/v1/occupations/{id}` | `Occupations` | Ficha técnica de ocupación según contrato regional |
 | `POST` | `/api/v1/datasets/upload` | `Datasets` | Carga y validación estructural de archivos CSV o Excel |
 
@@ -82,10 +82,12 @@ app-backend/
 │   │   └── v1/
 │   │       ├── endpoints/
 │   │       │   ├── datasets.py       # Endpoint POST /upload con validación
-│   │       │   ├── health.py         # Chequeo de estado
+│   │       │   ├── health.py         # Estado del servicio + chequeo de DB
 │   │       │   └── occupations.py    # Fichas técnicas de ocupaciones
 │   │       └── router.py             # Enrutador central v1
-│   ├── core/                         # Configuración y conexión a DB
+│   ├── core/
+│   │   ├── config.py                 # Settings (pydantic-settings) desde .env
+│   │   └── database.py               # Engine async + get_db + healthcheck DB
 │   ├── models/                       # Modelos ORM SQLAlchemy
 │   ├── schemas/                      # Schemas de validación Pydantic
 │   │   ├── dataset.py
@@ -94,12 +96,17 @@ app-backend/
 │   │   └── parsers/
 │   │       └── dataset_parser.py     # Parser Pandas para CSV / Excel
 │   └── main.py                       # Instancia FastAPI y middleware CORS
-├── docs/                             # Especificaciones técnicas y contratos
+├── tests/                            # Suite Pytest (integración API)
+├── pytest.ini                        # Configuración de Pytest
+├── docs/
+│   ├── mocks/                        # Contratos JSON de ejemplo para Frontend
+│   ├── Casos_Apis_CargaDatos*.csv    # Matriz de casos QA
 │   ├── DATA_CONTRACTS.md
 │   ├── ROADMAP_BACKEND.md
 │   ├── SPEC.md
 │   └── STRUCTURE.md
 ├── requirements.txt
+├── .env.example
 ├── .gitignore
 └── README.md
 ```
@@ -116,11 +123,45 @@ country_code,sector_id,occupation_id,metric_name,metric_value,period,source_name
 
 Si alguna de estas columnas falta, el endpoint responde con código `400 Bad Request` indicando la lista de campos faltantes.
 
+Además de las columnas, se validan los valores de cada fila (rechazo `400` en cualquier fila inválida):
+
+* `country_code` ∈ `ARG`, `CHL`, `URY`
+* `occupation_id` ∈ catálogo `OCUP_01` … `OCUP_20`
+* `data_type` ∈ `observed`, `projected`
+* `metric_value` numérico
+
 ---
 
-## 6. Documentación Adicional
+## 6. Tests
+
+La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesidad de servidor corriendo):
+
+```bash
+python -m pytest -v
+```
+
+* Cobertura actual: `POST /datasets/upload` (casos LOAD-001..008 de la matriz QA, incluyendo validación de país, `data_type`, `metric_value` numérico y catálogo de ocupaciones `OCUP_01..OCUP_20`), `GET /health` (3 estados del chequeo de DB) y `GET /occupations/{id}` (200/404 + trazabilidad).
+* Los casos **API-001..API-014** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
+* La matriz de casos QA (`docs/Casos_Apis_CargaDatos - 22092026.csv`) mantiene el estado de cada caso.
+
+---
+
+## 7. Despliegue (pendiente)
+
+El despliegue del esqueleto en **Railway / Render** está diferido (Sprint 0 → Sprint 1). Pasos previstos:
+
+1. Linkear este repositorio en Railway (`railway link` o dashboard).
+2. Variables de entorno: `DATABASE_URL` (Supabase/PostgreSQL), `CORS_ORIGINS`.
+3. Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
+
+Mientras `DATABASE_URL` no esté configurada, `GET /api/v1/health` responde `200 {"status": "ok", "db": "not_configured"}`.
+
+---
+
+## 8. Documentación Adicional
 
 Para más detalles sobre la arquitectura y contratos:
 * [Especificación Técnica (`docs/SPEC.md`)](docs/SPEC.md)
 * [Contratos de Datos (`docs/DATA_CONTRACTS.md`)](docs/DATA_CONTRACTS.md)
 * [Roadmap y Sprints Kanban (`docs/ROADMAP_BACKEND.md`)](docs/ROADMAP_BACKEND.md)
+* [Mocks JSON para Frontend (`docs/mocks/`)](docs/mocks/)

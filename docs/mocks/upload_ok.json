@@ -1,0 +1,16 @@
+{
+  "filename": "dataset_prueba.csv",
+  "status": "ok",
+  "rows_count": 45,
+  "columns_detected": [
+    "country_code",
+    "sector_id",
+    "occupation_id",
+    "metric_name",
+    "metric_value",
+    "period",
+    "source_name",
+    "data_type"
+  ],
+  "message": "Archivo válido"
+}
