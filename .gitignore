@@ -9,3 +9,4 @@ __pycache__/
 session-*.md
 skills-lock.json
 dataset_prueba.csv
+data/raw/
