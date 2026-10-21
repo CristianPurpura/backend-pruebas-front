@@ -6,7 +6,46 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 
 ---
 
-## 1. Stack Tecnológico
+## 1. Estado del Proyecto
+
+**Sprint 0 (fundaciones) y Sprint 1 (ingesta y normalización) completados.**
+
+| Área | Estado | Detalle |
+| :--- | :--- | :--- |
+| Configuración y health | ✅ | Settings desde `.env`, DB async y `/health` con chequeo de conexión |
+| Carga manual | ✅ | `POST /datasets/upload` con validación por fila (422), cuarentena con flags y normalización al esquema común de Data |
+| Conectores | ✅ | Datos Argentina, Banco Mundial y SIMEL/ENE (SDMX del INE), con tests en vivo |
+| Almacenamiento crudo | ✅ | `data/raw/{fuente}/YYYY-MM-DD.jsonl` (esquema `raw_data_logs`) + flujo de ingesta |
+| Índice de empleabilidad | ✅ | `GET /employability` con IDELR + ICOL reimplementados y test de paridad contra la API de Data |
+| Matriz de casos QA | ✅ **28/28** | API-001..016 (contra la API de Data) + LOAD-001..012 (contra este backend) |
+| Base de datos | ⏸ | Modelos ORM + Alembic pendientes: falta `DATABASE_URL` (Supabase/PostgreSQL) |
+| Endpoint de indicadores | ⏸ | `GET /indicators` con filtros por país, sector y período |
+| Perfil de ocupación | ⏸ | `/occupations/{id}` sigue con datos de ejemplo: falta cruzar el ICOL |
+| Despliegue | ⏸ | Railway/Render diferido (pasos en §10) |
+
+**Pendientes de coordinación con el equipo de Data:**
+* Firmar las 4 desviaciones del ETL ([`docs/Data_Contracts.md` §5](docs/Data_Contracts.md)).
+* Reflejar en la planilla de QA los cambios de contrato: `400 → 422` en el rechazo por fila y `occupation_id` fuera de catálogo → cuarentena.
+* Quedan disponibles para el Frontend las unidades canónicas y el campo `is_projection`.
+
+### Datos de referencia
+
+El golden dataset regional del equipo de Data (`DataAnalyst`, 135 registros) se reingiere por el mismo endpoint de carga: el Backend detecta que el archivo ya viene en el esquema común y lo procesa sin transformaciones.
+
+```bash
+git clone https://github.com/InnovaLab-2C-2026-Equipo-6/DataAnalyst.git /tmp/opencode/DataAnalyst
+
+# Cargar el dataset regional (135 registros, 45 por país)
+curl -X POST -F "file=@/tmp/opencode/DataAnalyst/data/processed/dataset_consolidado_regional.csv" \
+  http://127.0.0.1:8000/api/v1/datasets/upload
+
+# Índice de empleabilidad con esos datos (serie macro + ranking de 60 ocupaciones)
+curl "http://127.0.0.1:8000/api/v1/employability"
+```
+
+---
+
+## 2. Stack Tecnológico
 
 * **Framework:** FastAPI
 * **Servidor ASGI:** Uvicorn
@@ -17,7 +56,7 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 
 ---
 
-## 2. Instalación y Ejecución Local
+## 3. Instalación y Ejecución Local
 
 ### Prerrequisitos
 * Python 3.11+
@@ -63,7 +102,7 @@ python3 -m uvicorn app.main:app --reload
 
 ---
 
-## 3. Endpoints Disponibles
+## 4. Endpoints Disponibles
 
 | Método | Ruta | Tag | Descripción |
 | :--- | :--- | :--- | :--- |
@@ -74,7 +113,7 @@ python3 -m uvicorn app.main:app --reload
 
 ---
 
-## 4. Estructura del Proyecto
+## 5. Estructura del Proyecto
 
 ```text
 app-backend/
@@ -133,7 +172,7 @@ app-backend/
 
 ---
 
-## 5. Formato para Carga Manual de Datasets
+## 6. Formato para Carga Manual de Datasets
 
 El endpoint `POST /api/v1/datasets/upload` valida que los archivos `.csv` o `.xlsx` contengan estrictamente las siguientes columnas:
 
@@ -177,7 +216,7 @@ El detalle completo del contrato, el mapeo campo a campo y las desviaciones acor
 
 ---
 
-## 6. Índice de Empleabilidad (IDELR + ICOL)
+## 7. Índice de Empleabilidad (IDELR + ICOL)
 
 `GET /api/v1/employability` expone el índice de empleabilidad reimplementado **localmente** a partir de la metodología publicada por el equipo de Data (`DataAnalyst/INFORME_METODOLOGICO_INDICES.md`), de modo que el Backend no dependa de la disponibilidad de su API:
 
@@ -190,7 +229,7 @@ Filtros: `pais` (ARG/CHL/URY), `sector`, `ocupacion` (OCUP_01..OCUP_20), `anio_i
 * La respuesta incluye el **desglose de dimensiones evaluadas** (`desglose_variables` con valor original, valor normalizado, peso asignado y contribución al índice) y la trazabilidad completa (fuente, fecha y metodología aplicada).
 * `tests/test_employability.py` incluye un **test de paridad**: nuestros valores coinciden exactamente con `/api/v1/analytics/indice-sintetico` y `/api/v1/analytics/ocupaciones/ranking` del repo `DataAnalyst`.
 
-## 7. Tests
+## 8. Tests
 
 La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesidad de servidor corriendo):
 
@@ -211,7 +250,7 @@ python -m pytest -v
 
 ---
 
-## 8. Conectores y Datos Crudos
+## 9. Conectores y Datos Crudos
 
 ### Conectores HTTP (Issue #18)
 
@@ -245,7 +284,7 @@ Clientes HTTPX asíncronos en `app/services/connectors/`:
 
 ---
 
-## 9. Despliegue (pendiente)
+## 10. Despliegue (pendiente)
 
 El despliegue del esqueleto en **Railway / Render** está diferido (Sprint 0 → Sprint 1). Pasos previstos:
 
@@ -257,7 +296,7 @@ Mientras `DATABASE_URL` no esté configurada, `GET /api/v1/health` responde `200
 
 ---
 
-## 10. Documentación Adicional
+## 11. Documentación Adicional
 
 Para más detalles sobre la arquitectura y contratos:
 * [Especificación Técnica (`docs/SPEC.md`)](docs/SPEC.md)

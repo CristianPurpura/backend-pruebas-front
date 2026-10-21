@@ -9,7 +9,7 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
   * Crear endpoint `/api/v1/health` — *con chequeo de DB: `ok` / `error` / `not_configured`.*
 * [x] **Issue #9 (En Ready):** Definir mecanismo de carga manual de datasets[cite: 1].
   * Definir arquitectura de subida (FastAPI `UploadFile`) y parseo base con Pandas[cite: 1].
-* [ ] Desplegar esqueleto inicial en Railway o Render para pruebas conjuntas con QA y Frontend[cite: 1] — *diferido; pasos documentados en README §9.*
+* [ ] Desplegar esqueleto inicial en Railway o Render para pruebas conjuntas con QA y Frontend[cite: 1] — *diferido; pasos documentados en README §10.*
 * [x] Publicar mocks/contratos JSON iniciales para descolgar el trabajo de Frontend[cite: 1] — *`docs/mocks/`.*
 
 ## Sprint 1: Exploración e Ingesta Base (Semanas 1 y 2)
