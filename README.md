@@ -69,7 +69,8 @@ python3 -m uvicorn app.main:app --reload
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/v1/health` | `Health` | Estado del servicio y chequeo de DB (`200 OK`; `503` si la DB está caída) |
 | `GET` | `/api/v1/occupations/{id}` | `Occupations` | Ficha técnica de ocupación según contrato regional |
-| `POST` | `/api/v1/datasets/upload` | `Datasets` | Carga y validación estructural de archivos CSV o Excel |
+| `POST` | `/api/v1/datasets/upload` | `Datasets` | Carga, validación y normalización de archivos CSV o Excel |
+| `GET` | `/api/v1/employability` | `Employability` | Índice de empleabilidad: serie macro (IDELR) y ranking por ocupación (ICOL) |
 
 ---
 
@@ -81,22 +82,41 @@ app-backend/
 │   ├── api/
 │   │   └── v1/
 │   │       ├── endpoints/
-│   │       │   ├── datasets.py       # Endpoint POST /upload con validación
+│   │       │   ├── datasets.py       # Endpoint POST /upload con validación y normalización
+│   │       │   ├── employability.py  # Índice de empleabilidad (IDELR + ICOL)
 │   │       │   ├── health.py         # Estado del servicio + chequeo de DB
 │   │       │   └── occupations.py    # Fichas técnicas de ocupaciones
 │   │       └── router.py             # Enrutador central v1
 │   ├── core/
 │   │   ├── config.py                 # Settings (pydantic-settings) desde .env
+│   │   ├── catalogs.py               # Catálogos canónicos (países, sectores, ocupaciones, unidades)
 │   │   └── database.py               # Engine async + get_db + healthcheck DB
 │   ├── models/                       # Modelos ORM SQLAlchemy
 │   ├── schemas/                      # Schemas de validación Pydantic
 │   │   ├── dataset.py
+│   │   ├── employability.py
 │   │   └── occupation.py
 │   ├── services/                     # Lógica de negocio y procesamiento
+│   │   ├── calculators/              # IDELR / ICOL (Índice de Empleabilidad)
+│   │   │   ├── employability.py       # Fórmula publicada por el equipo de Data
+│   │   │   └── datasets.py           # Lectura de los datasets normalizados
+│   │   ├── connectors/               # Clientes HTTPX de fuentes oficiales
+│   │   │   ├── base.py               # BaseConnector + ConnectorResponse
+│   │   │   ├── banco_mundial.py      # Banco Mundial API v2
+│   │   │   ├── datos_argentina.py    # Series de Tiempo datos.gob.ar
+│   │   │   └── simel_chile.py        # SIMEL/ENE vía SDMX del INE
+│   │   ├── normalization/             # ETL: mapeo al esquema común, cuarentena y deduplicación
+│   │   │   ├── mapper.py             # 8 columnas de entrada → ESQUEMA_COLUMNAS de Data
+│   │   │   ├── pipeline.py           # 3 niveles: rechazo 422 / cuarentena / dedupe
+│   │   │   ├── store.py              # Dataset normalizado (CSV) y cuarentena (JSONL)
+│   │   │   └── errors.py             # Errores de ingesta con detalle por fila
+│   │   ├── storage/
+│   │   │   └── raw_store.py          # Crudos en data/raw/{fuente}/YYYY-MM-DD.jsonl
+│   │   ├── ingestor.py               # Flujo: recepción → almacenamiento crudo
 │   │   └── parsers/
 │   │       └── dataset_parser.py     # Parser Pandas para CSV / Excel
 │   └── main.py                       # Instancia FastAPI y middleware CORS
-├── tests/                            # Suite Pytest (integración API)
+├── tests/                            # Suite Pytest (integración API + conectores + ETL)
 ├── pytest.ini                        # Configuración de Pytest
 ├── docs/
 │   ├── mocks/                        # Contratos JSON de ejemplo para Frontend
@@ -123,16 +143,54 @@ country_code,sector_id,occupation_id,metric_name,metric_value,period,source_name
 
 Si alguna de estas columnas falta, el endpoint responde con código `400 Bad Request` indicando la lista de campos faltantes.
 
-Además de las columnas, se validan los valores de cada fila (rechazo `400` en cualquier fila inválida):
+Además de las columnas, se validan los valores de cada fila:
 
 * `country_code` ∈ `ARG`, `CHL`, `URY`
-* `occupation_id` ∈ catálogo `OCUP_01` … `OCUP_20`
-* `data_type` ∈ `observed`, `projected`
+* `occupation_id` ∈ catálogo `OCUP_01` … `OCUP_20` (formato `OCUP_XX`)
+* `data_type` ∈ `percentage`, `currency`, `count` (unidad de la métrica)
 * `metric_value` numérico
+* `period` ∈ `2025`, `2025-Q3`, `2025-06`
+
+Una fila inválida produce **`422 Unprocessable Entity`** con el detalle de cada problema (`row`, `field`, `value`, `cause`) y el archivo completo se rechaza sin entrar al pipeline.
+
+### 5.1 Normalización al esquema común
+
+Las filas válidas se transforman al **esquema común aprobado por el equipo de Data** (`ESQUEMA_COLUMNAS` de `etl/cleaner.py`) más dos columnas propias (`occupation_id`, `is_projection`):
+
+```text
+pais_codigo_iso3,pais_nombre,dimension,indicador_nombre,anio,periodo,valor,unidad_medida,fuente_oficial,fecha_extraccion,occupation_id,is_projection
+```
+
+La clasificación de filas sigue los tres niveles de la definición aprobada (`DataAnalyst/DEFINICIONES_CASOS_CARGA_QA.md`):
+
+| Nivel | Situación | Resultado |
+| :--- | :--- | :--- |
+| 1 | Campo obligatorio vacío, valor no numérico, país/unidad/período/ocupación con formato inválido | **HTTP 422** (rechazo atómico, con detalle por fila) |
+| 2 | Sector u ocupación fuera del catálogo (`UNMAPPED_CATALOG`), valor fuera de rango lógico (`OUTLIER_RANGE`) | **Cuarentena**: la fila se aísla con su flag y el resto se procesa |
+| 3 | Misma clave natural dentro del lote | **Deduplicación**: gana el último registro (con warning si el valor difiere) |
+
+* Clave natural: `pais_codigo_iso3`, `dimension`, `indicador_nombre`, `anio`, `periodo`, `unidad_medida`, `fuente_oficial` **+ `occupation_id`**.
+* Salidas: dataset normalizado en `data/processed/{fecha}/` (CSV `utf-8-sig`) y cuarentena en `data/quarantine/{fecha}/` (JSONL). `?persist=false` devuelve el reporte sin escribir.
+* Si el archivo ya viene en el esquema común de Data, el endpoint lo reconoce (`input_schema: "common"`) y lo procesa sin transformaciones (útil para reingerir el golden dataset regional de 135 registros).
+
+El detalle completo del contrato, el mapeo campo a campo y las desviaciones acordadas con el equipo de Data están en [`docs/Data_Contracts.md`](docs/Data_Contracts.md).
 
 ---
 
-## 6. Tests
+## 6. Índice de Empleabilidad (IDELR + ICOL)
+
+`GET /api/v1/employability` expone el índice de empleabilidad reimplementado **localmente** a partir de la metodología publicada por el equipo de Data (`DataAnalyst/INFORME_METODOLOGICO_INDICES.md`), de modo que el Backend no dependa de la disponibilidad de su API:
+
+* **IDELR** (Índice de Desarrollo Económico-Laboral Regional): normalización Min-Max acotada `[0, 100]` y agregación lineal ponderada sobre 5 indicadores (PIB 25 %, salario real 25 %, ocupación 20 %, finalización secundaria 15 %, desempleo 15 %), con tendencia por banda muerta (ε = 1 %).
+* **ICOL** (Índice Compuesto de Oportunidad Laboral): `0.35 · IDELR + 0.40 · demanda + 0.25 · crecimiento`, ajustado por el factor de madurez del país (URY 1.05 / CHL 1.00 / ARG 0.95) y acotado a `[0, 100]`.
+
+Filtros: `pais` (ARG/CHL/URY), `sector`, `ocupacion` (OCUP_01..OCUP_20), `anio_inicio`, `anio_fin`.
+
+* Los datos macro salen de los datasets normalizados en `data/processed/`; si todavía no hay ninguno, el ICOL usa los valores de referencia y la respuesta lo explicita en `fuente_datos.tipo = "fallback"`.
+* La respuesta incluye el **desglose de dimensiones evaluadas** (`desglose_variables` con valor original, valor normalizado, peso asignado y contribución al índice) y la trazabilidad completa (fuente, fecha y metodología aplicada).
+* `tests/test_employability.py` incluye un **test de paridad**: nuestros valores coinciden exactamente con `/api/v1/analytics/indice-sintetico` y `/api/v1/analytics/ocupaciones/ranking` del repo `DataAnalyst`.
+
+## 7. Tests
 
 La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesidad de servidor corriendo):
 
@@ -140,13 +198,54 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual: `POST /datasets/upload` (casos LOAD-001..008 de la matriz QA, incluyendo validación de país, `data_type`, `metric_value` numérico y catálogo de ocupaciones `OCUP_01..OCUP_20`), `GET /health` (3 estados del chequeo de DB) y `GET /occupations/{id}` (200/404 + trazabilidad).
-* Los casos **API-001..API-014** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
-* La matriz de casos QA (`docs/Casos_Apis_CargaDatos - 22092026.csv`) mantiene el estado de cada caso.
+* Cobertura actual (91 tests): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (200/404 + trazabilidad) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
+* Los casos **API-001..API-016** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
+* `tests/test_normalization.py` cubre el ETL de forma unitaria y verifica que el golden dataset regional de Data entra por el esquema común sin perder registros (135 filas, 45 por país).
+* La matriz de casos QA (`docs/Casos_Apis_CargaDatos - 22092026.csv`) mantiene el estado de cada caso: **28/28 automatizados**.
+* `tests/test_connectors.py`, `tests/test_raw_store.py` y `tests/test_ingestor.py` cubren los conectores (unit + en vivo), el almacenamiento crudo y el flujo de ingesta.
+
+> **Para correr la matriz API completa** hay que clonar el repo del equipo Data:
+> ```bash
+> git clone https://github.com/InnovaLab-2C-2026-Equipo-6/DataAnalyst.git /tmp/opencode/DataAnalyst
+> ```
 
 ---
 
-## 7. Despliegue (pendiente)
+## 8. Conectores y Datos Crudos
+
+### Conectores HTTP (Issue #18)
+
+Clientes HTTPX asíncronos en `app/services/connectors/`:
+
+| `source_id` | Fuente | Endpoint | Serie por defecto |
+|---|---|---|---|
+| `datos_argentina` | Datos Argentina (Series de Tiempo) | `apis.datos.gob.ar/series/api/series/` | IPC nacional (`DATOS_AR_SERIES_IDS`, configurable) |
+| `banco_mundial` | Banco Mundial API v2 | `api.worldbank.org/v2/...` | `SL.UEM.TOTL.ZS` (desempleo) para ARG/CHL/URY |
+| `simel_chile` | SIMEL/ENE vía SDMX del INE | `sdmx.ine.gob.cl/rest/data/...` | `CL01,DF_DES_SEXO` (desocupación por sexo, fuente ENE) |
+
+* `www.simel.gob.cl` responde `418` a clientes automatizados; las series ENE se consumen por el SDMX oficial del INE (misma fuente).
+* Cada conector expone `await fetch(...) -> ConnectorResponse(source_id, ok, fetched_at, payload, points, error)`: `payload` conserva la respuesta cruda y `points` trae `(periodo, valor)`.
+* Registry: `CONNECTORS` en `app/services/connectors/__init__.py`.
+
+### Almacenamiento crudo (Issue #19)
+
+`app/services/storage/raw_store.py` appenda registros con el esquema `raw_data_logs` (SPEC §6):
+
+```json
+{"source_id": "datos_argentina", "raw_payload": {"...": "..."}, "status": "ok", "error": null, "created_at": "2026-10-07T00:00:00+00:00"}
+```
+
+* Archivos: `data/raw/{source_id}/YYYY-MM-DD.jsonl` (un registro por línea; directorio configurable con `RAW_DIR`).
+* Flujo de recepción: `await ingest(conector, **params)` (`app/services/ingestor.py`) hace fetch y guarda el registro (ok o error) → `IngestReport`.
+* `read_raw(source_id, limit)` devuelve los últimos registros para el consumo posterior (normalización pendiente de coordinar con Data).
+
+### Prueba de conexión
+
+`tests/test_connectors.py` incluye tests **en vivo** (una llamada real por fuente): sin salida a internet se omiten con *skip*; los tests unitarios cubren parseo y errores sin red.
+
+---
+
+## 9. Despliegue (pendiente)
 
 El despliegue del esqueleto en **Railway / Render** está diferido (Sprint 0 → Sprint 1). Pasos previstos:
 
@@ -158,7 +257,7 @@ Mientras `DATABASE_URL` no esté configurada, `GET /api/v1/health` responde `200
 
 ---
 
-## 8. Documentación Adicional
+## 10. Documentación Adicional
 
 Para más detalles sobre la arquitectura y contratos:
 * [Especificación Técnica (`docs/SPEC.md`)](docs/SPEC.md)

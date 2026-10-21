@@ -1,4 +1,4 @@
-"""Casos QA API-001..API-014 contra la API del equipo Data (repo DataAnalyst).
+"""Casos QA API-001..API-016 contra la API del equipo Data (repo DataAnalyst).
 
 La matriz docs/Casos_Apis_CargaDatos - 22092026.csv define estos casos para los
 endpoints /ocupaciones/*, /consolidado/* y /analytics/*, que viven en el repo
@@ -395,3 +395,20 @@ def test_api_014_consistencia_dataset_vs_api(data_api):
 
     assert len(df_csv) == len(df_api)
     assert llaves_csv == llaves_api
+
+
+# ---------------------------------------------------------------------------
+# API-015..016: seguridad y manejo de errores
+# ---------------------------------------------------------------------------
+def test_api_015_post_metodo_no_permitido(data_api):
+    """API-015: POST a un endpoint que solo espera GET devuelve 405."""
+    response = httpx.post(f"{data_api}/api/v1/consolidado/procesar", timeout=30.0)
+    assert response.status_code == 405
+
+
+def test_api_016_pais_fuera_de_alcance(data_api):
+    """API-016: país fuera del alcance regional (ARG/CHL/URY) → error explicito."""
+    for pais in ("XYZ", "BRA"):
+        response = _get(f"{data_api}/api/v1/paises/{pais}/descargar")
+        assert response.status_code in (400, 404), f"esperaba error, llegó {response.status_code}"
+        assert response.json().get("detail"), "el error debe traer un detalle explicito"
