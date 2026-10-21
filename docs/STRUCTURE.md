@@ -16,6 +16,7 @@ app-backend/
 │   │       └── router.py            # Enrutador principal de la API v1
 │   ├── core/
 │   │   ├── config.py                # Variables de entorno y configuraciones
+│   │   ├── catalogs.py              # Catálogos canónicos (países, sectores, ocupaciones, unidades)
 │   │   └── database.py              # Sesiones de SQLAlchemy / Supabase
 │   ├── models/                      # Entidades de base de datos (tablas ORM)
 │   │   ├── alert.py
@@ -31,6 +32,11 @@ app-backend/
 │   │   ├── calculators/             # Algoritmo de Índice y proyecciones
 │   │   ├── connectors/              # Clientes HTTPX para APIs externas (AR, UY, CL)
 │   │   ├── ingestor.py              # Recepción: fetch → registro crudo
+│   │   ├── normalization/           # ETL de carga manual: esquema común, cuarentena y dedupe
+│   │   │   ├── mapper.py            # Mapeo al ESQUEMA_COLUMNAS de Data
+│   │   │   ├── pipeline.py          # Clasificación en 3 niveles
+│   │   │   ├── store.py             # Dataset normalizado (CSV) y cuarentena (JSONL)
+│   │   │   └── errors.py            # Rechazo por fila (HTTP 422)
 │   │   ├── parsers/                 # Lectura y validación de CSV/Excel con Pandas
 │   │   ├── scheduler/               # Tareas cron / ejecución periódica
 │   │   └── storage/                 # Almacenamiento crudo (JSONL por fuente)

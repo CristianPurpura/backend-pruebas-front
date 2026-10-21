@@ -63,13 +63,100 @@ Para el parser de carga manual (`POST /api/v1/datasets/upload`), las columnas ob
 
 | Columna | Tipo | Ejemplo | Descripción |
 | :--- | :--- | :--- | :--- |
-| `country_code` | String(3) | `ARG` | Código ISO del país |
-| `sector_id` | String(10) | `TEC` | ID de sector oficial |
-| `occupation_id` | String(20) | `OCUP_01` | Identificador de ocupación |
-| `metric_name` | String(50) | `annual_growth` | Nombre normalizado de la métrica |
+| `country_code` | String(3) | `ARG` | Código ISO-3 del país (`ARG`, `CHL`, `URY`) |
+| `sector_id` | String(10) | `TEC` | ID de sector oficial (`TEC`, `SAL`, `ENE`, `TUR`, `ECO`) |
+| `occupation_id` | String(20) | `OCUP_01` | Identificador de ocupación del catálogo `OCUP_01`..`OCUP_20` |
+| `metric_name` | String(50) | `Tasa de Desocupación Total` | Nombre de la métrica (se homologa contra el catálogo de indicadores) |
 | `metric_value` | Float | `18.5` | Valor numérico |
-| `period` | String(10) | `2025-Q3` | Período de referencia |
+| `period` | String(10) | `2025`, `2025-Q3`, `2025-06` | Período de referencia |
 | `source_name` | String(100)| `INDEC-EPH` | Organismo oficial |
-| `data_type` | String(20) | `observed` | `observed` o `projected` |
+| `data_type` | String(20) | `percentage` | Unidad de la métrica: `percentage`, `currency` o `count` |
+| `is_projection` | Bool | `false` | **Opcional.** `true` si el dato es una proyección |
+
+> **Cambio de contrato (v2).** `data_type` pasó a describir la **unidad de
+> medida** (`percentage` / `currency` / `count`) según la definición aprobada
+> por el equipo de Data, y la semántica observado/proyectado pasó a la
+> columna opcional `is_projection` (equivale a `is_projection` de
+> `normalized_metrics` en la SPEC §6). Los valores `observed` / `projected`
+> ya no son válidos.
+
+## 4. Normalización al esquema común (Data)
+
+Cada fila válida se transforma al esquema común aprobado por el equipo de Data
+(`ESQUEMA_COLUMNAS` de `etl/cleaner.py` en el repo `DataAnalyst`), más dos
+columnas propias del Backend:
+
+| Campo origen (Backend) | Transformación | Campo canónico | Tipo |
+| :--- | :--- | :--- | :--- |
+| `country_code` | `UPPER` + `TRIM`, resolución contra `PAISES_INFO` | `pais_codigo_iso3` | str (ISO-3) |
+| (derivado) | Catálogo institucional de países | `pais_nombre` | str |
+| `sector_id` | Resolución contra el catálogo de sectores | `dimension` | str |
+| `occupation_id` | Catálogo de ocupaciones (`OCUP_01`..`OCUP_20`) | `occupation_id` *(extra)* | str |
+| `metric_name` | Homologación con `INDICADORES_ALIAS` | `indicador_nombre` | str |
+| `period` | Extracción del componente anual | `anio` | int |
+| `period` | Normalización de granularidad (`Anual`, `Trimestre N`, mes) | `periodo` | str |
+| `metric_value` | Casteo a flotante redondeado a 2 decimales | `valor` | float |
+| `data_type` | Homologación a la etiqueta canónica de unidad | `unidad_medida` | str |
+| `source_name` | Limpieza y validación de fuente oficial | `fuente_oficial` | str |
+| (metadata) | `NOW()` en UTC | `fecha_extraccion` | str (ISO-8601) |
+| `is_projection` | Booleano (`true`/`false`/`1`/`0`) | `is_projection` *(extra)* | bool |
+
+Equivalencia de unidades: `percentage` → `Porcentaje (%)`, `currency` → `Moneda (USD)`, `count` → `Unidades (conteo)`.
+
+### 4.1 Clasificación de filas (LOAD-006 / LOAD-010 / LOAD-011 / LOAD-012)
+
+| Nivel | Situación | Resultado |
+| :--- | :--- | :--- |
+| 1 | Campo obligatorio vacío, `metric_value` no numérico, `country_code` fuera del alcance, `data_type` inválido, `period` con formato inválido, `occupation_id` con formato inválido | **HTTP 422**: el archivo se rechaza de forma atómica, con detalle por fila (`row`, `field`, `value`, `cause`). No entra al pipeline. |
+| 2 | `sector_id` u `occupation_id` fuera del catálogo → `UNMAPPED_CATALOG`; valor fuera de rango lógico → `OUTLIER_RANGE` | **Cuarentena**: la fila se aísla (con su flag y causa) y el resto del archivo se procesa. |
+| 3 | Misma clave natural dentro del mismo lote | **Deduplicación**: se conserva **el último** registro. Si el valor difiere se emite el warning *"Registro sobreescrito por actualización en la misma carga"*. |
+
+* **Clave natural de unicidad:** `pais_codigo_iso3`, `dimension`, `indicador_nombre`, `anio`, `periodo`, `unidad_medida`, `fuente_oficial` **+ `occupation_id`**.
+* **Cobertura de referencia (LOAD-009):** 3 países × 45 registros = **135** (5 indicadores × 3 dimensiones × 3 períodos).
+
+### 4.2 Respuesta del endpoint
+
+```json
+{
+  "filename": "carga_2026.csv",
+  "status": "ok_with_warnings",
+  "input_schema": "manual",
+  "rows_count": 135,
+  "rows_valid": 133,
+  "rows_rejected": 0,
+  "rows_quarantined": 2,
+  "duplicates_removed": 1,
+  "columns_detected": ["country_code", "sector_id", "..."],
+  "normalized_columns": ["pais_codigo_iso3", "pais_nombre", "..."],
+  "warnings": ["Registro sobreescrito por actualización en la misma carga (fila 42 reemplaza a la fila 17)"],
+  "quarantine": [{"row": 88, "flag": "OUTLIER_RANGE", "cause": "valor 150.0 fuera del rango lógico de un porcentaje (0..100)", "payload": {}}],
+  "output_path": "data/processed/2026-10-21/120000_carga_2026.csv",
+  "quarantine_path": "data/quarantine/2026-10-21/120000_carga_2026.jsonl",
+  "message": "Archivo normalizado: 133 fila(s) válida(s), 2 en cuarentena, 1 duplicado(s) descartado(s)."
+}
+```
+
+* El dataset normalizado se escribe en `data/processed/{fecha}/` (CSV `utf-8-sig`) y la cuarentena en `data/quarantine/{fecha}/` (JSONL).
+* `?persist=false` devuelve el reporte sin escribir en disco.
+
+### 4.3 Ingesta de datasets ya normalizados
+
+Si el archivo ya viene en el esquema común de Data (las 10 columnas
+`pais_codigo_iso3` … `fecha_extraccion`), el endpoint lo reconoce
+(`input_schema: "common"`) y lo procesa sin transformaciones. Permite
+reingerir el golden dataset regional (`dataset_consolidado_regional.csv`) sin
+pérdidas: 135 registros, 45 por país.
+
+## 5. Desviaciones respecto de la definición aprobada
+
+Las desviaciones están acordadas con el equipo de Data y quedan pendientes de
+firma en la definición oficial (`DEFINICIONES_CASOS_CARGA_QA.md`):
+
+| # | Desviación | Motivo |
+| :--- | :--- | :--- |
+| 1 | La clave de deduplicación suma `occupation_id` a los 7 campos canónicos | Sin él, dos ocupaciones del mismo sector con la misma métrica, año y fuente se colapsarían en una sola fila (pérdida de datos real). |
+| 2 | El corte por rango no es "valor < 0" genérico | El golden dataset regional incluye variaciones negativas legítimas del PIB. Solo sePonenen en cuarentena los valores negativos de indicadores que no los admiten (desempleo, ocupación, población, etc.). |
+| 3 | `unidad_medida` y `periodo` usan etiquetas canónicas propias (`Porcentaje (%)`, `Anual`) | La definición aprobada usa el vocabulario literal (`percentage`, `ANUAL`) y el golden dataset real usa etiquetas en texto (`% del PIB`, `Índice (Base 100)`). El Backend elige un vocabulario canónico y homogéneo, documentado en §4. |
+| 4 | `data_type` sigue siendo obligatorio en la carga manual | Coherente con el contrato aprobado de 8 campos; la semántica proyectada viaja en `is_projection`. |
 
 ```

@@ -18,11 +18,11 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
 * [x] **Issue #19 (Backlog):** Preparar flujo inicial para recepción y almacenamiento de datos[cite: 1] — *`app/services/ingestor.py` (`ingest`) + `app/services/storage/raw_store.py`.*
   * Tablas intermedias de staging o guardado de datos crudos (raw data)[cite: 1] — *JSONL en `data/raw/{fuente}/YYYY-MM-DD.jsonl` con esquema `raw_data_logs`; DB diferida.*
 * [x] Endpoint básico de subida de CSV/Excel con validación de columnas mínimas[cite: 1] — *hecho en Sprint 0 (ref #9).*
-* [ ] Coordinar con equipo de Data Analytics la tabla de normalización definitiva[cite: 1].
+* [x] Coordinar con equipo de Data Analytics la tabla de normalización definitiva[cite: 1] — *cerrado: el equipo de Data publicó las definiciones aprobadas (`DataAnalyst/DEFINICIONES_CASOS_CARGA_QA.md`) y el Backend implementó el ETL en `app/services/normalization/` (mapeo al esquema común, cuarentena y deduplicación).*
 
 ## Sprint 2: Core de Métricas e Índice (Semanas 3 y 4)
 * [ ] Exponer endpoints para alimentar el dashboard general con filtros por país, sector y período[cite: 1].
-* [ ] Robustecer la carga manual: reportar filas erróneas sin interrumpir la ejecución[cite: 1].
+* [x] Robustecer la carga manual: reportar filas erróneas sin interrumpir la ejecución[cite: 1] — *hecho: `POST /datasets/upload` clasifica cada fila (rechazo 422 con detalle por fila, cuarentena con flag o deduplicación) y devuelve el reporte (`rows_valid`, `rows_quarantined`, `duplicates_removed`, `warnings`) sin abortar el archivo.*
 * [ ] Implementar la fórmula matemática del Índice de Empleabilidad (provista por Data)[cite: 1].
 * [ ] Exponer endpoint `/api/v1/employability` con desglose de dimensiones evaluadas[cite: 1].
 

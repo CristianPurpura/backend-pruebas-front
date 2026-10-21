@@ -87,6 +87,7 @@ app-backend/
 │   │       └── router.py             # Enrutador central v1
 │   ├── core/
 │   │   ├── config.py                 # Settings (pydantic-settings) desde .env
+│   │   ├── catalogs.py               # Catálogos canónicos (países, sectores, ocupaciones, unidades)
 │   │   └── database.py               # Engine async + get_db + healthcheck DB
 │   ├── models/                       # Modelos ORM SQLAlchemy
 │   ├── schemas/                      # Schemas de validación Pydantic
@@ -98,13 +99,18 @@ app-backend/
 │   │   │   ├── banco_mundial.py      # Banco Mundial API v2
 │   │   │   ├── datos_argentina.py    # Series de Tiempo datos.gob.ar
 │   │   │   └── simel_chile.py        # SIMEL/ENE vía SDMX del INE
+│   │   ├── normalization/             # ETL: mapeo al esquema común, cuarentena y deduplicación
+│   │   │   ├── mapper.py             # 8 columnas de entrada → ESQUEMA_COLUMNAS de Data
+│   │   │   ├── pipeline.py           # 3 niveles: rechazo 422 / cuarentena / dedupe
+│   │   │   ├── store.py              # Dataset normalizado (CSV) y cuarentena (JSONL)
+│   │   │   └── errors.py             # Errores de ingesta con detalle por fila
 │   │   ├── storage/
 │   │   │   └── raw_store.py          # Crudos en data/raw/{fuente}/YYYY-MM-DD.jsonl
 │   │   ├── ingestor.py               # Flujo: recepción → almacenamiento crudo
 │   │   └── parsers/
 │   │       └── dataset_parser.py     # Parser Pandas para CSV / Excel
 │   └── main.py                       # Instancia FastAPI y middleware CORS
-├── tests/                            # Suite Pytest (integración API + conectores)
+├── tests/                            # Suite Pytest (integración API + conectores + ETL)
 ├── pytest.ini                        # Configuración de Pytest
 ├── docs/
 │   ├── mocks/                        # Contratos JSON de ejemplo para Frontend
@@ -131,12 +137,37 @@ country_code,sector_id,occupation_id,metric_name,metric_value,period,source_name
 
 Si alguna de estas columnas falta, el endpoint responde con código `400 Bad Request` indicando la lista de campos faltantes.
 
-Además de las columnas, se validan los valores de cada fila (rechazo `400` en cualquier fila inválida):
+Además de las columnas, se validan los valores de cada fila:
 
 * `country_code` ∈ `ARG`, `CHL`, `URY`
-* `occupation_id` ∈ catálogo `OCUP_01` … `OCUP_20`
-* `data_type` ∈ `observed`, `projected`
+* `occupation_id` ∈ catálogo `OCUP_01` … `OCUP_20` (formato `OCUP_XX`)
+* `data_type` ∈ `percentage`, `currency`, `count` (unidad de la métrica)
 * `metric_value` numérico
+* `period` ∈ `2025`, `2025-Q3`, `2025-06`
+
+Una fila inválida produce **`422 Unprocessable Entity`** con el detalle de cada problema (`row`, `field`, `value`, `cause`) y el archivo completo se rechaza sin entrar al pipeline.
+
+### 5.1 Normalización al esquema común
+
+Las filas válidas se transforman al **esquema común aprobado por el equipo de Data** (`ESQUEMA_COLUMNAS` de `etl/cleaner.py`) más dos columnas propias (`occupation_id`, `is_projection`):
+
+```text
+pais_codigo_iso3,pais_nombre,dimension,indicador_nombre,anio,periodo,valor,unidad_medida,fuente_oficial,fecha_extraccion,occupation_id,is_projection
+```
+
+La clasificación de filas sigue los tres niveles de la definición aprobada (`DataAnalyst/DEFINICIONES_CASOS_CARGA_QA.md`):
+
+| Nivel | Situación | Resultado |
+| :--- | :--- | :--- |
+| 1 | Campo obligatorio vacío, valor no numérico, país/unidad/período/ocupación con formato inválido | **HTTP 422** (rechazo atómico, con detalle por fila) |
+| 2 | Sector u ocupación fuera del catálogo (`UNMAPPED_CATALOG`), valor fuera de rango lógico (`OUTLIER_RANGE`) | **Cuarentena**: la fila se aísla con su flag y el resto se procesa |
+| 3 | Misma clave natural dentro del lote | **Deduplicación**: gana el último registro (con warning si el valor difiere) |
+
+* Clave natural: `pais_codigo_iso3`, `dimension`, `indicador_nombre`, `anio`, `periodo`, `unidad_medida`, `fuente_oficial` **+ `occupation_id`**.
+* Salidas: dataset normalizado en `data/processed/{fecha}/` (CSV `utf-8-sig`) y cuarentena en `data/quarantine/{fecha}/` (JSONL). `?persist=false` devuelve el reporte sin escribir.
+* Si el archivo ya viene en el esquema común de Data, el endpoint lo reconoce (`input_schema: "common"`) y lo procesa sin transformaciones (útil para reingerir el golden dataset regional de 135 registros).
+
+El detalle completo del contrato, el mapeo campo a campo y las desviaciones acordadas con el equipo de Data están en [`docs/Data_Contracts.md`](docs/Data_Contracts.md).
 
 ---
 
@@ -148,10 +179,16 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual: `POST /datasets/upload` (casos LOAD-001..008 de la matriz QA, incluyendo validación de país, `data_type`, `metric_value` numérico y catálogo de ocupaciones `OCUP_01..OCUP_20`), `GET /health` (3 estados del chequeo de DB) y `GET /occupations/{id}` (200/404 + trazabilidad).
+* Cobertura actual (80 tests): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /health` (3 estados del chequeo de DB) y `GET /occupations/{id}` (200/404 + trazabilidad).
 * Los casos **API-001..API-016** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
-* La matriz de casos QA (`docs/Casos_Apis_CargaDatos - 22092026.csv`) mantiene el estado de cada caso.
+* `tests/test_normalization.py` cubre el ETL de forma unitaria y verifica que el golden dataset regional de Data entra por el esquema común sin perder registros (135 filas, 45 por país).
+* La matriz de casos QA (`docs/Casos_Apis_CargaDatos - 22092026.csv`) mantiene el estado de cada caso: **28/28 automatizados**.
 * `tests/test_connectors.py`, `tests/test_raw_store.py` y `tests/test_ingestor.py` cubren los conectores (unit + en vivo), el almacenamiento crudo y el flujo de ingesta.
+
+> **Para correr la matriz API completa** hay que clonar el repo del equipo Data:
+> ```bash
+> git clone https://github.com/InnovaLab-2C-2026-Equipo-6/DataAnalyst.git /tmp/opencode/DataAnalyst
+> ```
 
 ---
 
