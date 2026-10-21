@@ -1,11 +1,20 @@
+"""Parser de la carga manual de datasets (CSV / Excel).
+
+Se ocupa de la **estructura** del archivo (extensión, contenido, columnas).
+La validación de valores y la normalización al esquema común viven en
+`app/services/normalization/`.
+"""
+
 import io
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 from fastapi import UploadFile
 
-from app.schemas.dataset import DatasetUploadResponse
+from app.services.normalization.errors import DatasetValidationError
+from app.services.normalization.mapper import COMMON_COLUMNS
 
 REQUIRED_COLUMNS = (
     "country_code",
@@ -18,65 +27,44 @@ REQUIRED_COLUMNS = (
     "data_type",
 )
 
+OPTIONAL_COLUMNS = ("is_projection",)
+
 ALLOWED_EXTENSIONS = (".csv", ".xlsx")
 
-ALLOWED_COUNTRIES = ("ARG", "CHL", "URY")
-ALLOWED_DATA_TYPES = ("observed", "projected")
-OCCUPATION_IDS = tuple(f"OCUP_{number:02d}" for number in range(1, 21))
+SCHEMA_MANUAL = "manual"
+SCHEMA_COMMON = "common"
 
 
-class DatasetValidationError(Exception):
-    def __init__(self, message: str) -> None:
-        super().__init__(message)
-        self.message = message
+@dataclass
+class ParsedDataset:
+    """Archivo leído y validado estructuralmente."""
+
+    filename: str
+    columns: list[str]
+    rows: list[dict[str, Any]] = field(default_factory=list)
+    schema: str = SCHEMA_MANUAL
+
+    @property
+    def rows_count(self) -> int:
+        return len(self.rows)
 
 
-def _validate_row(position: int, row: dict[str, Any]) -> list[str]:
-    errors: list[str] = []
-
-    country = row.get("country_code")
-    if country not in ALLOWED_COUNTRIES:
-        errors.append(
-            f"country_code invalido en fila {position}: {country!r} "
-            f"(permitidos: {', '.join(ALLOWED_COUNTRIES)})"
-        )
-
-    occupation = row.get("occupation_id")
-    if occupation not in OCCUPATION_IDS:
-        errors.append(
-            f"occupation_id invalido en fila {position}: {occupation!r} "
-            "(debe pertenecer al catalogo OCUP_01..OCUP_20)"
-        )
-
-    data_type = row.get("data_type")
-    if data_type not in ALLOWED_DATA_TYPES:
-        errors.append(
-            f"data_type invalido en fila {position}: {data_type!r} "
-            f"(permitidos: {', '.join(ALLOWED_DATA_TYPES)})"
-        )
-
-    metric_value = row.get("metric_value")
-    try:
-        numeric_value = float(metric_value)
-    except (TypeError, ValueError):
-        numeric_value = float("nan")
-    if pd.isna(numeric_value):
-        errors.append(
-            f"metric_value invalido en fila {position}: {metric_value!r} (debe ser numerico)"
-        )
-
-    return errors
+def _read_frame(content: bytes, extension: str) -> Any:
+    if extension == ".csv":
+        return pd.read_csv(io.BytesIO(content), dtype=str, keep_default_na=False)
+    return pd.read_excel(io.BytesIO(content), dtype=str)
 
 
-def _validate_values(df: Any) -> None:
-    errors: list[str] = []
-    for position, row in enumerate(df.to_dict(orient="records"), start=2):
-        errors.extend(_validate_row(position, row))
-    if errors:
-        raise DatasetValidationError("; ".join(errors))
+def parse_dataset(file: UploadFile) -> ParsedDataset:
+    """Lee el archivo y devuelve sus filas ya tipadas como texto.
 
+    Acepta dos contratos de entrada:
 
-def parse_dataset(file: UploadFile) -> DatasetUploadResponse:
+    * **manual**: las 8 columnas de la carga manual (`country_code` …
+      `data_type`), con `is_projection` opcional.
+    * **común**: las 10 columnas del esquema de Data (`pais_codigo_iso3` …
+      `fecha_extraccion`), para reingerir el golden dataset regional.
+    """
     filename = file.filename or ""
     extension = Path(filename).suffix.lower()
 
@@ -91,27 +79,39 @@ def parse_dataset(file: UploadFile) -> DatasetUploadResponse:
         raise DatasetValidationError("El archivo está vacío.")
 
     try:
-        if extension == ".csv":
-            df: Any = pd.read_csv(io.BytesIO(content))
-        else:
-            df = pd.read_excel(io.BytesIO(content))
+        df = _read_frame(content, extension)
     except Exception as exc:
         raise DatasetValidationError(f"No se pudo leer el archivo: {exc}") from exc
 
     columns: list[str] = [str(column) for column in df.columns]
-    missing_columns = [column for column in REQUIRED_COLUMNS if column not in columns]
 
-    if missing_columns:
-        raise DatasetValidationError(
-            "Faltan columnas obligatorias: " + ", ".join(missing_columns)
-        )
+    if set(COMMON_COLUMNS).issubset(set(columns)):
+        schema = SCHEMA_COMMON
+    else:
+        missing_columns = [column for column in REQUIRED_COLUMNS if column not in columns]
+        if missing_columns:
+            raise DatasetValidationError(
+                "Faltan columnas obligatorias: " + ", ".join(missing_columns)
+            )
+        schema = SCHEMA_MANUAL
 
-    _validate_values(df)
+    frame = df.where(pd.notna(df), None)
+    rows: list[dict[str, Any]] = frame.to_dict(orient="records")
 
-    return DatasetUploadResponse(
+    return ParsedDataset(
         filename=filename,
-        status="ok",
-        rows_count=int(len(df)),
-        columns_detected=columns,
-        message="Archivo válido",
+        columns=columns,
+        rows=rows,
+        schema=schema,
     )
+
+
+__all__ = [
+    "ALLOWED_EXTENSIONS",
+    "OPTIONAL_COLUMNS",
+    "REQUIRED_COLUMNS",
+    "SCHEMA_COMMON",
+    "SCHEMA_MANUAL",
+    "ParsedDataset",
+    "parse_dataset",
+]
