@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     banco_mundial_base_url: str = "https://api.worldbank.org/v2"
     simel_base_url: str = "https://sdmx.ine.gob.cl/rest"
     raw_dir: str = "data/raw"
+    processed_dir: str = "data/processed"
+    quarantine_dir: str = "data/quarantine"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
