@@ -55,29 +55,30 @@ SECTOR_ALIASES: dict[str, str] = {
 }
 
 # ---------------------------------------------------------------------------
-# Ocupaciones (20 perfiles del MVP con su CIUO-08, sector y demanda)
+# Ocupaciones (20 perfiles del MVP con su CIUO-08, sector, demanda y crecimiento)
+# Catálogo publicado por el equipo de Data (DataAnalyst/README.md).
 # ---------------------------------------------------------------------------
 OCUPACIONES: dict[str, dict[str, str]] = {
-    "OCUP_01": {"nombre": "Desarrollador de Software y Aplicaciones", "ciuo08": "2512", "sector": "Tecnología", "demanda": "Muy Alta"},
-    "OCUP_02": {"nombre": "Ingeniero de Datos y Machine Learning", "ciuo08": "2511", "sector": "Tecnología", "demanda": "Muy Alta"},
-    "OCUP_03": {"nombre": "Especialista en Ciberseguridad y Redes", "ciuo08": "2529", "sector": "Tecnología", "demanda": "Alta"},
-    "OCUP_04": {"nombre": "Arquitecto Cloud y DevOps", "ciuo08": "2522", "sector": "Tecnología", "demanda": "Muy Alta"},
-    "OCUP_05": {"nombre": "Médico General y Especialista", "ciuo08": "2211", "sector": "Salud", "demanda": "Alta"},
-    "OCUP_06": {"nombre": "Profesional de Enfermería y Cuidados Críticos", "ciuo08": "2221", "sector": "Salud", "demanda": "Muy Alta"},
-    "OCUP_07": {"nombre": "Bioquímico y Farmacéutico Clínico", "ciuo08": "2262", "sector": "Salud", "demanda": "Media-Alta"},
-    "OCUP_08": {"nombre": "Técnico en Diagnóstico por Imágenes", "ciuo08": "3211", "sector": "Salud", "demanda": "Alta"},
-    "OCUP_09": {"nombre": "Ingeniero en Energías Renovables (Solar/Eólica)", "ciuo08": "2149", "sector": "Energía", "demanda": "Muy Alta"},
-    "OCUP_10": {"nombre": "Ingeniero en Petróleo, Gas y Minería de Transición", "ciuo08": "2146", "sector": "Energía", "demanda": "Alta"},
-    "OCUP_11": {"nombre": "Técnico en Redes Eléctricas Inteligentes", "ciuo08": "3113", "sector": "Energía", "demanda": "Media-Alta"},
-    "OCUP_12": {"nombre": "Auditor en Eficiencia Energética", "ciuo08": "2149", "sector": "Energía", "demanda": "Media-Alta"},
-    "OCUP_13": {"nombre": "Administrador de Servicios Hoteleros", "ciuo08": "1411", "sector": "Turismo", "demanda": "Media-Alta"},
-    "OCUP_14": {"nombre": "Guía de Ecoturismo y Aventura", "ciuo08": "5113", "sector": "Turismo", "demanda": "Alta"},
-    "OCUP_15": {"nombre": "Coordinador de Turismo Digital (TravelTech)", "ciuo08": "3339", "sector": "Turismo", "demanda": "Media-Alta"},
-    "OCUP_16": {"nombre": "Chef Ejecutivo y Gestor Gastronómico", "ciuo08": "3434", "sector": "Turismo", "demanda": "Media-Alta"},
-    "OCUP_17": {"nombre": "Diseñador UX/UI y Producto Digital", "ciuo08": "2166", "sector": "Economía del Conocimiento", "demanda": "Muy Alta"},
-    "OCUP_18": {"nombre": "Consultor en Transformación Digital", "ciuo08": "2421", "sector": "Economía del Conocimiento", "demanda": "Muy Alta"},
-    "OCUP_19": {"nombre": "Científico en Biotecnología y AgTech", "ciuo08": "2131", "sector": "Economía del Conocimiento", "demanda": "Alta"},
-    "OCUP_20": {"nombre": "Analista Financiero Cuantitativo / FinTech", "ciuo08": "2413", "sector": "Economía del Conocimiento", "demanda": "Muy Alta"},
+    "OCUP_01": {"nombre": "Desarrollador de Software y Aplicaciones", "ciuo08": "2512", "sector": "Tecnología", "demanda": "Muy Alta", "crecimiento": "+18.5% anual", "habilidades": "Python, JavaScript, FastAPI, React, SQL, Git"},
+    "OCUP_02": {"nombre": "Ingeniero de Datos y Machine Learning", "ciuo08": "2511", "sector": "Tecnología", "demanda": "Muy Alta", "crecimiento": "+24.0% anual", "habilidades": "Pipelines ETL, MLOps, PyTorch, Pandas, Power BI, SQL"},
+    "OCUP_03": {"nombre": "Especialista en Ciberseguridad y Redes", "ciuo08": "2529", "sector": "Tecnología", "demanda": "Alta", "crecimiento": "+15.2% anual", "habilidades": "Seguridad de Infraestructura, ISO 27001, Ethical Hacking, Cloud Security"},
+    "OCUP_04": {"nombre": "Arquitecto Cloud y DevOps", "ciuo08": "2522", "sector": "Tecnología", "demanda": "Muy Alta", "crecimiento": "+21.0% anual", "habilidades": "Docker, Kubernetes, AWS/Azure, CI/CD, Terraform"},
+    "OCUP_05": {"nombre": "Médico General y Especialista", "ciuo08": "2211", "sector": "Salud", "demanda": "Alta", "crecimiento": "+6.5% anual", "habilidades": "Diagnóstico Clínico, Telemedicina, Gestión de Historias Clínicas Electrónicas"},
+    "OCUP_06": {"nombre": "Profesional de Enfermería y Cuidados Críticos", "ciuo08": "2221", "sector": "Salud", "demanda": "Muy Alta", "crecimiento": "+9.8% anual", "habilidades": "Atención de Emergencias, Monitoreo Biomédico, Cuidados de Tercera Edad"},
+    "OCUP_07": {"nombre": "Bioquímico y Farmacéutico Clínico", "ciuo08": "2262", "sector": "Salud", "demanda": "Media-Alta", "crecimiento": "+7.2% anual", "habilidades": "Análisis Clínicos, Ensayos Farmacológicos, Biología Molecular"},
+    "OCUP_08": {"nombre": "Técnico en Diagnóstico por Imágenes y Bioinformática", "ciuo08": "3211", "sector": "Salud", "demanda": "Alta", "crecimiento": "+11.4% anual", "habilidades": "Operación de Resonancia/Tomografía, Procesamiento Digital de Imágenes Médicas"},
+    "OCUP_09": {"nombre": "Ingeniero en Energías Renovables (Eólica / Solar)", "ciuo08": "2149", "sector": "Energía", "demanda": "Muy Alta", "crecimiento": "+16.8% anual", "habilidades": "Diseño de Parques Eólicos/Solares, Simulación Energética, SCADA"},
+    "OCUP_10": {"nombre": "Ingeniero de Operaciones de Petróleo, Gas y Minería de Transición", "ciuo08": "2146", "sector": "Energía", "demanda": "Alta", "crecimiento": "+8.9% anual", "habilidades": "Extracción No Convencional, Minería de Litio/Cobre, Gestión Ambiental"},
+    "OCUP_11": {"nombre": "Técnico en Redes Eléctricas Inteligentes (Smart Grids)", "ciuo08": "3113", "sector": "Energía", "demanda": "Alta", "crecimiento": "+12.0% anual", "habilidades": "Telemetría, Distribución Eléctrica de Alta/Media Tensión, Automatización"},
+    "OCUP_12": {"nombre": "Auditor y Consultor en Eficiencia Energética", "ciuo08": "2149", "sector": "Energía", "demanda": "Media-Alta", "crecimiento": "+14.3% anual", "habilidades": "ISO 50001, Huella de Carbono, Optimización Térmica e Industrial"},
+    "OCUP_13": {"nombre": "Administrador de Servicios Hoteleros y Experiencia de Huésped", "ciuo08": "1411", "sector": "Turismo", "demanda": "Media-Alta", "crecimiento": "+7.5% anual", "habilidades": "Revenue Management, PMS Hoteleros, Gestión de Hospitalidad, Inglés/Portugués"},
+    "OCUP_14": {"nombre": "Guía Especializado en Ecoturismo y Aventura", "ciuo08": "5113", "sector": "Turismo", "demanda": "Alta", "crecimiento": "+13.1% anual", "habilidades": "Primeros Auxilios en Áreas Remotas, Interpretación Patrimonial, Idiomas"},
+    "OCUP_15": {"nombre": "Coordinador de Operaciones Turísticas Digitales (TravelTech)", "ciuo08": "3339", "sector": "Turismo", "demanda": "Alta", "crecimiento": "+10.2% anual", "habilidades": "Canales OTA (Booking, Expedia), Marketing Turístico Digital, CRM"},
+    "OCUP_16": {"nombre": "Chef Ejecutivo y Gestor Gastronómico Sostenible", "ciuo08": "3434", "sector": "Turismo", "demanda": "Media-Alta", "crecimiento": "+6.8% anual", "habilidades": "Cocina de Autor/Identidad Regional, Costos Gastronómicos, HACCP/BPM"},
+    "OCUP_17": {"nombre": "Diseñador UX/UI y Experiencia de Producto Digital", "ciuo08": "2166", "sector": "Economía del Conocimiento", "demanda": "Muy Alta", "crecimiento": "+17.4% anual", "habilidades": "Figma, Design Systems, User Research, Prototipado, Accesibilidad Web"},
+    "OCUP_18": {"nombre": "Consultor en Transformación Digital y Analítica de Negocio", "ciuo08": "2421", "sector": "Economía del Conocimiento", "demanda": "Muy Alta", "crecimiento": "+15.9% anual", "habilidades": "Gestión de Procesos (BPMN), Power BI, Scrum, Estrategia de Datos"},
+    "OCUP_19": {"nombre": "Científico e Investigador en Biotecnología y AgTech", "ciuo08": "2131", "sector": "Economía del Conocimiento", "demanda": "Alta", "crecimiento": "+13.7% anual", "habilidades": "Genómica Aplicada, Fermentación de Precisión, Bioinformática"},
+    "OCUP_20": {"nombre": "Analista Financiero Cuantitativo y FinTech", "ciuo08": "2413", "sector": "Economía del Conocimiento", "demanda": "Muy Alta", "crecimiento": "+19.2% anual", "habilidades": "Modelado Financiero, Python, Pagos Digitales, Cumplimiento Regulatorio / AML"},
 }
 
 OCUPACION_IDS: tuple[str, ...] = tuple(OCUPACIONES)

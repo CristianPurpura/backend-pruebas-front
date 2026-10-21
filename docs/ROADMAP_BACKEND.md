@@ -9,7 +9,7 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
   * Crear endpoint `/api/v1/health` — *con chequeo de DB: `ok` / `error` / `not_configured`.*
 * [x] **Issue #9 (En Ready):** Definir mecanismo de carga manual de datasets[cite: 1].
   * Definir arquitectura de subida (FastAPI `UploadFile`) y parseo base con Pandas[cite: 1].
-* [ ] Desplegar esqueleto inicial en Railway o Render para pruebas conjuntas con QA y Frontend[cite: 1] — *diferido; pasos documentados en README §8.*
+* [ ] Desplegar esqueleto inicial en Railway o Render para pruebas conjuntas con QA y Frontend[cite: 1] — *diferido; pasos documentados en README §9.*
 * [x] Publicar mocks/contratos JSON iniciales para descolgar el trabajo de Frontend[cite: 1] — *`docs/mocks/`.*
 
 ## Sprint 1: Exploración e Ingesta Base (Semanas 1 y 2)
@@ -23,8 +23,8 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
 ## Sprint 2: Core de Métricas e Índice (Semanas 3 y 4)
 * [ ] Exponer endpoints para alimentar el dashboard general con filtros por país, sector y período[cite: 1].
 * [x] Robustecer la carga manual: reportar filas erróneas sin interrumpir la ejecución[cite: 1] — *hecho: `POST /datasets/upload` clasifica cada fila (rechazo 422 con detalle por fila, cuarentena con flag o deduplicación) y devuelve el reporte (`rows_valid`, `rows_quarantined`, `duplicates_removed`, `warnings`) sin abortar el archivo.*
-* [ ] Implementar la fórmula matemática del Índice de Empleabilidad (provista por Data)[cite: 1].
-* [ ] Exponer endpoint `/api/v1/employability` con desglose de dimensiones evaluadas[cite: 1].
+* [x] Implementar la fórmula matemática del Índice de Empleabilidad (provista por Data)[cite: 1] — *hecho: reimplementación local de IDELR e ICOL en `app/services/calculators/employability.py` a partir de `DataAnalyst/INFORME_METODOLOGICO_INDICES.md`, con test de paridad contra la API de Data (mismos valores).*
+* [x] Exponer endpoint `/api/v1/employability` con desglose de dimensiones evaluadas[cite: 1] — *hecho: `GET /api/v1/employability` (filtros por país, sector, ocupación y período) con serie macro, ranking por ocupación y desglose de variables.*
 
 ## Sprint 3: Series Temporales y Habilidades (Semanas 5 y 6)
 * [ ] Crear endpoints de series históricas optimizados para alimentar gráficos de líneas/barras[cite: 1].
