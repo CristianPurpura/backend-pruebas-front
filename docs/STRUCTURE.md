@@ -9,10 +9,12 @@ app-backend/
 │   │   └── v1/
 │   │       ├── endpoints/
 │   │       │   ├── alerts.py        # Endpoints para el sistema de alertas
+│   │       │   ├── catalog.py       # Catálogos del frontend (países, sectores, ocupaciones)
 │   │       │   ├── datasets.py      # Subida manual y validación de archivos
 │   │       │   ├── employability.py # Índice de empleabilidad y dimensiones
 │   │       │   ├── health.py       # Ping y estado de servicios/DB
-│   │       │   └── indicators.py    # Filtros por país, sector y período
+│   │       │   ├── indicators.py    # Filtros por país, sector y período
+│   │       │   └── occupations.py   # Ficha técnica de una ocupación
 │   │       └── router.py            # Enrutador principal de la API v1
 │   ├── core/
 │   │   ├── config.py                # Variables de entorno y configuraciones
@@ -25,9 +27,11 @@ app-backend/
 │   │   └── source.py
 │   ├── schemas/                     # Validación de entrada/salida (Pydantic DTOs)
 │   │   ├── alert.py
+│   │   ├── catalog.py
 │   │   ├── dataset.py
 │   │   ├── employability.py
-│   │   └── indicator.py
+│   │   ├── indicator.py
+│   │   └── occupation.py
 │   ├── services/                    # Lógica de negocio y procesamiento pesado
 │   │   ├── calculators/             # Algoritmo de Índice y proyecciones
 │   │   ├── connectors/              # Clientes HTTPX para APIs externas (AR, UY, CL)

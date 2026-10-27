@@ -1,0 +1,406 @@
+{
+  "comentario": "Respuestas de referencia de GET /api/v1/countries, /sectors y /occupations (catálogos reales del Backend).",
+  "countries": [
+    {
+      "id": "ARG",
+      "nombre": "Argentina",
+      "iso2": "AR",
+      "iso3": "ARG"
+    },
+    {
+      "id": "CHL",
+      "nombre": "Chile",
+      "iso2": "CL",
+      "iso3": "CHL"
+    },
+    {
+      "id": "URY",
+      "nombre": "Uruguay",
+      "iso2": "UY",
+      "iso3": "URY"
+    }
+  ],
+  "sectors": [
+    {
+      "id": "TEC",
+      "slug": "tecnologia",
+      "nombre": "Tecnología"
+    },
+    {
+      "id": "SAL",
+      "slug": "salud",
+      "nombre": "Salud"
+    },
+    {
+      "id": "ENE",
+      "slug": "energia",
+      "nombre": "Energía"
+    },
+    {
+      "id": "TUR",
+      "slug": "turismo",
+      "nombre": "Turismo"
+    },
+    {
+      "id": "ECO",
+      "slug": "economia-conocimiento",
+      "nombre": "Economía del Conocimiento"
+    }
+  ],
+  "occupations": [
+    {
+      "id": "OCUP_01",
+      "nombre": "Desarrollador de Software y Aplicaciones",
+      "sector": {
+        "id": "TEC",
+        "slug": "tecnologia",
+        "nombre": "Tecnología"
+      },
+      "ciuo08": "2512",
+      "demanda": "Muy Alta",
+      "crecimiento_anual_pct": 18.5,
+      "habilidades": [
+        "Python",
+        "JavaScript",
+        "FastAPI",
+        "React",
+        "SQL",
+        "Git"
+      ]
+    },
+    {
+      "id": "OCUP_02",
+      "nombre": "Ingeniero de Datos y Machine Learning",
+      "sector": {
+        "id": "TEC",
+        "slug": "tecnologia",
+        "nombre": "Tecnología"
+      },
+      "ciuo08": "2511",
+      "demanda": "Muy Alta",
+      "crecimiento_anual_pct": 24.0,
+      "habilidades": [
+        "Pipelines ETL",
+        "MLOps",
+        "PyTorch",
+        "Pandas",
+        "Power BI",
+        "SQL"
+      ]
+    },
+    {
+      "id": "OCUP_03",
+      "nombre": "Especialista en Ciberseguridad y Redes",
+      "sector": {
+        "id": "TEC",
+        "slug": "tecnologia",
+        "nombre": "Tecnología"
+      },
+      "ciuo08": "2529",
+      "demanda": "Alta",
+      "crecimiento_anual_pct": 15.2,
+      "habilidades": [
+        "Seguridad de Infraestructura",
+        "ISO 27001",
+        "Ethical Hacking",
+        "Cloud Security"
+      ]
+    },
+    {
+      "id": "OCUP_04",
+      "nombre": "Arquitecto Cloud y DevOps",
+      "sector": {
+        "id": "TEC",
+        "slug": "tecnologia",
+        "nombre": "Tecnología"
+      },
+      "ciuo08": "2522",
+      "demanda": "Muy Alta",
+      "crecimiento_anual_pct": 21.0,
+      "habilidades": [
+        "Docker",
+        "Kubernetes",
+        "AWS/Azure",
+        "CI/CD",
+        "Terraform"
+      ]
+    },
+    {
+      "id": "OCUP_05",
+      "nombre": "Médico General y Especialista",
+      "sector": {
+        "id": "SAL",
+        "slug": "salud",
+        "nombre": "Salud"
+      },
+      "ciuo08": "2211",
+      "demanda": "Alta",
+      "crecimiento_anual_pct": 6.5,
+      "habilidades": [
+        "Diagnóstico Clínico",
+        "Telemedicina",
+        "Gestión de Historias Clínicas Electrónicas"
+      ]
+    },
+    {
+      "id": "OCUP_06",
+      "nombre": "Profesional de Enfermería y Cuidados Críticos",
+      "sector": {
+        "id": "SAL",
+        "slug": "salud",
+        "nombre": "Salud"
+      },
+      "ciuo08": "2221",
+      "demanda": "Muy Alta",
+      "crecimiento_anual_pct": 9.8,
+      "habilidades": [
+        "Atención de Emergencias",
+        "Monitoreo Biomédico",
+        "Cuidados de Tercera Edad"
+      ]
+    },
+    {
+      "id": "OCUP_07",
+      "nombre": "Bioquímico y Farmacéutico Clínico",
+      "sector": {
+        "id": "SAL",
+        "slug": "salud",
+        "nombre": "Salud"
+      },
+      "ciuo08": "2262",
+      "demanda": "Media-Alta",
+      "crecimiento_anual_pct": 7.2,
+      "habilidades": [
+        "Análisis Clínicos",
+        "Ensayos Farmacológicos",
+        "Biología Molecular"
+      ]
+    },
+    {
+      "id": "OCUP_08",
+      "nombre": "Técnico en Diagnóstico por Imágenes y Bioinformática",
+      "sector": {
+        "id": "SAL",
+        "slug": "salud",
+        "nombre": "Salud"
+      },
+      "ciuo08": "3211",
+      "demanda": "Alta",
+      "crecimiento_anual_pct": 11.4,
+      "habilidades": [
+        "Operación de Resonancia/Tomografía",
+        "Procesamiento Digital de Imágenes Médicas"
+      ]
+    },
+    {
+      "id": "OCUP_09",
+      "nombre": "Ingeniero en Energías Renovables (Eólica / Solar)",
+      "sector": {
+        "id": "ENE",
+        "slug": "energia",
+        "nombre": "Energía"
+      },
+      "ciuo08": "2149",
+      "demanda": "Muy Alta",
+      "crecimiento_anual_pct": 16.8,
+      "habilidades": [
+        "Diseño de Parques Eólicos/Solares",
+        "Simulación Energética",
+        "SCADA"
+      ]
+    },
+    {
+      "id": "OCUP_10",
+      "nombre": "Ingeniero de Operaciones de Petróleo, Gas y Minería de Transición",
+      "sector": {
+        "id": "ENE",
+        "slug": "energia",
+        "nombre": "Energía"
+      },
+      "ciuo08": "2146",
+      "demanda": "Alta",
+      "crecimiento_anual_pct": 8.9,
+      "habilidades": [
+        "Extracción No Convencional",
+        "Minería de Litio/Cobre",
+        "Gestión Ambiental"
+      ]
+    },
+    {
+      "id": "OCUP_11",
+      "nombre": "Técnico en Redes Eléctricas Inteligentes (Smart Grids)",
+      "sector": {
+        "id": "ENE",
+        "slug": "energia",
+        "nombre": "Energía"
+      },
+      "ciuo08": "3113",
+      "demanda": "Alta",
+      "crecimiento_anual_pct": 12.0,
+      "habilidades": [
+        "Telemetría",
+        "Distribución Eléctrica de Alta/Media Tensión",
+        "Automatización"
+      ]
+    },
+    {
+      "id": "OCUP_12",
+      "nombre": "Auditor y Consultor en Eficiencia Energética",
+      "sector": {
+        "id": "ENE",
+        "slug": "energia",
+        "nombre": "Energía"
+      },
+      "ciuo08": "2149",
+      "demanda": "Media-Alta",
+      "crecimiento_anual_pct": 14.3,
+      "habilidades": [
+        "ISO 50001",
+        "Huella de Carbono",
+        "Optimización Térmica e Industrial"
+      ]
+    },
+    {
+      "id": "OCUP_13",
+      "nombre": "Administrador de Servicios Hoteleros y Experiencia de Huésped",
+      "sector": {
+        "id": "TUR",
+        "slug": "turismo",
+        "nombre": "Turismo"
+      },
+      "ciuo08": "1411",
+      "demanda": "Media-Alta",
+      "crecimiento_anual_pct": 7.5,
+      "habilidades": [
+        "Revenue Management",
+        "PMS Hoteleros",
+        "Gestión de Hospitalidad",
+        "Inglés/Portugués"
+      ]
+    },
+    {
+      "id": "OCUP_14",
+      "nombre": "Guía Especializado en Ecoturismo y Aventura",
+      "sector": {
+        "id": "TUR",
+        "slug": "turismo",
+        "nombre": "Turismo"
+      },
+      "ciuo08": "5113",
+      "demanda": "Alta",
+      "crecimiento_anual_pct": 13.1,
+      "habilidades": [
+        "Primeros Auxilios en Áreas Remotas",
+        "Interpretación Patrimonial",
+        "Idiomas"
+      ]
+    },
+    {
+      "id": "OCUP_15",
+      "nombre": "Coordinador de Operaciones Turísticas Digitales (TravelTech)",
+      "sector": {
+        "id": "TUR",
+        "slug": "turismo",
+        "nombre": "Turismo"
+      },
+      "ciuo08": "3339",
+      "demanda": "Alta",
+      "crecimiento_anual_pct": 10.2,
+      "habilidades": [
+        "Canales OTA (Booking",
+        "Expedia)",
+        "Marketing Turístico Digital",
+        "CRM"
+      ]
+    },
+    {
+      "id": "OCUP_16",
+      "nombre": "Chef Ejecutivo y Gestor Gastronómico Sostenible",
+      "sector": {
+        "id": "TUR",
+        "slug": "turismo",
+        "nombre": "Turismo"
+      },
+      "ciuo08": "3434",
+      "demanda": "Media-Alta",
+      "crecimiento_anual_pct": 6.8,
+      "habilidades": [
+        "Cocina de Autor/Identidad Regional",
+        "Costos Gastronómicos",
+        "HACCP/BPM"
+      ]
+    },
+    {
+      "id": "OCUP_17",
+      "nombre": "Diseñador UX/UI y Experiencia de Producto Digital",
+      "sector": {
+        "id": "ECO",
+        "slug": "economia-conocimiento",
+        "nombre": "Economía del Conocimiento"
+      },
+      "ciuo08": "2166",
+      "demanda": "Muy Alta",
+      "crecimiento_anual_pct": 17.4,
+      "habilidades": [
+        "Figma",
+        "Design Systems",
+        "User Research",
+        "Prototipado",
+        "Accesibilidad Web"
+      ]
+    },
+    {
+      "id": "OCUP_18",
+      "nombre": "Consultor en Transformación Digital y Analítica de Negocio",
+      "sector": {
+        "id": "ECO",
+        "slug": "economia-conocimiento",
+        "nombre": "Economía del Conocimiento"
+      },
+      "ciuo08": "2421",
+      "demanda": "Muy Alta",
+      "crecimiento_anual_pct": 15.9,
+      "habilidades": [
+        "Gestión de Procesos (BPMN)",
+        "Power BI",
+        "Scrum",
+        "Estrategia de Datos"
+      ]
+    },
+    {
+      "id": "OCUP_19",
+      "nombre": "Científico e Investigador en Biotecnología y AgTech",
+      "sector": {
+        "id": "ECO",
+        "slug": "economia-conocimiento",
+        "nombre": "Economía del Conocimiento"
+      },
+      "ciuo08": "2131",
+      "demanda": "Alta",
+      "crecimiento_anual_pct": 13.7,
+      "habilidades": [
+        "Genómica Aplicada",
+        "Fermentación de Precisión",
+        "Bioinformática"
+      ]
+    },
+    {
+      "id": "OCUP_20",
+      "nombre": "Analista Financiero Cuantitativo y FinTech",
+      "sector": {
+        "id": "ECO",
+        "slug": "economia-conocimiento",
+        "nombre": "Economía del Conocimiento"
+      },
+      "ciuo08": "2413",
+      "demanda": "Muy Alta",
+      "crecimiento_anual_pct": 19.2,
+      "habilidades": [
+        "Modelado Financiero",
+        "Python",
+        "Pagos Digitales",
+        "Cumplimiento Regulatorio / AML"
+      ]
+    }
+  ]
+}

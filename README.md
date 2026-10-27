@@ -15,6 +15,7 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 | Configuración y health | ✅ | Settings desde `.env`, DB async y `/health` con chequeo de conexión |
 | Carga manual | ✅ | `POST /datasets/upload` con validación por fila (422), cuarentena con flags y normalización al esquema común de Data |
 | Conectores | ✅ | Datos Argentina, Banco Mundial y SIMEL/ENE (SDMX del INE), con tests en vivo |
+| Catálogos para el Frontend | ✅ | `GET /countries`, `/sectors` y `/occupations` reemplazan los mocks del repositorio `frontend` |
 | Almacenamiento crudo | ✅ | `data/raw/{fuente}/YYYY-MM-DD.jsonl` (esquema `raw_data_logs`) + flujo de ingesta |
 | Índice de empleabilidad | ✅ | `GET /employability` con IDELR + ICOL reimplementados y test de paridad contra la API de Data |
 | Matriz de casos QA | ✅ **28/28** | API-001..016 (contra la API de Data) + LOAD-001..012 (contra este backend) |
@@ -26,7 +27,7 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 **Pendientes de coordinación con el equipo de Data:**
 * Firmar las 4 desviaciones del ETL ([`docs/Data_Contracts.md` §5](docs/Data_Contracts.md)).
 * Reflejar en la planilla de QA los cambios de contrato: `400 → 422` en el rechazo por fila y `occupation_id` fuera de catálogo → cuarentena.
-* Quedan disponibles para el Frontend las unidades canónicas y el campo `is_projection`.
+* Para el Frontend: los catálogos ya se sirven en `/api/v1/countries`, `/sectors` y `/occupations` (contrato, mapeo de campos y snippet de integración en §4). También quedan disponibles las unidades canónicas y el campo `is_projection`.
 
 ### Datos de referencia
 
@@ -107,9 +108,77 @@ python3 -m uvicorn app.main:app --reload
 | Método | Ruta | Tag | Descripción |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/v1/health` | `Health` | Estado del servicio y chequeo de DB (`200 OK`; `503` si la DB está caída) |
+| `GET` | `/api/v1/countries` | `Catalogs` | Países del alcance regional (`id` ISO-3, `nombre`, `iso2`, `iso3`) |
+| `GET` | `/api/v1/sectors` | `Catalogs` | Sectores productivos (`id` canónico, `slug` para el frontend, `nombre`) |
+| `GET` | `/api/v1/occupations` | `Catalogs` | Catálogo de ocupaciones (CIUO-08, demanda, crecimiento y habilidades). Filtro `?sector=TEC` o `?sector=economia-conocimiento` |
 | `GET` | `/api/v1/occupations/{id}` | `Occupations` | Ficha técnica de ocupación según contrato regional |
 | `POST` | `/api/v1/datasets/upload` | `Datasets` | Carga, validación y normalización de archivos CSV o Excel |
 | `GET` | `/api/v1/employability` | `Employability` | Índice de empleabilidad: serie macro (IDELR) y ranking por ocupación (ICOL) |
+
+### Catálogos para el Frontend
+
+Los tres endpoints de `Catalogs` existen para reemplazar los mocks del repositorio `frontend`
+(`src/mocks/paises.json`, `sectores.json`, `ocupaciones.json`).
+
+* `countries` y `sectors` devuelven **exactamente** la misma forma que los mocks: el swap es directo.
+* `occupations` usa los nombres propios del Backend. El mapeo contra el mock actual es de tres
+  campos (`ocupacion` → `nombre`, `nivelDemanda` → `demanda`,
+  `crecimientoAnualEstPct` → `crecimiento_anual_pct`) y el `sector` pasa a ser objeto
+  `{id, slug, nombre}` en lugar del nombre suelto.
+
+```jsonc
+// GET /api/v1/countries  →  [{ "id": "ARG", "nombre": "Argentina", "iso2": "AR", "iso3": "ARG" }]
+// GET /api/v1/sectors    →  [{ "id": "ECO", "slug": "economia-conocimiento", "nombre": "Economía del Conocimiento" }]
+// GET /api/v1/occupations?sector=TEC
+[
+  {
+    "id": "OCUP_01",
+    "nombre": "Desarrollador de Software y Aplicaciones",
+    "sector": { "id": "TEC", "slug": "tecnologia", "nombre": "Tecnología" },
+    "ciuo08": "2512",
+    "demanda": "Muy Alta",
+    "crecimiento_anual_pct": 18.5,
+    "habilidades": ["Python", "JavaScript", "FastAPI", "React", "SQL", "Git"]
+  }
+]
+```
+
+El parámetro `sector` acepta el código (`TEC`), el slug (`economia-conocimiento`) o el nombre
+completo (`Economía del Conocimiento`); si no existe devuelve `422`.
+
+Cambio mínimo en el frontend (`src/services/AppServices.js`), sin librerías nuevas:
+
+```js
+const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000";
+
+const getJson = async (path) => {
+  const respuesta = await fetch(`${API_URL}${path}`);
+  if (!respuesta.ok) throw new Error(`GET ${path} → ${respuesta.status}`);
+  return respuesta.json();
+};
+
+export const observatorioService = {
+  getCountries: () => getJson("/api/v1/countries"),
+  getSectors: () => getJson("/api/v1/sectors"),
+  getOccupations: async () => {
+    const filas = await getJson("/api/v1/occupations");
+    return filas.map((f) => ({
+      id: f.id,
+      sector: f.sector.nombre,
+      ocupacion: f.nombre,
+      ciuo08: f.ciuo08,
+      nivelDemanda: f.demanda,
+      crecimientoAnualEstPct: f.crecimiento_anual_pct,
+      habilidades: f.habilidades,
+    }));
+  },
+  // Sin datos todavía: ningún repo del equipo tiene catálogo geográfico.
+  getGeographicAreas: async () => [],
+};
+```
+
+Ninguno de estos endpoints requiere base de datos: los catálogos viven en
+`app/core/catalogs.py` y se sirven desde memoria.
 
 ---
 
@@ -121,6 +190,7 @@ app-backend/
 │   ├── api/
 │   │   └── v1/
 │   │       ├── endpoints/
+│   │       │   ├── catalog.py        # Catálogos para Frontend (países, sectores, ocupaciones)
 │   │       │   ├── datasets.py       # Endpoint POST /upload con validación y normalización
 │   │       │   ├── employability.py  # Índice de empleabilidad (IDELR + ICOL)
 │   │       │   ├── health.py         # Estado del servicio + chequeo de DB
@@ -132,6 +202,7 @@ app-backend/
 │   │   └── database.py               # Engine async + get_db + healthcheck DB
 │   ├── models/                       # Modelos ORM SQLAlchemy
 │   ├── schemas/                      # Schemas de validación Pydantic
+│   │   ├── catalog.py
 │   │   ├── dataset.py
 │   │   ├── employability.py
 │   │   └── occupation.py
@@ -237,7 +308,8 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual (91 tests): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (200/404 + trazabilidad) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
+* Cobertura actual (100 tests): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (200/404 + trazabilidad) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
+* Los tests escriben siempre en `tmp_path`: el fixture `output_dirs` es `autouse`, así que la suite no ensucia `data/processed/` ni `data/quarantine/`.
 * Los casos **API-001..API-016** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
 * `tests/test_normalization.py` cubre el ETL de forma unitaria y verifica que el golden dataset regional de Data entra por el esquema común sin perder registros (135 filas, 45 por país).
 * La matriz de casos QA (`docs/Casos_Apis_CargaDatos - 22092026.csv`) mantiene el estado de cada caso: **28/28 automatizados**.
