@@ -61,10 +61,14 @@ El backend es responsable de la ingesta de datos (APIs públicas y carga de arch
 * `GET /api/v1/alerts` -> Listado de variaciones y advertencias recientes[cite: 1].
 
 * `GET /api/v1/occupations/{occupation_id}`:
-  Retorna la ficha consolidada de ocupación según el esquema acordado:
-  - `country`: `{ code: str, name: str }`
-  - `sector`: `{ id: str, name: str }`
-  - `occupation`: `{ id: str, name: str, isco_code: str }`
-  - `indicators`: `{ demand_level: str, annual_growth: float }`
-  - `skills`: `list[str]`
-  - `traceability`: `{ source: str, source_url: str, last_updated: str, retrieved_at: str, data_type: str }`
+  Retorna la ficha consolidada de ocupación. Contrato v2 (unificado en español y con el
+  índice de oportunidad integrado, issue #75). Acepta `?pais=ARG|CHL|URY` (default `ARG`):
+  - `pais`: `{ codigo: str, nombre: str }`
+  - `sector`: `{ id: str, slug: str, nombre: str }`
+  - `ocupacion`: `{ id: str, nombre: str, ciuo08: str }`
+  - `indicadores`: `{ nivel_demanda, crecimiento_anual_pct, icol, categoria_oportunidad, icono, prioridad_formacion, scores: { demanda, crecimiento, entorno_macro }, rankings: { regional, pais, sector } }`
+  - `habilidades`: `list[str]`
+  - `comparacion_paises`: `[{ codigo, nombre, icol, ranking_pais, categoria_oportunidad }]` (3 países, el pedido primero)
+  - `trazabilidad`: `{ fuente, fuente_url, actualizado, is_projection, origen_indice, datasets }`
+
+  Validación: formato inválido (`OCC-1`) → `422`; formato válido fuera de catálogo (`OCUP_99`) → `404`; país fuera de alcance → `400`.
