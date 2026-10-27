@@ -118,9 +118,13 @@ python3 -m uvicorn app.main:app --reload
 ### Catálogos para el Frontend
 
 Los tres endpoints de `Catalogs` existen para reemplazar los mocks del repositorio `frontend`
-(`src/mocks/paises.json`, `sectores.json`, `ocupaciones.json`) **sin mapear nada**: la forma de los
-objetos replica los mocks actuales. El único cambio es que el sector ahora trae su código canónico
-además del slug, para poder mandarlo como filtro.
+(`src/mocks/paises.json`, `sectores.json`, `ocupaciones.json`).
+
+* `countries` y `sectors` devuelven **exactamente** la misma forma que los mocks: el swap es directo.
+* `occupations` usa los nombres propios del Backend. El mapeo contra el mock actual es de tres
+  campos (`ocupacion` → `nombre`, `nivelDemanda` → `demanda`,
+  `crecimientoAnualEstPct` → `crecimiento_anual_pct`) y el `sector` pasa a ser objeto
+  `{id, slug, nombre}` en lugar del nombre suelto.
 
 ```jsonc
 // GET /api/v1/countries  →  [{ "id": "ARG", "nombre": "Argentina", "iso2": "AR", "iso3": "ARG" }]
@@ -141,6 +145,40 @@ además del slug, para poder mandarlo como filtro.
 
 El parámetro `sector` acepta el código (`TEC`), el slug (`economia-conocimiento`) o el nombre
 completo (`Economía del Conocimiento`); si no existe devuelve `422`.
+
+Cambio mínimo en el frontend (`src/services/AppServices.js`), sin librerías nuevas:
+
+```js
+const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000";
+
+const getJson = async (path) => {
+  const respuesta = await fetch(`${API_URL}${path}`);
+  if (!respuesta.ok) throw new Error(`GET ${path} → ${respuesta.status}`);
+  return respuesta.json();
+};
+
+export const observatorioService = {
+  getCountries: () => getJson("/api/v1/countries"),
+  getSectors: () => getJson("/api/v1/sectors"),
+  getOccupations: async () => {
+    const filas = await getJson("/api/v1/occupations");
+    return filas.map((f) => ({
+      id: f.id,
+      sector: f.sector.nombre,
+      ocupacion: f.nombre,
+      ciuo08: f.ciuo08,
+      nivelDemanda: f.demanda,
+      crecimientoAnualEstPct: f.crecimiento_anual_pct,
+      habilidades: f.habilidades,
+    }));
+  },
+  // Sin datos todavía: ningún repo del equipo tiene catálogo geográfico.
+  getGeographicAreas: async () => [],
+};
+```
+
+Ninguno de estos endpoints requiere base de datos: los catálogos viven en
+`app/core/catalogs.py` y se sirven desde memoria.
 
 ---
 
