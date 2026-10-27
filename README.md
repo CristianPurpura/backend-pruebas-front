@@ -15,6 +15,7 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 | Configuración y health | ✅ | Settings desde `.env`, DB async y `/health` con chequeo de conexión |
 | Carga manual | ✅ | `POST /datasets/upload` con validación por fila (422), cuarentena con flags y normalización al esquema común de Data |
 | Conectores | ✅ | Datos Argentina, Banco Mundial y SIMEL/ENE (SDMX del INE), con tests en vivo |
+| Catálogos para el Frontend | ✅ | `GET /countries`, `/sectors` y `/occupations` reemplazan los mocks del repositorio `frontend` |
 | Almacenamiento crudo | ✅ | `data/raw/{fuente}/YYYY-MM-DD.jsonl` (esquema `raw_data_logs`) + flujo de ingesta |
 | Índice de empleabilidad | ✅ | `GET /employability` con IDELR + ICOL reimplementados y test de paridad contra la API de Data |
 | Matriz de casos QA | ✅ **28/28** | API-001..016 (contra la API de Data) + LOAD-001..012 (contra este backend) |
@@ -107,9 +108,39 @@ python3 -m uvicorn app.main:app --reload
 | Método | Ruta | Tag | Descripción |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/v1/health` | `Health` | Estado del servicio y chequeo de DB (`200 OK`; `503` si la DB está caída) |
+| `GET` | `/api/v1/countries` | `Catalogs` | Países del alcance regional (`id` ISO-3, `nombre`, `iso2`, `iso3`) |
+| `GET` | `/api/v1/sectors` | `Catalogs` | Sectores productivos (`id` canónico, `slug` para el frontend, `nombre`) |
+| `GET` | `/api/v1/occupations` | `Catalogs` | Catálogo de ocupaciones (CIUO-08, demanda, crecimiento y habilidades). Filtro `?sector=TEC` o `?sector=economia-conocimiento` |
 | `GET` | `/api/v1/occupations/{id}` | `Occupations` | Ficha técnica de ocupación según contrato regional |
 | `POST` | `/api/v1/datasets/upload` | `Datasets` | Carga, validación y normalización de archivos CSV o Excel |
 | `GET` | `/api/v1/employability` | `Employability` | Índice de empleabilidad: serie macro (IDELR) y ranking por ocupación (ICOL) |
+
+### Catálogos para el Frontend
+
+Los tres endpoints de `Catalogs` existen para reemplazar los mocks del repositorio `frontend`
+(`src/mocks/paises.json`, `sectores.json`, `ocupaciones.json`) **sin mapear nada**: la forma de los
+objetos replica los mocks actuales. El único cambio es que el sector ahora trae su código canónico
+además del slug, para poder mandarlo como filtro.
+
+```jsonc
+// GET /api/v1/countries  →  [{ "id": "ARG", "nombre": "Argentina", "iso2": "AR", "iso3": "ARG" }]
+// GET /api/v1/sectors    →  [{ "id": "ECO", "slug": "economia-conocimiento", "nombre": "Economía del Conocimiento" }]
+// GET /api/v1/occupations?sector=TEC
+[
+  {
+    "id": "OCUP_01",
+    "nombre": "Desarrollador de Software y Aplicaciones",
+    "sector": { "id": "TEC", "slug": "tecnologia", "nombre": "Tecnología" },
+    "ciuo08": "2512",
+    "demanda": "Muy Alta",
+    "crecimiento_anual_pct": 18.5,
+    "habilidades": ["Python", "JavaScript", "FastAPI", "React", "SQL", "Git"]
+  }
+]
+```
+
+El parámetro `sector` acepta el código (`TEC`), el slug (`economia-conocimiento`) o el nombre
+completo (`Economía del Conocimiento`); si no existe devuelve `422`.
 
 ---
 

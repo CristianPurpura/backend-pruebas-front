@@ -18,9 +18,9 @@ from typing import Any
 # Países (SPEC §6: countries)
 # ---------------------------------------------------------------------------
 PAISES_INFO: dict[str, dict[str, str]] = {
-    "ARG": {"nombre": "Argentina", "iso3": "ARG"},
-    "CHL": {"nombre": "Chile", "iso3": "CHL"},
-    "URY": {"nombre": "Uruguay", "iso3": "URY"},
+    "ARG": {"nombre": "Argentina", "iso2": "AR", "iso3": "ARG"},
+    "CHL": {"nombre": "Chile", "iso2": "CL", "iso3": "CHL"},
+    "URY": {"nombre": "Uruguay", "iso2": "UY", "iso3": "URY"},
 }
 
 # ---------------------------------------------------------------------------
@@ -32,6 +32,16 @@ SECTORES: dict[str, str] = {
     "ENE": "Energía",
     "TUR": "Turismo",
     "ECO": "Economía del Conocimiento",
+}
+
+# Slug público de cada sector, expuesto en la API (`GET /sectors`) para que el
+# frontend pueda usar un identificador amigable además del código canónico.
+SECTOR_SLUGS: dict[str, str] = {
+    "TEC": "tecnologia",
+    "SAL": "salud",
+    "ENE": "energia",
+    "TUR": "turismo",
+    "ECO": "economia-conocimiento",
 }
 
 # Alias aceptados en la carga manual para cada sector (normalizados con _slug).
@@ -157,17 +167,38 @@ def resolve_country(country_code: Any) -> str | None:
     return pais["nombre"] if pais else None
 
 
-def resolve_sector(sector_id: Any) -> str | None:
-    """Nombre canónico del sector a partir de su código o alias, o None."""
+def resolve_sector_code(sector_id: Any) -> str | None:
+    """Código canónico del sector (TEC, SAL, ENE, TUR, ECO), o None.
+
+    Acepta el código, el nombre completo (`Energía`) o cualquiera de los slugs
+    públicos (`energia`, `economia-conocimiento`).
+    """
     clave = slug(sector_id)
     if not clave:
         return None
     if clave in SECTORES:
-        return SECTORES[clave]
+        return clave
     codigo = SECTOR_ALIASES.get(clave)
     if codigo:
-        return SECTORES[codigo]
+        return codigo
+    for codigo, sector_slug in SECTOR_SLUGS.items():
+        if slug(sector_slug) == clave:
+            return codigo
     return None
+
+
+def sector_info(sector_id: Any) -> dict[str, str] | None:
+    """`{id, slug, nombre}` del sector, o None si no existe."""
+    codigo = resolve_sector_code(sector_id)
+    if not codigo:
+        return None
+    return {"id": codigo, "slug": SECTOR_SLUGS[codigo], "nombre": SECTORES[codigo]}
+
+
+def resolve_sector(sector_id: Any) -> str | None:
+    """Nombre canónico del sector a partir de su código o alias, o None."""
+    codigo = resolve_sector_code(sector_id)
+    return SECTORES[codigo] if codigo else None
 
 
 def is_occupation_format(occupation_id: Any) -> bool:
@@ -179,6 +210,26 @@ def resolve_occupation(occupation_id: Any) -> dict[str, str] | None:
     """Ficha de la ocupación a partir de su identificador, o None si no existe."""
     clave = str(occupation_id or "").strip().upper()
     return OCUPACIONES.get(clave)
+
+
+_RE_CRECIMIENTO = re.compile(r"([+-]?\d+(?:[.,]\d+)?)")
+
+
+def ocupacion_crecimiento_pct(ocupacion_id: Any) -> float | None:
+    """Crecimiento anual estimado en puntos porcentuales (`+18.5% anual` → 18.5)."""
+    ficha = resolve_occupation(ocupacion_id)
+    if not ficha:
+        return None
+    match = _RE_CRECIMIENTO.search(ficha.get("crecimiento", ""))
+    return float(match.group(1).replace(",", ".")) if match else None
+
+
+def ocupacion_habilidades(ocupacion_id: Any) -> list[str]:
+    """Habilidades clave de la ocupación como lista."""
+    ficha = resolve_occupation(ocupacion_id)
+    if not ficha:
+        return []
+    return [habilidad.strip() for habilidad in ficha.get("habilidades", "").split(",") if habilidad.strip()]
 
 
 def resolve_unit(data_type: Any) -> str | None:
@@ -234,13 +285,18 @@ __all__ = [
     "PERIODO_ANUAL",
     "SECTORES",
     "SECTOR_ALIASES",
+    "SECTOR_SLUGS",
     "UNIDADES",
     "homologate_indicator",
     "is_occupation_format",
+    "ocupacion_crecimiento_pct",
+    "ocupacion_habilidades",
     "parse_period",
     "resolve_country",
     "resolve_occupation",
     "resolve_sector",
+    "resolve_sector_code",
     "resolve_unit",
+    "sector_info",
     "slug",
 ]
