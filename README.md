@@ -27,7 +27,7 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 **Pendientes de coordinación con el equipo de Data:**
 * Firmar las 4 desviaciones del ETL ([`docs/Data_Contracts.md` §5](docs/Data_Contracts.md)).
 * Reflejar en la planilla de QA los cambios de contrato: `400 → 422` en el rechazo por fila y `occupation_id` fuera de catálogo → cuarentena.
-* Quedan disponibles para el Frontend las unidades canónicas y el campo `is_projection`.
+* Para el Frontend: los catálogos ya se sirven en `/api/v1/countries`, `/sectors` y `/occupations` (contrato, mapeo de campos y snippet de integración en §4). También quedan disponibles las unidades canónicas y el campo `is_projection`.
 
 ### Datos de referencia
 
@@ -190,6 +190,7 @@ app-backend/
 │   ├── api/
 │   │   └── v1/
 │   │       ├── endpoints/
+│   │       │   ├── catalog.py        # Catálogos para Frontend (países, sectores, ocupaciones)
 │   │       │   ├── datasets.py       # Endpoint POST /upload con validación y normalización
 │   │       │   ├── employability.py  # Índice de empleabilidad (IDELR + ICOL)
 │   │       │   ├── health.py         # Estado del servicio + chequeo de DB
@@ -201,6 +202,7 @@ app-backend/
 │   │   └── database.py               # Engine async + get_db + healthcheck DB
 │   ├── models/                       # Modelos ORM SQLAlchemy
 │   ├── schemas/                      # Schemas de validación Pydantic
+│   │   ├── catalog.py
 │   │   ├── dataset.py
 │   │   ├── employability.py
 │   │   └── occupation.py
@@ -306,7 +308,8 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual (91 tests): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (200/404 + trazabilidad) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
+* Cobertura actual (100 tests): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (200/404 + trazabilidad) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
+* Los tests escriben siempre en `tmp_path`: el fixture `output_dirs` es `autouse`, así que la suite no ensucia `data/processed/` ni `data/quarantine/`.
 * Los casos **API-001..API-016** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
 * `tests/test_normalization.py` cubre el ETL de forma unitaria y verifica que el golden dataset regional de Data entra por el esquema común sin perder registros (135 filas, 45 por país).
 * La matriz de casos QA (`docs/Casos_Apis_CargaDatos - 22092026.csv`) mantiene el estado de cada caso: **28/28 automatizados**.
