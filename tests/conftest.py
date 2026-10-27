@@ -85,9 +85,14 @@ def make_common_csv(rows: Sequence[dict[str, object]]) -> bytes:
     return df.to_csv(index=False).encode("utf-8")
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def output_dirs(tmp_path, monkeypatch):
-    """Redirige la persistencia (dataset normalizado y cuarentena) a tmp_path."""
+    """Redirige la persistencia (dataset normalizado y cuarentena) a tmp_path.
+
+    Es automático para toda la suite: si un test persiste un upload y se le
+    olvida pedir el fixture, igual no ensucia `data/processed/` ni
+    `data/quarantine/` del entorno de desarrollo.
+    """
     processed = tmp_path / "processed"
     quarantine = tmp_path / "quarantine"
     monkeypatch.setenv("PROCESSED_DIR", str(processed))
