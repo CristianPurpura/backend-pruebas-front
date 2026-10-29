@@ -87,6 +87,26 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
+> **Nota sobre `sqlalchemy[asyncio]`**: el extra es obligatorio, no cosmético.
+> El backend trabaja con `sqlalchemy.ext.asyncio` (`create_async_engine`,
+> `async_sessionmaker`) y ese extra es el que instala **`greenlet`**, el puente
+> sync/async de SQLAlchemy. Sin él, una instalación limpia falla al importar el
+> módulo asíncrono. Si ya tenés el entorno armado y te falta:
+> ```bash
+> python -m pip install "sqlalchemy[asyncio]"
+> ```
+
+> **Windows 11 + Smart App Control (SAC):** si al importar `pandas` aparece
+> `ImportError: DLL load failed ... Una directiva de Control de aplicaciones
+> bloqueó este archivo` (o el toast *"Parte de esta aplicación se ha bloqueado"*
+> con error `0x11C7`), no es un problema del repo: SAC está bloqueando `.pyd`
+> sin firma y sin reputación en la nube (en pandas 3.1.0 afecta a 8 de 45
+> binarios: `groupby`, `join`, `properties`, `nattype`, `offsets`, `strptime`,
+> `tzconversion`, `aggregations`). Workaround temporal mientras Microsoft les
+> da reputación: `pip install "pandas==2.2.3"` (satisface `pandas>=2.2.0`).
+> Verificación rápida de qué binarios están bloqueados: mirar los eventos
+> `3033`/`3077` del log *Microsoft-Windows-CodeIntegrity/Operational*.
+
 4. Configurar variables de entorno:
 ```bash
 cp .env.example .env
