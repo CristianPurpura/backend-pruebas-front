@@ -482,5 +482,6 @@ Mientras `DATABASE_URL` no esté configurada, `GET /api/v1/health` responde `200
 Para más detalles sobre la arquitectura y contratos:
 * [Especificación Técnica (`docs/SPEC.md`)](docs/SPEC.md)
 * [Contratos de Datos (`docs/DATA_CONTRACTS.md`)](docs/DATA_CONTRACTS.md)
+* [Runbook de conexión a Supabase (`docs/CONEXION_SUPABASE.md`)](docs/CONEXION_SUPABASE.md)
 * [Roadmap y Sprints Kanban (`docs/ROADMAP_BACKEND.md`)](docs/ROADMAP_BACKEND.md)
 * [Mocks JSON para Frontend (`docs/mocks/`)](docs/mocks/)
