@@ -41,6 +41,7 @@ app-backend/
 │   │   │   ├── pipeline.py          # Clasificación en 3 niveles
 │   │   │   ├── store.py             # Dataset normalizado (CSV) y cuarentena (JSONL)
 │   │   │   └── errors.py            # Rechazo por fila (HTTP 422)
+│   │   ├── occupation_profile.py    # Perfil de ocupación: catálogo + ICOL
 │   │   ├── parsers/                 # Lectura y validación de CSV/Excel con Pandas
 │   │   ├── scheduler/               # Tareas cron / ejecución periódica
 │   │   └── storage/                 # Almacenamiento crudo (JSONL por fuente)

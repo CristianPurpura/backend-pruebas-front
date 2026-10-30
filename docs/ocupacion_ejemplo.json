@@ -1,33 +1,73 @@
 {
-  "country": {
-    "code": "ARG",
-    "name": "Argentina"
+  "pais": {
+    "codigo": "ARG",
+    "nombre": "Argentina"
   },
   "sector": {
     "id": "TEC",
-    "name": "Tecnología"
+    "slug": "tecnologia",
+    "nombre": "Tecnología"
   },
-  "occupation": {
+  "ocupacion": {
     "id": "OCUP_01",
-    "name": "Desarrollador de Software y Aplicaciones",
-    "isco_code": "2512"
+    "nombre": "Desarrollador de Software y Aplicaciones",
+    "ciuo08": "2512"
   },
-  "indicators": {
-    "demand_level": "Muy Alta",
-    "annual_growth": 18.5
+  "indicadores": {
+    "nivel_demanda": "Muy Alta",
+    "crecimiento_anual_pct": 18.5,
+    "icol": 70.67,
+    "categoria_oportunidad": "Alta Oportunidad",
+    "icono": "🟢",
+    "prioridad_formacion": "Alta Demanda",
+    "scores": {
+      "demanda": 100.0,
+      "crecimiento": 61.67,
+      "entorno_macro": 54.2
+    },
+    "rankings": {
+      "regional": 24,
+      "pais": 4,
+      "sector": 10
+    }
   },
-  "skills": [
+  "habilidades": [
     "Python",
+    "JavaScript",
     "FastAPI",
     "React",
     "SQL",
     "Git"
   ],
-  "traceability": {
-    "source": "INDEC-EPH",
-    "source_url": "https://www.indec.gob.ar",
-    "last_updated": "2025-Q3",
-    "retrieved_at": "2026-09-18",
-    "data_type": "observed"
+  "comparacion_paises": [
+    {
+      "codigo": "ARG",
+      "nombre": "Argentina",
+      "icol": 70.67,
+      "ranking_pais": 4,
+      "categoria_oportunidad": "Alta Oportunidad"
+    },
+    {
+      "codigo": "CHL",
+      "nombre": "Chile",
+      "icol": 79.36,
+      "ranking_pais": 4,
+      "categoria_oportunidad": "Alta Oportunidad"
+    },
+    {
+      "codigo": "URY",
+      "nombre": "Uruguay",
+      "icol": 84.83,
+      "ranking_pais": 4,
+      "categoria_oportunidad": "Alta Oportunidad"
+    }
+  ],
+  "trazabilidad": {
+    "fuente": "Catálogo regional de ocupaciones (DataAnalyst)",
+    "fuente_url": "https://github.com/InnovaLab-2C-2026-Equipo-6/DataAnalyst",
+    "actualizado": "2026-10-15",
+    "is_projection": true,
+    "origen_indice": "fallback",
+    "datasets": []
   }
 }

@@ -21,7 +21,7 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 | Matriz de casos QA | ✅ **28/28** | API-001..016 (contra la API de Data) + LOAD-001..012 (contra este backend) |
 | Base de datos | ✅ | Conexión a **Supabase** (pooler session, `?ssl=require`) + modelos ORM y **Alembic** async: primera tabla `raw_data_logs` |
 | Endpoint de indicadores | ⏸ | `GET /indicators` con filtros por país, sector y período |
-| Perfil de ocupación | ⏸ | `/occupations/{id}` sigue con datos de ejemplo: falta cruzar el ICOL |
+| Perfil de ocupación | ✅ | `/occupations/{id}` devuelve el perfil de las 20 ocupaciones: ficha del catálogo + ICOL, rankings y comparación entre países |
 | Despliegue | ⏸ | Railway/Render diferido (pasos en §10) |
 
 **Pendientes de coordinación con el equipo de Data:**
@@ -171,7 +171,7 @@ python3 -m uvicorn app.main:app --reload
 | `GET` | `/api/v1/countries` | `Catalogs` | Países del alcance regional (`id` ISO-3, `nombre`, `iso2`, `iso3`) |
 | `GET` | `/api/v1/sectors` | `Catalogs` | Sectores productivos (`id` canónico, `slug` para el frontend, `nombre`) |
 | `GET` | `/api/v1/occupations` | `Catalogs` | Catálogo de ocupaciones (CIUO-08, demanda, crecimiento y habilidades). Filtro `?sector=TEC` o `?sector=economia-conocimiento` |
-| `GET` | `/api/v1/occupations/{id}` | `Occupations` | Ficha técnica de ocupación según contrato regional |
+| `GET` | `/api/v1/occupations/{id}` | `Occupations` | Perfil de la ocupación: ficha del catálogo + ICOL con rankings y comparación entre países. `?pais=ARG` (default) |
 | `POST` | `/api/v1/datasets/upload` | `Datasets` | Carga, validación y normalización de archivos CSV o Excel |
 | `GET` | `/api/v1/employability` | `Employability` | Índice de empleabilidad: serie macro (IDELR) y ranking por ocupación (ICOL) |
 
@@ -240,6 +240,52 @@ export const observatorioService = {
 Ninguno de estos endpoints requiere base de datos: los catálogos viven en
 `app/core/catalogs.py` y se sirven desde memoria.
 
+### Ficha de ocupación
+
+`GET /api/v1/occupations/{id}` combina la ficha técnica del catálogo con el índice de
+oportunidad (ICOL). Es el mismo cálculo que devuelve `/employability`, así que los valores
+coinciden exactamente.
+
+```jsonc
+// GET /api/v1/occupations/OCUP_01?pais=ARG   (también CHL y URY)
+{
+  "pais":      { "codigo": "ARG", "nombre": "Argentina" },
+  "sector":    { "id": "TEC", "slug": "tecnologia", "nombre": "Tecnología" },
+  "ocupacion": { "id": "OCUP_01", "nombre": "Desarrollador de Software y Aplicaciones", "ciuo08": "2512" },
+  "indicadores": {
+    "nivel_demanda": "Muy Alta",
+    "crecimiento_anual_pct": 18.5,
+    "icol": 70.67,
+    "categoria_oportunidad": "Alta Oportunidad",
+    "icono": "🟢",
+    "prioridad_formacion": "Alta Demanda",
+    "scores":  { "demanda": 100.0, "crecimiento": 61.67, "entorno_macro": 54.2 },
+    "rankings": { "regional": 24, "pais": 4, "sector": 10 }
+  },
+  "habilidades": ["Python", "JavaScript", "FastAPI", "React", "SQL", "Git"],
+  "comparacion_paises": [
+    { "codigo": "ARG", "nombre": "Argentina", "icol": 70.67, "ranking_pais": 4, "categoria_oportunidad": "Alta Oportunidad" },
+    { "codigo": "CHL", "nombre": "Chile",     "icol": 79.36, "ranking_pais": 4, "categoria_oportunidad": "Alta Oportunidad" },
+    { "codigo": "URY", "nombre": "Uruguay",   "icol": 84.83, "ranking_pais": 4, "categoria_oportunidad": "Alta Oportunidad" }
+  ],
+  "trazabilidad": {
+    "fuente": "Catálogo regional de ocupaciones (DataAnalyst)",
+    "fuente_url": "https://github.com/InnovaLab-2C-2026-Equipo-6/DataAnalyst",
+    "actualizado": "2026-10-15",
+    "is_projection": true,
+    "origen_indice": "fallback",
+    "datasets": []
+  }
+}
+```
+
+* `trazabilidad.origen_indice` avisa si el índice salió de datasets cargados (`processed`)
+  o de los valores de referencia del entorno macro (`fallback`).
+* `trazabilidad.is_projection` es `true` porque la demanda y el crecimiento del catálogo
+  son estimaciones, no mediciones. En este bloque ya no existe `data_type` (contrato v2).
+* Validación: `OCC-1` → `422` (formato), `OCUP_99` → `404` (fuera de catálogo),
+  `?pais=XXX` → `400` (alcance regional).
+
 ---
 
 ## 5. Estructura del Proyecto
@@ -283,6 +329,7 @@ app-backend/
 │   │   ├── storage/
 │   │   │   └── raw_store.py          # Crudos en data/raw/{fuente}/YYYY-MM-DD.jsonl
 │   │   ├── ingestor.py               # Flujo: recepción → almacenamiento crudo
+│   │   ├── occupation_profile.py   # Perfil de ocupación: catálogo + ICOL
 │   │   └── parsers/
 │   │       └── dataset_parser.py     # Parser Pandas para CSV / Excel
 │   └── main.py                       # Instancia FastAPI y middleware CORS
@@ -370,7 +417,7 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual (100 tests): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (200/404 + trazabilidad) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
+* Cobertura actual (129 tests): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback` y coherencia del ICOL con `/employability`) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
 * Los tests escriben siempre en `tmp_path`: el fixture `output_dirs` es `autouse`, así que la suite no ensucia `data/processed/` ni `data/quarantine/`.
 * Los casos **API-001..API-016** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
 * `tests/test_normalization.py` cubre el ETL de forma unitaria y verifica que el golden dataset regional de Data entra por el esquema común sin perder registros (135 filas, 45 por país).
@@ -435,5 +482,6 @@ Mientras `DATABASE_URL` no esté configurada, `GET /api/v1/health` responde `200
 Para más detalles sobre la arquitectura y contratos:
 * [Especificación Técnica (`docs/SPEC.md`)](docs/SPEC.md)
 * [Contratos de Datos (`docs/DATA_CONTRACTS.md`)](docs/DATA_CONTRACTS.md)
+* [Runbook de conexión a Supabase (`docs/CONEXION_SUPABASE.md`)](docs/CONEXION_SUPABASE.md)
 * [Roadmap y Sprints Kanban (`docs/ROADMAP_BACKEND.md`)](docs/ROADMAP_BACKEND.md)
 * [Mocks JSON para Frontend (`docs/mocks/`)](docs/mocks/)
