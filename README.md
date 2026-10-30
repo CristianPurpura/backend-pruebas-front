@@ -19,7 +19,7 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 | Almacenamiento crudo | ✅ | `data/raw/{fuente}/YYYY-MM-DD.jsonl` (esquema `raw_data_logs`) + flujo de ingesta |
 | Índice de empleabilidad | ✅ | `GET /employability` con IDELR + ICOL reimplementados y test de paridad contra la API de Data |
 | Matriz de casos QA | ✅ **28/28** | API-001..016 (contra la API de Data) + LOAD-001..012 (contra este backend) |
-| Base de datos | ⏸ | Modelos ORM + Alembic pendientes: falta `DATABASE_URL` (Supabase/PostgreSQL) |
+| Base de datos | ✅ | Conexión a **Supabase** (pooler session, `?ssl=require`) + modelos ORM y **Alembic** async: primera tabla `raw_data_logs` |
 | Endpoint de indicadores | ⏸ | `GET /indicators` con filtros por país, sector y período |
 | Perfil de ocupación | ✅ | `/occupations/{id}` devuelve el perfil de las 20 ocupaciones: ficha del catálogo + ICOL, rankings y comparación entre países |
 | Despliegue | ⏸ | Railway/Render diferido (pasos en §10) |
@@ -87,10 +87,70 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
+> **Nota sobre `sqlalchemy[asyncio]`**: el extra es obligatorio, no cosmético.
+> El backend trabaja con `sqlalchemy.ext.asyncio` (`create_async_engine`,
+> `async_sessionmaker`) y ese extra es el que instala **`greenlet`**, el puente
+> sync/async de SQLAlchemy. Sin él, una instalación limpia falla al importar el
+> módulo asíncrono. Si ya tenés el entorno armado y te falta:
+> ```bash
+> python -m pip install "sqlalchemy[asyncio]"
+> ```
+
+> **Windows 11 + Smart App Control (SAC):** si al importar `pandas` aparece
+> `ImportError: DLL load failed ... Una directiva de Control de aplicaciones
+> bloqueó este archivo` (o el toast *"Parte de esta aplicación se ha bloqueado"*
+> con error `0x11C7`), no es un problema del repo: SAC está bloqueando `.pyd`
+> sin firma y sin reputación en la nube (en pandas 3.1.0 afecta a 8 de 45
+> binarios: `groupby`, `join`, `properties`, `nattype`, `offsets`, `strptime`,
+> `tzconversion`, `aggregations`). Workaround temporal mientras Microsoft les
+> da reputación: `pip install "pandas==2.2.3"` (satisface `pandas>=2.2.0`).
+> Verificación rápida de qué binarios están bloqueados: mirar los eventos
+> `3033`/`3077` del log *Microsoft-Windows-CodeIntegrity/Operational*.
+
 4. Configurar variables de entorno:
 ```bash
 cp .env.example .env
 ```
+
+### Base de datos (Supabase)
+
+Completar `DATABASE_URL` en `.env` (el archivo está en `.gitignore`: **nunca** se commitea):
+
+```dotenv
+DATABASE_URL=postgresql+asyncpg://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres?ssl=require
+```
+
+* **Pooler en modo Session** (puerto `5432`). El modo Transaction (`6543`) no sirve con
+  `asyncpg` ni con Alembic: rompe los *prepared statements* y las transacciones de sesión.
+  Se cambia en Supabase → *Settings → Database → Connection pooling*.
+* El host directo `db.<project-ref>.supabase.co` es **IPv6-only**: desde redes sin IPv6 no
+  conecta. Usar siempre el **pooler**.
+* `?ssl=require` cifra la conexión sin validar el certificado: Supabase emite los certs del
+  pooler con una **CA propia** (`Supabase Intermediate 2021 CA`) que no está en los trust
+  stores públicos, por lo que `verify-full` falla.
+* **Redes institucionales/campus**: suelen tener bloqueado el puerto de salida `5432`.
+  Si el healthcheck devuelve `"db": "error"` (no `"not_configured"`), verificar desde otra
+  red (p. ej. hotspot móvil) antes de investigar la app.
+
+Verificación:
+
+```bash
+curl http://127.0.0.1:8000/api/v1/health   # → {"status":"ok","db":"ok"}
+```
+
+#### Migraciones (Alembic)
+
+Las migraciones viven en `migrations/` y leen `DATABASE_URL` desde las settings del backend
+(mismo `.env` que la app, template async):
+
+```bash
+python -m alembic revision --autogenerate -m "descripcion del cambio"
+python -m alembic upgrade head          # aplica pendientes
+python -m alembic current               # versión aplicada
+python -m alembic history               # historial
+```
+
+Modelos ORM en `app/models/` (`Base` + `RawDataLog`, esquema `raw_data_logs` de SPEC §6).
 
 5. Iniciar el servidor en modo desarrollo:
 ```bash
@@ -246,7 +306,7 @@ app-backend/
 │   │   ├── config.py                 # Settings (pydantic-settings) desde .env
 │   │   ├── catalogs.py               # Catálogos canónicos (países, sectores, ocupaciones, unidades)
 │   │   └── database.py               # Engine async + get_db + healthcheck DB
-│   ├── models/                       # Modelos ORM SQLAlchemy
+│   ├── models/                       # Modelos ORM SQLAlchemy (Base + raw_data_logs)
 │   ├── schemas/                      # Schemas de validación Pydantic
 │   │   ├── catalog.py
 │   │   ├── dataset.py
@@ -274,6 +334,8 @@ app-backend/
 │   │       └── dataset_parser.py     # Parser Pandas para CSV / Excel
 │   └── main.py                       # Instancia FastAPI y middleware CORS
 ├── tests/                            # Suite Pytest (integración API + conectores + ETL)
+├── migrations/                       # Migraciones Alembic (template async)
+├── alembic.ini                       # Configuración de Alembic
 ├── pytest.ini                        # Configuración de Pytest
 ├── docs/
 │   ├── mocks/                        # Contratos JSON de ejemplo para Frontend
