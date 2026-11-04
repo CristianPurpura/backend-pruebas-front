@@ -34,10 +34,14 @@ app-backend/
 │   │   ├── employability.py
 │   │   ├── indicator.py
 │   │   ├── indicator_result.py      # Snapshot e historial (#54)
+│   │   ├── datascience.py           # Brechas y oferta formativa (#74)
 │   │   └── occupation.py
 │   ├── services/                    # Lógica de negocio y procesamiento pesado
 │   │   ├── calculators/             # Algoritmo de Índice y proyecciones
 │   │   ├── connectors/              # Clientes HTTPX para APIs externas (AR, UY, CL)
+│   │   ├── datascience/             # Brechas y oferta formativa (#74)
+│   │   │   ├── client.py            # Cliente HTTPX a DataAnalyst + cache + fallback
+│   │   │   └── mapper.py            # Normalización del payload de Data
 │   │   ├── ingestor.py              # Recepción: fetch → registro crudo
 │   │   ├── normalization/           # ETL de carga manual: esquema común, cuarentena y dedupe
 │   │   │   ├── mapper.py            # Mapeo al ESQUEMA_COLUMNAS de Data

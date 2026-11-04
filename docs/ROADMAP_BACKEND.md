@@ -31,11 +31,12 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
 * [x] Implementar la fórmula matemática del Índice de Empleabilidad (provista por Data)[cite: 1] — *hecho: reimplementación local de IDELR e ICOL en `app/services/calculators/employability.py` a partir de `DataAnalyst/INFORME_METODOLOGICO_INDICES.md`, con test de paridad contra la API de Data (mismos valores).*
 * [x] Exponer endpoint `/api/v1/employability` con desglose de dimensiones evaluadas[cite: 1] — *hecho: `GET /api/v1/employability` (filtros por país, sector, ocupación y período) con serie macro, ranking por ocupación y desglose de variables.*
 * [x] **Issue #54:** almacenar los resultados históricos de los índices[cite: 1] — *hecho: tabla `indicator_results` (migración `4565d593028e`) + `POST /api/v1/employability/snapshot` (guardado idempotente por día) + `GET /api/v1/employability/history` (filtros por tipo, país, ocupación y rango de años). El `GET /employability` sigue siendo de solo lectura.*
+* [x] **Issue #74:** preparar endpoints para habilidades y oferta formativa[cite: 1] — *hecho: `GET /api/v1/skills`, `GET /api/v1/skills/{ocupacion_id}` y `GET /api/v1/gaps`, que consumen el módulo de Data Science (`DataAnalyst/etl/data_science.py`) con degradación `live` → `cache` → `reference` → `503`.*
 
 ## Sprint 3: Series Temporales y Habilidades (Semanas 5 y 6)
 * [ ] Crear endpoints de series históricas optimizados para alimentar gráficos de líneas/barras[cite: 1].
 * [ ] Lógica para clasificar ocupaciones en tendencia: alza, estabilidad o caída[cite: 1] — *base lista: `clasificar_tendencia(delta, epsilon=1.0)` en `app/services/calculators/employability.py`; falta exponerla como endpoint (#67).*
-* [ ] Exponer modelo relacional de brechas de habilidades (oferta formativa vs. demanda)[cite: 1] — *contrato ya publicado por Data el 02/11: `GET /api/v1/ds/brechas-habilidades` y `GET /api/v1/ds/comparativa-educativo-laboral` (#74/#75).*
+* [ ] Exponer modelo relacional de brechas de habilidades (oferta formativa vs. demanda)[cite: 1] — *hecho (#74): `GET /api/v1/skills`, `GET /api/v1/skills/{ocupacion_id}` y `GET /api/v1/gaps` consumen el módulo de Data Science con cache y fallback (`live` → `cache` → `reference` → 503). Pendiente #75: integrar las brechas al perfil de ocupación.*
 * [ ] Asegurar trazabilidad completa en cada respuesta (fuente oficial y fecha de actualización)[cite: 1] — *parcial: `fuente_datos`, `metodologia.fuente_metodologia` y `trazabilidad` ya están en las respuestas actuales; falta extenderlo a los endpoints nuevos.*
 
 ## Sprint 4: Automatización y Alertas (Semanas 7 y 8)
