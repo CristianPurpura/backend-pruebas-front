@@ -417,7 +417,8 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual (129 tests): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback` y coherencia del ICOL con `/employability`) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
+* Cobertura actual (**147 tests**, 0 omitidos con el repo de Data disponible): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback` y coherencia del ICOL con `/employability`) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
+* `tests/test_employability_metodologia.py` verifica la **metodología visible**: los pesos del IDELR y del ICOL suman `1.0`, el endpoint expone las 5 dimensiones y es espejo exacto de `VARIABLES_IDELR` / `DEFAULT_ICOL_WEIGHTS`, y los umbrales de categoría se comprueban en su borde exacto (85 / 70 / 55).
 * Los tests escriben siempre en `tmp_path`: el fixture `output_dirs` es `autouse`, así que la suite no ensucia `data/processed/` ni `data/quarantine/`.
 * Los casos **API-001..API-016** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
 * `tests/test_normalization.py` cubre el ETL de forma unitaria y verifica que el golden dataset regional de Data entra por el esquema común sin perder registros (135 filas, 45 por país).
@@ -427,7 +428,9 @@ python -m pytest -v
 > **Para correr la matriz API completa** hay que clonar el repo del equipo Data:
 > ```bash
 > git clone https://github.com/InnovaLab-2C-2026-Equipo-6/DataAnalyst.git /tmp/opencode/DataAnalyst
+> cd /tmp/opencode/DataAnalyst && git checkout 45abdfc   # versión auditada del 02/11
 > ```
+> Sin el clon, la suite da **128 passed, 19 skipped**; con el clon, **147 passed, 0 skipped**.
 
 ---
 
