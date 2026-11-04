@@ -174,6 +174,8 @@ python3 -m uvicorn app.main:app --reload
 | `GET` | `/api/v1/occupations/{id}` | `Occupations` | Perfil de la ocupación: ficha del catálogo + ICOL con rankings y comparación entre países. `?pais=ARG` (default) |
 | `POST` | `/api/v1/datasets/upload` | `Datasets` | Carga, validación y normalización de archivos CSV o Excel |
 | `GET` | `/api/v1/employability` | `Employability` | Índice de empleabilidad: serie macro (IDELR) y ranking por ocupación (ICOL) |
+| `POST` | `/api/v1/employability/snapshot` | `Snapshots` | Calcula los índices y **guarda** el resultado en la base para poder mirar el pasado (idempotente) |
+| `GET` | `/api/v1/employability/history` | `Snapshots` | Histórico de resultados guardados. Filtros: `tipo`, `pais`, `ocupacion`, `anio_desde`, `anio_hasta`, `limite` |
 
 ### Catálogos para el Frontend
 
@@ -408,6 +410,44 @@ Filtros: `pais` (ARG/CHL/URY), `sector`, `ocupacion` (OCUP_01..OCUP_20), `anio_i
 * Los datos macro salen de los datasets normalizados en `data/processed/`; si todavía no hay ninguno, el ICOL usa los valores de referencia y la respuesta lo explicita en `fuente_datos.tipo = "fallback"`.
 * La respuesta incluye el **desglose de dimensiones evaluadas** (`desglose_variables` con valor original, valor normalizado, peso asignado y contribución al índice) y la trazabilidad completa (fuente, fecha y metodología aplicada).
 * `tests/test_employability.py` incluye un **test de paridad**: nuestros valores coinciden exactamente con `/api/v1/analytics/indice-sintetico` y `/api/v1/analytics/ocupaciones/ranking` del repo `DataAnalyst`.
+
+## 7.b Persistencia histórica de resultados (Issue #54)
+
+El índice se recalcula en cada consulta, pero **el resultado no se guardaba**: solo existían los datos crudos (`raw_data_logs`). Con `POST /api/v1/employability/snapshot` el Backend calcula los índices y **persiste el resultado**, para poder mirar el pasado, comparar días y reproducir un cálculo.
+
+### Cómo funciona
+
+| Concepto | Detalle |
+| :--- | :--- |
+| Tabla | `indicator_results` (migración `4565d593028e`) |
+| Qué guarda | Un snapshot por combinación: tipo (`IDELR`/`ICOL`), país, año, ocupación, valor, categoría, cobertura, versión de metodología, payload completo y fecha del cálculo |
+| Idempotencia | `dedupe_key = tipo\|país\|año\|ocupación\|fecha`: guardar dos veces el **mismo día** actualiza la fila en lugar de duplicarla; otro día crea un snapshot nuevo y conserva el histórico |
+| Guardado | **Explícito por POST**: `GET /employability` sigue siendo de solo lectura y no escribe nada |
+| Sin base de datos | `503` con un mensaje claro (`DATABASE_URL` no configurada) |
+
+```bash
+# Guardar el snapshot de hoy
+curl -X POST http://localhost:8000/api/v1/employability/snapshot
+
+# Consultar el histórico
+curl "http://localhost:8000/api/v1/employability/history?tipo=ICOL&pais=URY"
+curl "http://localhost:8000/api/v1/employability/history?tipo=IDELR&anio_desde=2020"
+```
+
+```jsonc
+// POST /api/v1/employability/snapshot  →  200 OK
+{
+  "generated_at": "2026-11-04T12:13:51+00:00",
+  "fecha_snapshot": "2026-11-04",
+  "metodologia_version": "idelr-icol-2026-11",
+  "fuente_datos": "processed",          // "fallback" si no hay datasets cargados
+  "anio_referencia": 2024,
+  "guardado": { "idelr": 30, "icol": 60, "insertados": 90, "actualizados": 0 }
+}
+```
+
+> `metodologia_version` permite distinguir snapshots comparables: si cambia la fórmula o los
+> pesos, se incrementa la versión y los históricos de cada versión siguen siendo distinguibles.
 
 ## 8. Tests
 

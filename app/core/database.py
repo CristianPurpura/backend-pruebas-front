@@ -1,5 +1,6 @@
 from collections.abc import AsyncGenerator
 
+from fastapi import HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
@@ -28,6 +29,24 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
+async def get_db_requerida() -> AsyncGenerator[AsyncSession, None]:
+    """Igual que `get_db`, pero responde 503 si la base no está configurada.
+
+    Se usa en los endpoints que necesitan base de datos: es preferible un
+    503 con mensaje claro que un 500 por una `RuntimeError` interna.
+    """
+    if _ensure_engine() is None:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Base de datos no configurada: definir DATABASE_URL para usar "
+                "los endpoints que requieren persistencia."
+            ),
+        )
+    async for session in get_db():
+        yield session
+
+
 async def async_check_db() -> str:
     """Estado de la conexion a base de datos para el healthcheck."""
     factory = _ensure_engine()
@@ -48,4 +67,4 @@ def reset_engine() -> None:
     _session_factory = None
 
 
-__all__: list[str] = ["get_db", "async_check_db", "reset_engine"]
+__all__: list[str] = ["get_db", "get_db_requerida", "async_check_db", "reset_engine"]

@@ -23,7 +23,9 @@ app-backend/
 │   ├── models/                      # Entidades de base de datos (tablas ORM)
 │   │   ├── alert.py
 │   │   ├── indicator.py
+│   │   ├── indicator_result.py      # Snapshot histórico de IDELR/ICOL (#54)
 │   │   ├── lookup.py                # País, Sector, Ocupación
+│   │   ├── raw_data_log.py          # Registro crudo de ingesta
 │   │   └── source.py
 │   ├── schemas/                     # Validación de entrada/salida (Pydantic DTOs)
 │   │   ├── alert.py
@@ -31,6 +33,7 @@ app-backend/
 │   │   ├── dataset.py
 │   │   ├── employability.py
 │   │   ├── indicator.py
+│   │   ├── indicator_result.py      # Snapshot e historial (#54)
 │   │   └── occupation.py
 │   ├── services/                    # Lógica de negocio y procesamiento pesado
 │   │   ├── calculators/             # Algoritmo de Índice y proyecciones
@@ -43,6 +46,8 @@ app-backend/
 │   │   │   └── errors.py            # Rechazo por fila (HTTP 422)
 │   │   ├── occupation_profile.py    # Perfil de ocupación: catálogo + ICOL
 │   │   ├── parsers/                 # Lectura y validación de CSV/Excel con Pandas
+│   │   ├── persistence/             # Snapshots históricos de los índices (#54)
+│   │   │   └── results_store.py     # Guardado idempotente y consulta del histórico
 │   │   ├── scheduler/               # Tareas cron / ejecución periódica
 │   │   └── storage/                 # Almacenamiento crudo (JSONL por fuente)
 │   └── main.py                      # Punto de entrada de la aplicación FastAPI
