@@ -30,6 +30,7 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
 * [x] Robustecer la carga manual: reportar filas erróneas sin interrumpir la ejecución[cite: 1] — *hecho: `POST /datasets/upload` clasifica cada fila (rechazo 422 con detalle por fila, cuarentena con flag o deduplicación) y devuelve el reporte (`rows_valid`, `rows_quarantined`, `duplicates_removed`, `warnings`) sin abortar el archivo.*
 * [x] Implementar la fórmula matemática del Índice de Empleabilidad (provista por Data)[cite: 1] — *hecho: reimplementación local de IDELR e ICOL en `app/services/calculators/employability.py` a partir de `DataAnalyst/INFORME_METODOLOGICO_INDICES.md`, con test de paridad contra la API de Data (mismos valores).*
 * [x] Exponer endpoint `/api/v1/employability` con desglose de dimensiones evaluadas[cite: 1] — *hecho: `GET /api/v1/employability` (filtros por país, sector, ocupación y período) con serie macro, ranking por ocupación y desglose de variables.*
+* [x] **Issue #54:** almacenar los resultados históricos de los índices[cite: 1] — *hecho: tabla `indicator_results` (migración `4565d593028e`) + `POST /api/v1/employability/snapshot` (guardado idempotente por día) + `GET /api/v1/employability/history` (filtros por tipo, país, ocupación y rango de años). El `GET /employability` sigue siendo de solo lectura.*
 
 ## Sprint 3: Series Temporales y Habilidades (Semanas 5 y 6)
 * [ ] Crear endpoints de series históricas optimizados para alimentar gráficos de líneas/barras[cite: 1].
