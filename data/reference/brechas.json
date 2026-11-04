@@ -1,0 +1,1833 @@
+{
+  "status": "success",
+  "total_ocupaciones_analizadas": 60,
+  "filtros_aplicados": {
+    "pais": null,
+    "sector": null
+  },
+  "brechas_y_habilidades": [
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_02",
+      "ocupacion_nombre": "Ingeniero de Datos y Machine Learning",
+      "codigo_ciuo08_oit": "2511",
+      "indice_oportunidad_icol": 88.19,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 80.0,
+      "coeficiente_cobertura_educativa_cce": 0.571,
+      "score_brecha_talento_100": 87.76,
+      "diagnostico_brecha": "Déficit Crítico de Talento",
+      "icono_brecha": "🔴",
+      "urgencia_intervencion": "Prioridad 1: Formación Acelerada Inmediata",
+      "habilidades_tradicionales": [
+        "ETL Batch",
+        "Pandas",
+        "Scikit-Learn",
+        "PostgreSQL"
+      ],
+      "habilidades_emergentes_2026": [
+        "Arquitecturas RAG",
+        "Vector Databases (Milvus, Pinecone)",
+        "Edge AI",
+        "LLMOps & Model Governance",
+        "Data Mesh"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Acelerador Fundamental",
+      "velocidad_obsolescencia": "Ultra Rápida (< 12 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_04",
+      "ocupacion_nombre": "Arquitecto Cloud y DevOps",
+      "codigo_ciuo08_oit": "2522",
+      "indice_oportunidad_icol": 85.57,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 70.0,
+      "coeficiente_cobertura_educativa_cce": 0.571,
+      "score_brecha_talento_100": 85.13,
+      "diagnostico_brecha": "Déficit Crítico de Talento",
+      "icono_brecha": "🔴",
+      "urgencia_intervencion": "Prioridad 1: Formación Acelerada Inmediata",
+      "habilidades_tradicionales": [
+        "Linux SysAdmin",
+        "Docker Básico",
+        "Scripts Bash",
+        "Jenkins"
+      ],
+      "habilidades_emergentes_2026": [
+        "FinOps (Optimización de Costos Cloud)",
+        "GitOps con ArgoCD",
+        "Platform Engineering",
+        "eBPF para Observabilidad",
+        "Kubernetes Multi-Cluster Mesh"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_01",
+      "ocupacion_nombre": "Desarrollador de Software y Aplicaciones",
+      "codigo_ciuo08_oit": "2512",
+      "indice_oportunidad_icol": 83.38,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 61.67,
+      "coeficiente_cobertura_educativa_cce": 0.571,
+      "score_brecha_talento_100": 82.95,
+      "diagnostico_brecha": "Déficit Crítico de Talento",
+      "icono_brecha": "🔴",
+      "urgencia_intervencion": "Prioridad 1: Formación Acelerada Inmediata",
+      "habilidades_tradicionales": [
+        "JavaScript",
+        "Python",
+        "SQL",
+        "Git",
+        "HTML/CSS"
+      ],
+      "habilidades_emergentes_2026": [
+        "Generative AI Coding",
+        "LLM Orchestration (LangChain/LlamaIndex)",
+        "Micro-frontends",
+        "Rust",
+        "WebAssembly"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Disruptivo / Complementario",
+      "velocidad_obsolescencia": "Muy Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_02",
+      "ocupacion_nombre": "Ingeniero de Datos y Machine Learning",
+      "codigo_ciuo08_oit": "2511",
+      "indice_oportunidad_icol": 82.55,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 80.0,
+      "coeficiente_cobertura_educativa_cce": 0.614,
+      "score_brecha_talento_100": 82.72,
+      "diagnostico_brecha": "Déficit Crítico de Talento",
+      "icono_brecha": "🔴",
+      "urgencia_intervencion": "Prioridad 1: Formación Acelerada Inmediata",
+      "habilidades_tradicionales": [
+        "ETL Batch",
+        "Pandas",
+        "Scikit-Learn",
+        "PostgreSQL"
+      ],
+      "habilidades_emergentes_2026": [
+        "Arquitecturas RAG",
+        "Vector Databases (Milvus, Pinecone)",
+        "Edge AI",
+        "LLMOps & Model Governance",
+        "Data Mesh"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Acelerador Fundamental",
+      "velocidad_obsolescencia": "Ultra Rápida (< 12 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_20",
+      "ocupacion_nombre": "Analista Financiero Cuantitativo y FinTech",
+      "codigo_ciuo08_oit": "2413",
+      "indice_oportunidad_icol": 83.99,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 64.0,
+      "coeficiente_cobertura_educativa_cce": 0.674,
+      "score_brecha_talento_100": 81.4,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Contabilidad Financiera",
+        "Modelos DCF en Excel",
+        "Análisis Fundamental"
+      ],
+      "habilidades_emergentes_2026": [
+        "Algoritmos de Trading Cuantitativo en Python",
+        "Tokenización de Activos del Mundo Real (RWA)",
+        "Cumplimiento Automatizado Anti-Lavado (RegTech / AML)",
+        "Scoring Crediticio Alternativo con Redes Neuronales"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Muy Alto",
+      "velocidad_obsolescencia": "Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_04",
+      "ocupacion_nombre": "Arquitecto Cloud y DevOps",
+      "codigo_ciuo08_oit": "2522",
+      "indice_oportunidad_icol": 80.05,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 70.0,
+      "coeficiente_cobertura_educativa_cce": 0.614,
+      "score_brecha_talento_100": 80.22,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Linux SysAdmin",
+        "Docker Básico",
+        "Scripts Bash",
+        "Jenkins"
+      ],
+      "habilidades_emergentes_2026": [
+        "FinOps (Optimización de Costos Cloud)",
+        "GitOps con ArgoCD",
+        "Platform Engineering",
+        "eBPF para Observabilidad",
+        "Kubernetes Multi-Cluster Mesh"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_17",
+      "ocupacion_nombre": "Diseñador UX/UI y Experiencia de Producto Digital",
+      "codigo_ciuo08_oit": "2166",
+      "indice_oportunidad_icol": 82.42,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 58.0,
+      "coeficiente_cobertura_educativa_cce": 0.674,
+      "score_brecha_talento_100": 79.82,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Photoshop/Illustrator",
+        "Diseño Gráfico Estático",
+        "Wireframes en Papel"
+      ],
+      "habilidades_emergentes_2026": [
+        "Diseño para Agentes de IA y UI Conversacional",
+        "Design Systems Tokenizados",
+        "Investigación Cuantitativa de Usuarios con IA",
+        "Accesibilidad Web Universal WCAG 2.2 AAA"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Transformador",
+      "velocidad_obsolescencia": "Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_02",
+      "ocupacion_nombre": "Ingeniero de Datos y Machine Learning",
+      "codigo_ciuo08_oit": "2511",
+      "indice_oportunidad_icol": 69.73,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 80.0,
+      "coeficiente_cobertura_educativa_cce": 0.568,
+      "score_brecha_talento_100": 79.46,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "ETL Batch",
+        "Pandas",
+        "Scikit-Learn",
+        "PostgreSQL"
+      ],
+      "habilidades_emergentes_2026": [
+        "Arquitecturas RAG",
+        "Vector Databases (Milvus, Pinecone)",
+        "Edge AI",
+        "LLMOps & Model Governance",
+        "Data Mesh"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Acelerador Fundamental",
+      "velocidad_obsolescencia": "Ultra Rápida (< 12 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_09",
+      "ocupacion_nombre": "Ingeniero en Energías Renovables (Eólica / Solar)",
+      "codigo_ciuo08_oit": "2149",
+      "indice_oportunidad_icol": 81.89,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 56.0,
+      "coeficiente_cobertura_educativa_cce": 0.682,
+      "score_brecha_talento_100": 79.13,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Cálculo Eléctrico Convencional",
+        "Topografía Básica",
+        "Grupos Electrógenos"
+      ],
+      "habilidades_emergentes_2026": [
+        "Producción y Logística de Hidrógeno Verde",
+        "Sistemas de Almacenamiento en Baterías (BESS)",
+        "Modelado CFD con IA para Parques Eólicos",
+        "Sistemas Híbridos Solar-Eólico"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_18",
+      "ocupacion_nombre": "Consultor en Transformación Digital y Analítica de Negocio",
+      "codigo_ciuo08_oit": "2421",
+      "indice_oportunidad_icol": 81.1,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 53.0,
+      "coeficiente_cobertura_educativa_cce": 0.674,
+      "score_brecha_talento_100": 78.51,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Excel Avanzado",
+        "Diagramas de Flujo en Visio",
+        "Informes en PowerPoint"
+      ],
+      "habilidades_emergentes_2026": [
+        "Minería de Procesos (Process Mining - Celonis)",
+        "Despliegue de Agentes de IA Autónomos",
+        "Hiperautomatización con RPA e Inteligencia Artificial",
+        "Gobernanza Ética y Regulatoria de Datos (GDPR/Ley Protección de Datos)"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Acelerador Primario",
+      "velocidad_obsolescencia": "Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_01",
+      "ocupacion_nombre": "Desarrollador de Software y Aplicaciones",
+      "codigo_ciuo08_oit": "2512",
+      "indice_oportunidad_icol": 77.97,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 61.67,
+      "coeficiente_cobertura_educativa_cce": 0.614,
+      "score_brecha_talento_100": 78.14,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "JavaScript",
+        "Python",
+        "SQL",
+        "Git",
+        "HTML/CSS"
+      ],
+      "habilidades_emergentes_2026": [
+        "Generative AI Coding",
+        "LLM Orchestration (LangChain/LlamaIndex)",
+        "Micro-frontends",
+        "Rust",
+        "WebAssembly"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Disruptivo / Complementario",
+      "velocidad_obsolescencia": "Muy Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_04",
+      "ocupacion_nombre": "Arquitecto Cloud y DevOps",
+      "codigo_ciuo08_oit": "2522",
+      "indice_oportunidad_icol": 67.36,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 70.0,
+      "coeficiente_cobertura_educativa_cce": 0.568,
+      "score_brecha_talento_100": 77.08,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Linux SysAdmin",
+        "Docker Básico",
+        "Scripts Bash",
+        "Jenkins"
+      ],
+      "habilidades_emergentes_2026": [
+        "FinOps (Optimización de Costos Cloud)",
+        "GitOps con ArgoCD",
+        "Platform Engineering",
+        "eBPF para Observabilidad",
+        "Kubernetes Multi-Cluster Mesh"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_20",
+      "ocupacion_nombre": "Analista Financiero Cuantitativo y FinTech",
+      "codigo_ciuo08_oit": "2413",
+      "indice_oportunidad_icol": 78.55,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 64.0,
+      "coeficiente_cobertura_educativa_cce": 0.742,
+      "score_brecha_talento_100": 76.16,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Contabilidad Financiera",
+        "Modelos DCF en Excel",
+        "Análisis Fundamental"
+      ],
+      "habilidades_emergentes_2026": [
+        "Algoritmos de Trading Cuantitativo en Python",
+        "Tokenización de Activos del Mundo Real (RWA)",
+        "Cumplimiento Automatizado Anti-Lavado (RegTech / AML)",
+        "Scoring Crediticio Alternativo con Redes Neuronales"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Muy Alto",
+      "velocidad_obsolescencia": "Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_09",
+      "ocupacion_nombre": "Ingeniero en Energías Renovables (Eólica / Solar)",
+      "codigo_ciuo08_oit": "2149",
+      "indice_oportunidad_icol": 76.55,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 56.0,
+      "coeficiente_cobertura_educativa_cce": 0.667,
+      "score_brecha_talento_100": 75.66,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Cálculo Eléctrico Convencional",
+        "Topografía Básica",
+        "Grupos Electrógenos"
+      ],
+      "habilidades_emergentes_2026": [
+        "Producción y Logística de Hidrógeno Verde",
+        "Sistemas de Almacenamiento en Baterías (BESS)",
+        "Modelado CFD con IA para Parques Eólicos",
+        "Sistemas Híbridos Solar-Eólico"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_01",
+      "ocupacion_nombre": "Desarrollador de Software y Aplicaciones",
+      "codigo_ciuo08_oit": "2512",
+      "indice_oportunidad_icol": 65.38,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 61.67,
+      "coeficiente_cobertura_educativa_cce": 0.568,
+      "score_brecha_talento_100": 75.1,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "JavaScript",
+        "Python",
+        "SQL",
+        "Git",
+        "HTML/CSS"
+      ],
+      "habilidades_emergentes_2026": [
+        "Generative AI Coding",
+        "LLM Orchestration (LangChain/LlamaIndex)",
+        "Micro-frontends",
+        "Rust",
+        "WebAssembly"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Disruptivo / Complementario",
+      "velocidad_obsolescencia": "Muy Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_17",
+      "ocupacion_nombre": "Diseñador UX/UI y Experiencia de Producto Digital",
+      "codigo_ciuo08_oit": "2166",
+      "indice_oportunidad_icol": 77.05,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 58.0,
+      "coeficiente_cobertura_educativa_cce": 0.742,
+      "score_brecha_talento_100": 74.66,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Photoshop/Illustrator",
+        "Diseño Gráfico Estático",
+        "Wireframes en Papel"
+      ],
+      "habilidades_emergentes_2026": [
+        "Diseño para Agentes de IA y UI Conversacional",
+        "Design Systems Tokenizados",
+        "Investigación Cuantitativa de Usuarios con IA",
+        "Accesibilidad Web Universal WCAG 2.2 AAA"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Transformador",
+      "velocidad_obsolescencia": "Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_09",
+      "ocupacion_nombre": "Ingeniero en Energías Renovables (Eólica / Solar)",
+      "codigo_ciuo08_oit": "2149",
+      "indice_oportunidad_icol": 64.03,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 56.0,
+      "coeficiente_cobertura_educativa_cce": 0.539,
+      "score_brecha_talento_100": 74.31,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Cálculo Eléctrico Convencional",
+        "Topografía Básica",
+        "Grupos Electrógenos"
+      ],
+      "habilidades_emergentes_2026": [
+        "Producción y Logística de Hidrógeno Verde",
+        "Sistemas de Almacenamiento en Baterías (BESS)",
+        "Modelado CFD con IA para Parques Eólicos",
+        "Sistemas Híbridos Solar-Eólico"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_20",
+      "ocupacion_nombre": "Analista Financiero Cuantitativo y FinTech",
+      "codigo_ciuo08_oit": "2413",
+      "indice_oportunidad_icol": 65.93,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 64.0,
+      "coeficiente_cobertura_educativa_cce": 0.669,
+      "score_brecha_talento_100": 73.74,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Contabilidad Financiera",
+        "Modelos DCF en Excel",
+        "Análisis Fundamental"
+      ],
+      "habilidades_emergentes_2026": [
+        "Algoritmos de Trading Cuantitativo en Python",
+        "Tokenización de Activos del Mundo Real (RWA)",
+        "Cumplimiento Automatizado Anti-Lavado (RegTech / AML)",
+        "Scoring Crediticio Alternativo con Redes Neuronales"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Muy Alto",
+      "velocidad_obsolescencia": "Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_18",
+      "ocupacion_nombre": "Consultor en Transformación Digital y Analítica de Negocio",
+      "codigo_ciuo08_oit": "2421",
+      "indice_oportunidad_icol": 75.8,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 53.0,
+      "coeficiente_cobertura_educativa_cce": 0.742,
+      "score_brecha_talento_100": 73.41,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Excel Avanzado",
+        "Diagramas de Flujo en Visio",
+        "Informes en PowerPoint"
+      ],
+      "habilidades_emergentes_2026": [
+        "Minería de Procesos (Process Mining - Celonis)",
+        "Despliegue de Agentes de IA Autónomos",
+        "Hiperautomatización con RPA e Inteligencia Artificial",
+        "Gobernanza Ética y Regulatoria de Datos (GDPR/Ley Protección de Datos)"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Acelerador Primario",
+      "velocidad_obsolescencia": "Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_17",
+      "ocupacion_nombre": "Diseñador UX/UI y Experiencia de Producto Digital",
+      "codigo_ciuo08_oit": "2166",
+      "indice_oportunidad_icol": 64.51,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 58.0,
+      "coeficiente_cobertura_educativa_cce": 0.669,
+      "score_brecha_talento_100": 72.31,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Photoshop/Illustrator",
+        "Diseño Gráfico Estático",
+        "Wireframes en Papel"
+      ],
+      "habilidades_emergentes_2026": [
+        "Diseño para Agentes de IA y UI Conversacional",
+        "Design Systems Tokenizados",
+        "Investigación Cuantitativa de Usuarios con IA",
+        "Accesibilidad Web Universal WCAG 2.2 AAA"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Transformador",
+      "velocidad_obsolescencia": "Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_18",
+      "ocupacion_nombre": "Consultor en Transformación Digital y Analítica de Negocio",
+      "codigo_ciuo08_oit": "2421",
+      "indice_oportunidad_icol": 63.32,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 53.0,
+      "coeficiente_cobertura_educativa_cce": 0.669,
+      "score_brecha_talento_100": 71.13,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Excel Avanzado",
+        "Diagramas de Flujo en Visio",
+        "Informes en PowerPoint"
+      ],
+      "habilidades_emergentes_2026": [
+        "Minería de Procesos (Process Mining - Celonis)",
+        "Despliegue de Agentes de IA Autónomos",
+        "Hiperautomatización con RPA e Inteligencia Artificial",
+        "Gobernanza Ética y Regulatoria de Datos (GDPR/Ley Protección de Datos)"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Acelerador Primario",
+      "velocidad_obsolescencia": "Rápida (< 18 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_06",
+      "ocupacion_nombre": "Profesional de Enfermería y Cuidados Críticos",
+      "codigo_ciuo08_oit": "2221",
+      "indice_oportunidad_icol": 75.77,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 32.67,
+      "coeficiente_cobertura_educativa_cce": 0.829,
+      "score_brecha_talento_100": 69.92,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Toma de Signos Vitales",
+        "Administración de Vías",
+        "Cuidados Generales"
+      ],
+      "habilidades_emergentes_2026": [
+        "Monitoreo Biomédico Continuo IoT",
+        "Triage Digital Inteligente",
+        "Simulación Clínica Avanzada",
+        "Gestión de Cuidados para Envejecimiento Activo"
+      ],
+      "nivel_adopcion_habilidades": "Media",
+      "impacto_ia_automatizacion": "Bajo (Alta Intensidad Humana)",
+      "velocidad_obsolescencia": "Moderada (< 48 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_03",
+      "ocupacion_nombre": "Especialista en Ciberseguridad y Redes",
+      "codigo_ciuo08_oit": "2529",
+      "indice_oportunidad_icol": 72.09,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 50.67,
+      "coeficiente_cobertura_educativa_cce": 0.571,
+      "score_brecha_talento_100": 68.51,
+      "diagnostico_brecha": "Déficit Moderado de Especialistas",
+      "icono_brecha": "🟡",
+      "urgencia_intervencion": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "Firewalls de Red",
+        "Antivirus Corporativo",
+        "VPN IPsec",
+        "ISO 27001 Básico"
+      ],
+      "habilidades_emergentes_2026": [
+        "Arquitectura Zero-Trust",
+        "Criptografía Post-Cuántica",
+        "Detección de Amenazas con IA",
+        "SOAR (Security Orchestration)",
+        "Seguridad de LLMs / Prompt Injection"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Crítico Defensivo",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_06",
+      "ocupacion_nombre": "Profesional de Enfermería y Cuidados Críticos",
+      "codigo_ciuo08_oit": "2221",
+      "indice_oportunidad_icol": 70.72,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 32.67,
+      "coeficiente_cobertura_educativa_cce": 0.809,
+      "score_brecha_talento_100": 66.99,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Toma de Signos Vitales",
+        "Administración de Vías",
+        "Cuidados Generales"
+      ],
+      "habilidades_emergentes_2026": [
+        "Monitoreo Biomédico Continuo IoT",
+        "Triage Digital Inteligente",
+        "Simulación Clínica Avanzada",
+        "Gestión de Cuidados para Envejecimiento Activo"
+      ],
+      "nivel_adopcion_habilidades": "Media",
+      "impacto_ia_automatizacion": "Bajo (Alta Intensidad Humana)",
+      "velocidad_obsolescencia": "Moderada (< 48 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_06",
+      "ocupacion_nombre": "Profesional de Enfermería y Cuidados Críticos",
+      "codigo_ciuo08_oit": "2221",
+      "indice_oportunidad_icol": 58.49,
+      "score_demanda_mercado": 100.0,
+      "score_crecimiento_estimado": 32.67,
+      "coeficiente_cobertura_educativa_cce": 0.7,
+      "score_brecha_talento_100": 65.71,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Toma de Signos Vitales",
+        "Administración de Vías",
+        "Cuidados Generales"
+      ],
+      "habilidades_emergentes_2026": [
+        "Monitoreo Biomédico Continuo IoT",
+        "Triage Digital Inteligente",
+        "Simulación Clínica Avanzada",
+        "Gestión de Cuidados para Envejecimiento Activo"
+      ],
+      "nivel_adopcion_habilidades": "Media",
+      "impacto_ia_automatizacion": "Bajo (Alta Intensidad Humana)",
+      "velocidad_obsolescencia": "Moderada (< 48 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_19",
+      "ocupacion_nombre": "Científico e Investigador en Biotecnología y AgTech",
+      "codigo_ciuo08_oit": "2131",
+      "indice_oportunidad_icol": 70.78,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 45.67,
+      "coeficiente_cobertura_educativa_cce": 0.674,
+      "score_brecha_talento_100": 65.03,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Microbiología Básica",
+        "Ensayos de Campo",
+        "Genética Mendeliana"
+      ],
+      "habilidades_emergentes_2026": [
+        "Modelado de Proteínas con AlphaFold / ESMFold",
+        "Bioinformática de Alto Rendimiento en la Nube",
+        "Bioinsumos y Microbiomas para Suelos",
+        "Agricultura de Precisión Integrada con Sensores Satelitales"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Revolución Científica",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_03",
+      "ocupacion_nombre": "Especialista en Ciberseguridad y Redes",
+      "codigo_ciuo08_oit": "2529",
+      "indice_oportunidad_icol": 67.22,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 50.67,
+      "coeficiente_cobertura_educativa_cce": 0.614,
+      "score_brecha_talento_100": 64.39,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Firewalls de Red",
+        "Antivirus Corporativo",
+        "VPN IPsec",
+        "ISO 27001 Básico"
+      ],
+      "habilidades_emergentes_2026": [
+        "Arquitectura Zero-Trust",
+        "Criptografía Post-Cuántica",
+        "Detección de Amenazas con IA",
+        "SOAR (Security Orchestration)",
+        "Seguridad de LLMs / Prompt Injection"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Crítico Defensivo",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_11",
+      "ocupacion_nombre": "Técnico en Redes Eléctricas Inteligentes (Smart Grids)",
+      "codigo_ciuo08_oit": "3113",
+      "indice_oportunidad_icol": 69.29,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 40.0,
+      "coeficiente_cobertura_educativa_cce": 0.682,
+      "score_brecha_talento_100": 63.38,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Tendido de Líneas",
+        "Tableros Analógicos",
+        "Mantenimiento Preventivo"
+      ],
+      "habilidades_emergentes_2026": [
+        "Subestaciones Digitales IEC 61850",
+        "Medidores AMI Bidireccionales",
+        "Gestión de Microrredes Distribuidas",
+        "Ciberdefensa OT para Infraestructura Crítica"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_03",
+      "ocupacion_nombre": "Especialista en Ciberseguridad y Redes",
+      "codigo_ciuo08_oit": "2529",
+      "indice_oportunidad_icol": 55.16,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 50.67,
+      "coeficiente_cobertura_educativa_cce": 0.568,
+      "score_brecha_talento_100": 62.04,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Firewalls de Red",
+        "Antivirus Corporativo",
+        "VPN IPsec",
+        "ISO 27001 Básico"
+      ],
+      "habilidades_emergentes_2026": [
+        "Arquitectura Zero-Trust",
+        "Criptografía Post-Cuántica",
+        "Detección de Amenazas con IA",
+        "SOAR (Security Orchestration)",
+        "Seguridad de LLMs / Prompt Injection"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Crítico Defensivo",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_14",
+      "ocupacion_nombre": "Guía Especializado en Ecoturismo y Aventura",
+      "codigo_ciuo08_oit": "5113",
+      "indice_oportunidad_icol": 70.25,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 43.67,
+      "coeficiente_cobertura_educativa_cce": 0.828,
+      "score_brecha_talento_100": 61.28,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Rutas Tradicionales",
+        "Guía Oral de Monumentos",
+        "Idiomas Básicos"
+      ],
+      "habilidades_emergentes_2026": [
+        "Turismo Regenerativo y Conservación Activa",
+        "Sistemas de Seguridad y Telemetría Satelital",
+        "Certificación Wilderness First Responder (WFR)",
+        "Interpretación de Biodiversidad con Apps de Ciencia Ciudadana"
+      ],
+      "nivel_adopcion_habilidades": "Media",
+      "impacto_ia_automatizacion": "Bajo (Alta Conexión con la Naturaleza)",
+      "velocidad_obsolescencia": "Lenta (> 48 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_10",
+      "ocupacion_nombre": "Ingeniero de Operaciones de Petróleo, Gas y Minería de Transición",
+      "codigo_ciuo08_oit": "2146",
+      "indice_oportunidad_icol": 66.58,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 29.67,
+      "coeficiente_cobertura_educativa_cce": 0.682,
+      "score_brecha_talento_100": 60.67,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Perforación Convencional",
+        "Metalurgia Tradicional",
+        "Geología Manual"
+      ],
+      "habilidades_emergentes_2026": [
+        "Extracción Directa de Litio (DLE)",
+        "Minería de Cobre Verde con Cero Emisiones",
+        "Gemelos Digitales de Yacimientos",
+        "Monitoreo Sísmico 4D"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Medio-Alto",
+      "velocidad_obsolescencia": "Moderada (< 36 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_11",
+      "ocupacion_nombre": "Técnico en Redes Eléctricas Inteligentes (Smart Grids)",
+      "codigo_ciuo08_oit": "3113",
+      "indice_oportunidad_icol": 64.55,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 40.0,
+      "coeficiente_cobertura_educativa_cce": 0.667,
+      "score_brecha_talento_100": 60.66,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Tendido de Líneas",
+        "Tableros Analógicos",
+        "Mantenimiento Preventivo"
+      ],
+      "habilidades_emergentes_2026": [
+        "Subestaciones Digitales IEC 61850",
+        "Medidores AMI Bidireccionales",
+        "Gestión de Microrredes Distribuidas",
+        "Ciberdefensa OT para Infraestructura Crítica"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_19",
+      "ocupacion_nombre": "Científico e Investigador en Biotecnología y AgTech",
+      "codigo_ciuo08_oit": "2131",
+      "indice_oportunidad_icol": 65.97,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 45.67,
+      "coeficiente_cobertura_educativa_cce": 0.742,
+      "score_brecha_talento_100": 60.58,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Microbiología Básica",
+        "Ensayos de Campo",
+        "Genética Mendeliana"
+      ],
+      "habilidades_emergentes_2026": [
+        "Modelado de Proteínas con AlphaFold / ESMFold",
+        "Bioinformática de Alto Rendimiento en la Nube",
+        "Bioinsumos y Microbiomas para Suelos",
+        "Agricultura de Precisión Integrada con Sensores Satelitales"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Revolución Científica",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_11",
+      "ocupacion_nombre": "Técnico en Redes Eléctricas Inteligentes (Smart Grids)",
+      "codigo_ciuo08_oit": "3113",
+      "indice_oportunidad_icol": 52.63,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 40.0,
+      "coeficiente_cobertura_educativa_cce": 0.539,
+      "score_brecha_talento_100": 60.06,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Tendido de Líneas",
+        "Tableros Analógicos",
+        "Mantenimiento Preventivo"
+      ],
+      "habilidades_emergentes_2026": [
+        "Subestaciones Digitales IEC 61850",
+        "Medidores AMI Bidireccionales",
+        "Gestión de Microrredes Distribuidas",
+        "Ciberdefensa OT para Infraestructura Crítica"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_08",
+      "ocupacion_nombre": "Técnico en Diagnóstico por Imágenes y Bioinformática",
+      "codigo_ciuo08_oit": "3211",
+      "indice_oportunidad_icol": 68.77,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 38.0,
+      "coeficiente_cobertura_educativa_cce": 0.829,
+      "score_brecha_talento_100": 59.77,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Operación de Rayos X",
+        "Tomografía Convencional",
+        "Revelado Digital"
+      ],
+      "habilidades_emergentes_2026": [
+        "Redes Convolucionales para Detección Temprana",
+        "Reconstrucción Tomográfica 3D/4D",
+        "Procesamiento Bioinformático de Imágenes",
+        "Control de Calidad Automatizado con IA"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Muy Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Economía del Conocimiento",
+      "ocupacion_id": "OCUP_19",
+      "ocupacion_nombre": "Científico e Investigador en Biotecnología y AgTech",
+      "codigo_ciuo08_oit": "2131",
+      "indice_oportunidad_icol": 53.98,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 45.67,
+      "coeficiente_cobertura_educativa_cce": 0.669,
+      "score_brecha_talento_100": 58.94,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Microbiología Básica",
+        "Ensayos de Campo",
+        "Genética Mendeliana"
+      ],
+      "habilidades_emergentes_2026": [
+        "Modelado de Proteínas con AlphaFold / ESMFold",
+        "Bioinformática de Alto Rendimiento en la Nube",
+        "Bioinsumos y Microbiomas para Suelos",
+        "Agricultura de Precisión Integrada con Sensores Satelitales"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Revolución Científica",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_15",
+      "ocupacion_nombre": "Coordinador de Operaciones Turísticas Digitales (TravelTech)",
+      "codigo_ciuo08_oit": "3339",
+      "indice_oportunidad_icol": 67.72,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 34.0,
+      "coeficiente_cobertura_educativa_cce": 0.828,
+      "score_brecha_talento_100": 58.74,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Gestión de Paquetes en Agencia",
+        "Emisión Manual GDS"
+      ],
+      "habilidades_emergentes_2026": [
+        "Integraciones API bajo Estándar NDC (IATA)",
+        "Big Data Turístico para Destinos Inteligentes",
+        "E-Commerce Turístico Omnicanal",
+        "Marketing de Hiperpersonalización con IA"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Muy Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_10",
+      "ocupacion_nombre": "Ingeniero de Operaciones de Petróleo, Gas y Minería de Transición",
+      "codigo_ciuo08_oit": "2146",
+      "indice_oportunidad_icol": 61.97,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 29.67,
+      "coeficiente_cobertura_educativa_cce": 0.667,
+      "score_brecha_talento_100": 58.08,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Perforación Convencional",
+        "Metalurgia Tradicional",
+        "Geología Manual"
+      ],
+      "habilidades_emergentes_2026": [
+        "Extracción Directa de Litio (DLE)",
+        "Minería de Cobre Verde con Cero Emisiones",
+        "Gemelos Digitales de Yacimientos",
+        "Monitoreo Sísmico 4D"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Medio-Alto",
+      "velocidad_obsolescencia": "Moderada (< 36 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_14",
+      "ocupacion_nombre": "Guía Especializado en Ecoturismo y Aventura",
+      "codigo_ciuo08_oit": "5113",
+      "indice_oportunidad_icol": 65.47,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 43.67,
+      "coeficiente_cobertura_educativa_cce": 0.845,
+      "score_brecha_talento_100": 58.02,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Rutas Tradicionales",
+        "Guía Oral de Monumentos",
+        "Idiomas Básicos"
+      ],
+      "habilidades_emergentes_2026": [
+        "Turismo Regenerativo y Conservación Activa",
+        "Sistemas de Seguridad y Telemetría Satelital",
+        "Certificación Wilderness First Responder (WFR)",
+        "Interpretación de Biodiversidad con Apps de Ciencia Ciudadana"
+      ],
+      "nivel_adopcion_habilidades": "Media",
+      "impacto_ia_automatizacion": "Bajo (Alta Conexión con la Naturaleza)",
+      "velocidad_obsolescencia": "Lenta (> 48 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_10",
+      "ocupacion_nombre": "Ingeniero de Operaciones de Petróleo, Gas y Minería de Transición",
+      "codigo_ciuo08_oit": "2146",
+      "indice_oportunidad_icol": 50.18,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 29.67,
+      "coeficiente_cobertura_educativa_cce": 0.539,
+      "score_brecha_talento_100": 57.61,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Perforación Convencional",
+        "Metalurgia Tradicional",
+        "Geología Manual"
+      ],
+      "habilidades_emergentes_2026": [
+        "Extracción Directa de Litio (DLE)",
+        "Minería de Cobre Verde con Cero Emisiones",
+        "Gemelos Digitales de Yacimientos",
+        "Monitoreo Sísmico 4D"
+      ],
+      "nivel_adopcion_habilidades": "Muy Alta",
+      "impacto_ia_automatizacion": "Medio-Alto",
+      "velocidad_obsolescencia": "Moderada (< 36 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_08",
+      "ocupacion_nombre": "Técnico en Diagnóstico por Imágenes y Bioinformática",
+      "codigo_ciuo08_oit": "3211",
+      "indice_oportunidad_icol": 64.05,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 38.0,
+      "coeficiente_cobertura_educativa_cce": 0.809,
+      "score_brecha_talento_100": 57.32,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Operación de Rayos X",
+        "Tomografía Convencional",
+        "Revelado Digital"
+      ],
+      "habilidades_emergentes_2026": [
+        "Redes Convolucionales para Detección Temprana",
+        "Reconstrucción Tomográfica 3D/4D",
+        "Procesamiento Bioinformático de Imágenes",
+        "Control de Calidad Automatizado con IA"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Muy Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_12",
+      "ocupacion_nombre": "Auditor y Consultor en Eficiencia Energética",
+      "codigo_ciuo08_oit": "2149",
+      "indice_oportunidad_icol": 65.0,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 47.67,
+      "coeficiente_cobertura_educativa_cce": 0.682,
+      "score_brecha_talento_100": 56.73,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Revisión de Facturas Eléctricas",
+        "Termometría Básica"
+      ],
+      "habilidades_emergentes_2026": [
+        "Norma ISO 50001 con Telemetría IoT",
+        "Cálculo de Huella de Carbono Corporativa Scope 1-3",
+        "Mercados y Créditos de Carbono",
+        "Gemelos Térmicos Industriales"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Medio-Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_08",
+      "ocupacion_nombre": "Técnico en Diagnóstico por Imágenes y Bioinformática",
+      "codigo_ciuo08_oit": "3211",
+      "indice_oportunidad_icol": 52.16,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 38.0,
+      "coeficiente_cobertura_educativa_cce": 0.7,
+      "score_brecha_talento_100": 56.52,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Operación de Rayos X",
+        "Tomografía Convencional",
+        "Revelado Digital"
+      ],
+      "habilidades_emergentes_2026": [
+        "Redes Convolucionales para Detección Temprana",
+        "Reconstrucción Tomográfica 3D/4D",
+        "Procesamiento Bioinformático de Imágenes",
+        "Control de Calidad Automatizado con IA"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Muy Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_15",
+      "ocupacion_nombre": "Coordinador de Operaciones Turísticas Digitales (TravelTech)",
+      "codigo_ciuo08_oit": "3339",
+      "indice_oportunidad_icol": 63.05,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 34.0,
+      "coeficiente_cobertura_educativa_cce": 0.845,
+      "score_brecha_talento_100": 55.6,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Gestión de Paquetes en Agencia",
+        "Emisión Manual GDS"
+      ],
+      "habilidades_emergentes_2026": [
+        "Integraciones API bajo Estándar NDC (IATA)",
+        "Big Data Turístico para Destinos Inteligentes",
+        "E-Commerce Turístico Omnicanal",
+        "Marketing de Hiperpersonalización con IA"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Muy Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_05",
+      "ocupacion_nombre": "Médico General y Especialista",
+      "codigo_ciuo08_oit": "2211",
+      "indice_oportunidad_icol": 64.48,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 21.67,
+      "coeficiente_cobertura_educativa_cce": 0.829,
+      "score_brecha_talento_100": 55.48,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Examen Físico Clínico",
+        "Prescripción Farmacológica",
+        "Historia Clínica en Papel"
+      ],
+      "habilidades_emergentes_2026": [
+        "Diagnóstico Predictivo Asistido por IA",
+        "Telemedicina e Interoperabilidad HL7/FHIR",
+        "Medicina Genómica Personalizada",
+        "Monitoreo Remoto de Pacientes"
+      ],
+      "nivel_adopcion_habilidades": "Media-Alta",
+      "impacto_ia_automatizacion": "Asistencia / Aumento Humano",
+      "velocidad_obsolescencia": "Moderada (< 48 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_14",
+      "ocupacion_nombre": "Guía Especializado en Ecoturismo y Aventura",
+      "codigo_ciuo08_oit": "5113",
+      "indice_oportunidad_icol": 53.5,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 43.67,
+      "coeficiente_cobertura_educativa_cce": 0.835,
+      "score_brecha_talento_100": 55.31,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Rutas Tradicionales",
+        "Guía Oral de Monumentos",
+        "Idiomas Básicos"
+      ],
+      "habilidades_emergentes_2026": [
+        "Turismo Regenerativo y Conservación Activa",
+        "Sistemas de Seguridad y Telemetría Satelital",
+        "Certificación Wilderness First Responder (WFR)",
+        "Interpretación de Biodiversidad con Apps de Ciencia Ciudadana"
+      ],
+      "nivel_adopcion_habilidades": "Media",
+      "impacto_ia_automatizacion": "Bajo (Alta Conexión con la Naturaleza)",
+      "velocidad_obsolescencia": "Lenta (> 48 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_12",
+      "ocupacion_nombre": "Auditor y Consultor en Eficiencia Energética",
+      "codigo_ciuo08_oit": "2149",
+      "indice_oportunidad_icol": 60.47,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 47.67,
+      "coeficiente_cobertura_educativa_cce": 0.667,
+      "score_brecha_talento_100": 54.33,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Revisión de Facturas Eléctricas",
+        "Termometría Básica"
+      ],
+      "habilidades_emergentes_2026": [
+        "Norma ISO 50001 con Telemetría IoT",
+        "Cálculo de Huella de Carbono Corporativa Scope 1-3",
+        "Mercados y Créditos de Carbono",
+        "Gemelos Térmicos Industriales"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Medio-Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Energía",
+      "ocupacion_id": "OCUP_12",
+      "ocupacion_nombre": "Auditor y Consultor en Eficiencia Energética",
+      "codigo_ciuo08_oit": "2149",
+      "indice_oportunidad_icol": 48.75,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 47.67,
+      "coeficiente_cobertura_educativa_cce": 0.539,
+      "score_brecha_talento_100": 54.04,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Revisión de Facturas Eléctricas",
+        "Termometría Básica"
+      ],
+      "habilidades_emergentes_2026": [
+        "Norma ISO 50001 con Telemetría IoT",
+        "Cálculo de Huella de Carbono Corporativa Scope 1-3",
+        "Mercados y Créditos de Carbono",
+        "Gemelos Térmicos Industriales"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Medio-Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_05",
+      "ocupacion_nombre": "Médico General y Especialista",
+      "codigo_ciuo08_oit": "2211",
+      "indice_oportunidad_icol": 59.97,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 21.67,
+      "coeficiente_cobertura_educativa_cce": 0.809,
+      "score_brecha_talento_100": 53.24,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Examen Físico Clínico",
+        "Prescripción Farmacológica",
+        "Historia Clínica en Papel"
+      ],
+      "habilidades_emergentes_2026": [
+        "Diagnóstico Predictivo Asistido por IA",
+        "Telemedicina e Interoperabilidad HL7/FHIR",
+        "Medicina Genómica Personalizada",
+        "Monitoreo Remoto de Pacientes"
+      ],
+      "nivel_adopcion_habilidades": "Media-Alta",
+      "impacto_ia_automatizacion": "Asistencia / Aumento Humano",
+      "velocidad_obsolescencia": "Moderada (< 48 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_15",
+      "ocupacion_nombre": "Coordinador de Operaciones Turísticas Digitales (TravelTech)",
+      "codigo_ciuo08_oit": "3339",
+      "indice_oportunidad_icol": 51.21,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 34.0,
+      "coeficiente_cobertura_educativa_cce": 0.835,
+      "score_brecha_talento_100": 53.01,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Gestión de Paquetes en Agencia",
+        "Emisión Manual GDS"
+      ],
+      "habilidades_emergentes_2026": [
+        "Integraciones API bajo Estándar NDC (IATA)",
+        "Big Data Turístico para Destinos Inteligentes",
+        "E-Commerce Turístico Omnicanal",
+        "Marketing de Hiperpersonalización con IA"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Muy Alto",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_05",
+      "ocupacion_nombre": "Médico General y Especialista",
+      "codigo_ciuo08_oit": "2211",
+      "indice_oportunidad_icol": 48.28,
+      "score_demanda_mercado": 80.0,
+      "score_crecimiento_estimado": 21.67,
+      "coeficiente_cobertura_educativa_cce": 0.7,
+      "score_brecha_talento_100": 52.65,
+      "diagnostico_brecha": "Equilibrio Oferta-Demanda",
+      "icono_brecha": "🟢",
+      "urgencia_intervencion": "Prioridad 3: Monitoreo Regular",
+      "habilidades_tradicionales": [
+        "Examen Físico Clínico",
+        "Prescripción Farmacológica",
+        "Historia Clínica en Papel"
+      ],
+      "habilidades_emergentes_2026": [
+        "Diagnóstico Predictivo Asistido por IA",
+        "Telemedicina e Interoperabilidad HL7/FHIR",
+        "Medicina Genómica Personalizada",
+        "Monitoreo Remoto de Pacientes"
+      ],
+      "nivel_adopcion_habilidades": "Media-Alta",
+      "impacto_ia_automatizacion": "Asistencia / Aumento Humano",
+      "velocidad_obsolescencia": "Moderada (< 48 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_13",
+      "ocupacion_nombre": "Administrador de Servicios Hoteleros y Experiencia de Huésped",
+      "codigo_ciuo08_oit": "1411",
+      "indice_oportunidad_icol": 59.05,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 25.0,
+      "coeficiente_cobertura_educativa_cce": 0.828,
+      "score_brecha_talento_100": 47.71,
+      "diagnostico_brecha": "Superávit Relativo / Saturación",
+      "icono_brecha": "🔵",
+      "urgencia_intervencion": "Prioridad 4: Reconversión Hacia Nichos",
+      "habilidades_tradicionales": [
+        "Recepción y Conserjería",
+        "Control Manual de Reservas",
+        "Libro de Huéspedes"
+      ],
+      "habilidades_emergentes_2026": [
+        "Pricing Dinámico Algorítmico (Revenue Management con IA)",
+        "Check-in Biométrico y Llaves Digitales",
+        "Estándares de Sostenibilidad Turística ESG",
+        "Análisis de Sentimiento de Reseñas"
+      ],
+      "nivel_adopcion_habilidades": "Media-Alta",
+      "impacto_ia_automatizacion": "Alto en Operaciones",
+      "velocidad_obsolescencia": "Moderada (< 36 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_07",
+      "ocupacion_nombre": "Bioquímico y Farmacéutico Clínico",
+      "codigo_ciuo08_oit": "2262",
+      "indice_oportunidad_icol": 58.79,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 24.0,
+      "coeficiente_cobertura_educativa_cce": 0.829,
+      "score_brecha_talento_100": 47.43,
+      "diagnostico_brecha": "Superávit Relativo / Saturación",
+      "icono_brecha": "🔵",
+      "urgencia_intervencion": "Prioridad 4: Reconversión Hacia Nichos",
+      "habilidades_tradicionales": [
+        "Bioquímica Básica",
+        "Dispensación de Fármacos",
+        "Cultivos Clásicos"
+      ],
+      "habilidades_emergentes_2026": [
+        "Edición Génica CRISPR/Cas9",
+        "Cribado Virtual de Fármacos (In Silico)",
+        "Secuenciación de Próxima Generación (NGS)",
+        "Farmacovigilancia Basada en Big Data"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Transformador",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_16",
+      "ocupacion_nombre": "Chef Ejecutivo y Gestor Gastronómico Sostenible",
+      "codigo_ciuo08_oit": "3434",
+      "indice_oportunidad_icol": 58.44,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 22.67,
+      "coeficiente_cobertura_educativa_cce": 0.828,
+      "score_brecha_talento_100": 47.1,
+      "diagnostico_brecha": "Superávit Relativo / Saturación",
+      "icono_brecha": "🔵",
+      "urgencia_intervencion": "Prioridad 4: Reconversión Hacia Nichos",
+      "habilidades_tradicionales": [
+        "Cocina Tradicional",
+        "Escandallos en Papel",
+        "BPM Básica"
+      ],
+      "habilidades_emergentes_2026": [
+        "Gastronomía Circular y Cero Desperdicio (Zero-Waste)",
+        "Trazabilidad Blockchain de Proveedores Km 0",
+        "Fermentación de Precisión y Alimentos Plant-Based",
+        "Software ERP Integrado de Costos y Mermas"
+      ],
+      "nivel_adopcion_habilidades": "Media-Alta",
+      "impacto_ia_automatizacion": "Bajo en Creación / Alto en Logística",
+      "velocidad_obsolescencia": "Moderada (< 36 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_07",
+      "ocupacion_nombre": "Bioquímico y Farmacéutico Clínico",
+      "codigo_ciuo08_oit": "2262",
+      "indice_oportunidad_icol": 54.55,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 24.0,
+      "coeficiente_cobertura_educativa_cce": 0.809,
+      "score_brecha_talento_100": 45.57,
+      "diagnostico_brecha": "Superávit Relativo / Saturación",
+      "icono_brecha": "🔵",
+      "urgencia_intervencion": "Prioridad 4: Reconversión Hacia Nichos",
+      "habilidades_tradicionales": [
+        "Bioquímica Básica",
+        "Dispensación de Fármacos",
+        "Cultivos Clásicos"
+      ],
+      "habilidades_emergentes_2026": [
+        "Edición Génica CRISPR/Cas9",
+        "Cribado Virtual de Fármacos (In Silico)",
+        "Secuenciación de Próxima Generación (NGS)",
+        "Farmacovigilancia Basada en Big Data"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Transformador",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Salud",
+      "ocupacion_id": "OCUP_07",
+      "ocupacion_nombre": "Bioquímico y Farmacéutico Clínico",
+      "codigo_ciuo08_oit": "2262",
+      "indice_oportunidad_icol": 43.13,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 24.0,
+      "coeficiente_cobertura_educativa_cce": 0.7,
+      "score_brecha_talento_100": 45.36,
+      "diagnostico_brecha": "Superávit Relativo / Saturación",
+      "icono_brecha": "🔵",
+      "urgencia_intervencion": "Prioridad 4: Reconversión Hacia Nichos",
+      "habilidades_tradicionales": [
+        "Bioquímica Básica",
+        "Dispensación de Fármacos",
+        "Cultivos Clásicos"
+      ],
+      "habilidades_emergentes_2026": [
+        "Edición Génica CRISPR/Cas9",
+        "Cribado Virtual de Fármacos (In Silico)",
+        "Secuenciación de Próxima Generación (NGS)",
+        "Farmacovigilancia Basada en Big Data"
+      ],
+      "nivel_adopcion_habilidades": "Alta",
+      "impacto_ia_automatizacion": "Transformador",
+      "velocidad_obsolescencia": "Rápida (< 24 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_13",
+      "ocupacion_nombre": "Administrador de Servicios Hoteleros y Experiencia de Huésped",
+      "codigo_ciuo08_oit": "1411",
+      "indice_oportunidad_icol": 54.8,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 25.0,
+      "coeficiente_cobertura_educativa_cce": 0.845,
+      "score_brecha_talento_100": 45.1,
+      "diagnostico_brecha": "Superávit Relativo / Saturación",
+      "icono_brecha": "🔵",
+      "urgencia_intervencion": "Prioridad 4: Reconversión Hacia Nichos",
+      "habilidades_tradicionales": [
+        "Recepción y Conserjería",
+        "Control Manual de Reservas",
+        "Libro de Huéspedes"
+      ],
+      "habilidades_emergentes_2026": [
+        "Pricing Dinámico Algorítmico (Revenue Management con IA)",
+        "Check-in Biométrico y Llaves Digitales",
+        "Estándares de Sostenibilidad Turística ESG",
+        "Análisis de Sentimiento de Reseñas"
+      ],
+      "nivel_adopcion_habilidades": "Media-Alta",
+      "impacto_ia_automatizacion": "Alto en Operaciones",
+      "velocidad_obsolescencia": "Moderada (< 36 meses)"
+    },
+    {
+      "pais_codigo_iso3": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_16",
+      "ocupacion_nombre": "Chef Ejecutivo y Gestor Gastronómico Sostenible",
+      "codigo_ciuo08_oit": "3434",
+      "indice_oportunidad_icol": 54.22,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 22.67,
+      "coeficiente_cobertura_educativa_cce": 0.845,
+      "score_brecha_talento_100": 44.52,
+      "diagnostico_brecha": "Superávit Relativo / Saturación",
+      "icono_brecha": "🔵",
+      "urgencia_intervencion": "Prioridad 4: Reconversión Hacia Nichos",
+      "habilidades_tradicionales": [
+        "Cocina Tradicional",
+        "Escandallos en Papel",
+        "BPM Básica"
+      ],
+      "habilidades_emergentes_2026": [
+        "Gastronomía Circular y Cero Desperdicio (Zero-Waste)",
+        "Trazabilidad Blockchain de Proveedores Km 0",
+        "Fermentación de Precisión y Alimentos Plant-Based",
+        "Software ERP Integrado de Costos y Mermas"
+      ],
+      "nivel_adopcion_habilidades": "Media-Alta",
+      "impacto_ia_automatizacion": "Bajo en Creación / Alto en Logística",
+      "velocidad_obsolescencia": "Moderada (< 36 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_13",
+      "ocupacion_nombre": "Administrador de Servicios Hoteleros y Experiencia de Huésped",
+      "codigo_ciuo08_oit": "1411",
+      "indice_oportunidad_icol": 43.37,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 25.0,
+      "coeficiente_cobertura_educativa_cce": 0.835,
+      "score_brecha_talento_100": 43.03,
+      "diagnostico_brecha": "Superávit Relativo / Saturación",
+      "icono_brecha": "🔵",
+      "urgencia_intervencion": "Prioridad 4: Reconversión Hacia Nichos",
+      "habilidades_tradicionales": [
+        "Recepción y Conserjería",
+        "Control Manual de Reservas",
+        "Libro de Huéspedes"
+      ],
+      "habilidades_emergentes_2026": [
+        "Pricing Dinámico Algorítmico (Revenue Management con IA)",
+        "Check-in Biométrico y Llaves Digitales",
+        "Estándares de Sostenibilidad Turística ESG",
+        "Análisis de Sentimiento de Reseñas"
+      ],
+      "nivel_adopcion_habilidades": "Media-Alta",
+      "impacto_ia_automatizacion": "Alto en Operaciones",
+      "velocidad_obsolescencia": "Moderada (< 36 meses)"
+    },
+    {
+      "pais_codigo_iso3": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Turismo",
+      "ocupacion_id": "OCUP_16",
+      "ocupacion_nombre": "Chef Ejecutivo y Gestor Gastronómico Sostenible",
+      "codigo_ciuo08_oit": "3434",
+      "indice_oportunidad_icol": 42.81,
+      "score_demanda_mercado": 65.0,
+      "score_crecimiento_estimado": 22.67,
+      "coeficiente_cobertura_educativa_cce": 0.835,
+      "score_brecha_talento_100": 42.48,
+      "diagnostico_brecha": "Superávit Relativo / Saturación",
+      "icono_brecha": "🔵",
+      "urgencia_intervencion": "Prioridad 4: Reconversión Hacia Nichos",
+      "habilidades_tradicionales": [
+        "Cocina Tradicional",
+        "Escandallos en Papel",
+        "BPM Básica"
+      ],
+      "habilidades_emergentes_2026": [
+        "Gastronomía Circular y Cero Desperdicio (Zero-Waste)",
+        "Trazabilidad Blockchain de Proveedores Km 0",
+        "Fermentación de Precisión y Alimentos Plant-Based",
+        "Software ERP Integrado de Costos y Mermas"
+      ],
+      "nivel_adopcion_habilidades": "Media-Alta",
+      "impacto_ia_automatizacion": "Bajo en Creación / Alto en Logística",
+      "velocidad_obsolescencia": "Moderada (< 36 meses)"
+    }
+  ],
+  "_actualizado": "2026-11-04T16:33:36+00:00",
+  "_fuente": "DataAnalyst@45abdfc:/api/v1/ds/brechas-habilidades"
+}

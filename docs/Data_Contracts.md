@@ -147,6 +147,61 @@ Si el archivo ya viene en el esquema común de Data (las 10 columnas
 reingerir el golden dataset regional (`dataset_consolidado_regional.csv`) sin
 pérdidas: 135 registros, 45 por país.
 
+## 4.4 Brechas de talento y oferta formativa (issue #74)
+
+Los endpoints `GET /api/v1/skills`, `GET /api/v1/skills/{ocupacion_id}` y
+`GET /api/v1/gaps` consumen el **módulo de Data Science** del equipo de Data
+(`DataAnalyst/etl/data_science.py`, publicado el 02/11) y lo normalizan a un
+contrato propio, para que el Frontend no dependa de la forma interna de Data.
+
+### 4.4.1 Correspondencia de campos
+
+| Campo de Data | Campo del contrato | Nota |
+| :--- | :--- | :--- |
+| `pais_codigo_iso3` | `pais` | Se normaliza a mayúsculas |
+| `sector` | `sector` | Nombre canónico del catálogo del Backend |
+| `ocupacion_id` / `ocupacion_nombre` | `ocupacion_id` / `ocupacion_nombre` | |
+| `codigo_ciuo08_oit` | `ciuo08` | |
+| `indice_oportunidad_icol` | `icol` | |
+| `score_brecha_talento_100` | `score_brecha` | *Talent Gap Score* (0-100) |
+| `coeficiente_cobertura_educativa_cce` | `cce` | Coeficiente de cobertura educativa |
+| `diagnostico_brecha` / `icono_brecha` / `urgencia_intervencion` | `diagnostico` / `icono` / `urgencia` | |
+| `habilidades_tradicionales` | `habilidades_tradicionales` | Lista (Data puede devolver texto separado por comas) |
+| `habilidades_emergentes_2026` | `habilidades_emergentes` | Lista |
+| `nivel_adopcion_habilidades` / `impacto_ia_automatizacion` / `velocidad_obsolescencia` | `nivel_adopcion` / `impacto_ia` / `obsolescencia` | |
+| `egresados_anuales_estimados` | `egresados_anuales` | Estimación (`is_projection: true`) |
+| `demanda_anual_puestos_nuevos` | `demanda_anual` | Estimación |
+| `brecha_anual_puestos_deficit` | `deficit_anual` | Estimación |
+| `diagnostico_descalce` / `estado_alerta` / `semaforo` | `diagnostico` / `estado` / `semaforo` | |
+| `fuentes_oficiales_cruzadas` | `fuentes` | Lista |
+
+### 4.4.2 Envoltura de la respuesta
+
+```json
+{
+  "meta": { "fuente": "live", "actualizado": null, "detalle": "" },
+  "filtros": { "pais": "URY", "sector": "Tecnología" },
+  "total": 20,
+  "items": [ ... ]
+}
+```
+
+* `meta.fuente`: `live` (API de Data), `cache` (respuesta reciente en memoria),
+  `reference` (snapshot commiteado en `data/reference/`) o **503** si no hay ninguna.
+* `meta.actualizado`: fecha del snapshot de referencia (o `null` en `live`).
+* `is_projection`: las cifras educativas y de demanda son **estimaciones**.
+
+### 4.4.3 Validaciones
+
+| Situación | Respuesta |
+| :--- | :--- |
+| `pais` fuera de ARG/CHL/URY | **400** |
+| `sector` fuera de los 5 del catálogo (por código, slug o nombre) | **422** |
+| `ocupacion_id` con formato inválido (`OCC-1`) | **422** |
+| `ocupacion_id` válido pero fuera de catálogo (`OCUP_99`) | **404** |
+| Ocupación sin datos de brecha | **404** |
+| Data caído, sin caché y sin referencia | **503** |
+
 ## 5. Desviaciones respecto de la definición aprobada
 
 Las desviaciones están acordadas con el equipo de Data y quedan pendientes de

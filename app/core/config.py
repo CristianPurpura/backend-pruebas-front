@@ -15,6 +15,13 @@ class Settings(BaseSettings):
     raw_dir: str = "data/raw"
     processed_dir: str = "data/processed"
     quarantine_dir: str = "data/quarantine"
+    reference_dir: str = "data/reference"
+
+    # API del equipo de Data (repo `DataAnalyst`): módulo de Data Science con
+    # brechas de talento, habilidades emergentes y comparativa educativo-laboral.
+    data_api_url: str = "http://127.0.0.1:8001"
+    data_api_timeout: float = 5.0
+    data_cache_ttl: int = 300
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

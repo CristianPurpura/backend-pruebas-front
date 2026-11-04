@@ -176,6 +176,9 @@ python3 -m uvicorn app.main:app --reload
 | `GET` | `/api/v1/employability` | `Employability` | Índice de empleabilidad: serie macro (IDELR) y ranking por ocupación (ICOL) |
 | `POST` | `/api/v1/employability/snapshot` | `Snapshots` | Calcula los índices y **guarda** el resultado en la base para poder mirar el pasado (idempotente) |
 | `GET` | `/api/v1/employability/history` | `Snapshots` | Histórico de resultados guardados. Filtros: `tipo`, `pais`, `ocupacion`, `anio_desde`, `anio_hasta`, `limite` |
+| `GET` | `/api/v1/skills` | `Data Science` | Brechas de talento con habilidades emergentes. Filtros: `pais`, `sector` |
+| `GET` | `/api/v1/skills/{ocupacion_id}` | `Data Science` | Brecha de una ocupación en los 3 países. `?pais=ARG` |
+| `GET` | `/api/v1/gaps` | `Data Science` | Oferta formativa: demanda laboral vs. egresados por sector. Filtro: `pais` |
 
 ### Catálogos para el Frontend
 
@@ -449,6 +452,69 @@ curl "http://localhost:8000/api/v1/employability/history?tipo=IDELR&anio_desde=2
 > `metodologia_version` permite distinguir snapshots comparables: si cambia la fórmula o los
 > pesos, se incrementa la versión y los históricos de cada versión siguen siendo distinguibles.
 
+## 7.c Brechas de talento y oferta formativa (Issue #74)
+
+Consume el **módulo de Data Science** del equipo de Data (`DataAnalyst/etl/data_science.py`),
+publicado el 02/11, a través de un cliente con cache y fallback.
+
+| Endpoint | Qué responde |
+| :--- | :--- |
+| `GET /api/v1/skills?pais=&sector=` | Ranking de brechas de talento: *Talent Gap Score* (0-100), diagnóstico, habilidades tradicionales y emergentes 2026+ |
+| `GET /api/v1/skills/{ocupacion_id}?pais=` | Brecha de una ocupación en los 3 países (o en el pedido) |
+| `GET /api/v1/gaps?pais=` | **Oferta formativa**: egresados vs. demanda de nuevos puestos por sector, déficit anual, CCE y semáforo |
+
+### Degradación en tres niveles
+
+El frontend nunca se queda sin datos:
+
+| Nivel | Cuándo | `meta.fuente` |
+| :--- | :--- | :--- |
+| **live** | La API de Data responde | `live` |
+| **cache** | Data falló, pero hay una respuesta reciente en memoria (TTL 300 s) | `cache` |
+| **reference** | Data falló y no hay cache → snapshot commiteado en `data/reference/` | `reference` |
+| — | Ninguna fuente disponible | **503** con mensaje claro |
+
+### Configuración
+
+| Variable | Default | Para qué |
+| :--- | :--- | :--- |
+| `DATA_API_URL` | `http://127.0.0.1:8001` | Base de la API de Data |
+| `DATA_API_TIMEOUT` | `5.0` | Timeout de la llamada (segundos) |
+| `DATA_CACHE_TTL` | `300` | TTL de la caché en memoria (segundos) |
+
+### Regenerar los snapshots de referencia
+
+```bash
+# Con la API de Data levantada en :8001
+python scripts/generar_referencia.py
+```
+
+```jsonc
+// GET /api/v1/skills?pais=URY  →  200 OK
+{
+  "meta": { "fuente": "live", "actualizado": null, "detalle": "" },
+  "filtros": { "pais": "URY", "sector": null },
+  "total": 20,
+  "items": [
+    {
+      "pais": "URY",
+      "ocupacion_id": "OCUP_02",
+      "ocupacion_nombre": "Ingeniero de Datos y Machine Learning",
+      "icol": 88.19,
+      "score_brecha": 87.76,
+      "cce": 0.571,
+      "diagnostico": "Déficit Crítico de Talento",
+      "icono": "🔴",
+      "habilidades_emergentes": ["Arquitecturas RAG", "Edge AI", "LLMOps & Model Governance"],
+      "is_projection": true
+    }
+  ]
+}
+```
+
+> Las cifras educativas y de demanda son **estimaciones** (`is_projection: true`): por eso cada
+> ítem incluye el semáforo y las fuentes oficiales que reporta Data.
+
 ## 8. Tests
 
 La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesidad de servidor corriendo):
@@ -457,7 +523,8 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual (**147 tests**, 0 omitidos con el repo de Data disponible): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback` y coherencia del ICOL con `/employability`) y `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**).
+* Cobertura actual (**183 tests**, 0 omitidos con el repo de Data disponible): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback` y coherencia del ICOL con `/employability`), `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**), `POST /employability/snapshot` + `GET /employability/history` (persistencia histórica) y `GET /skills` / `skills/{id}` / `gaps` (brechas y oferta formativa).
+* `tests/test_datascience.py` cubre el módulo de brechas **sin usar la red** (`httpx.MockTransport`): normalización del payload de Data, filtros de país y sector, validaciones, y toda la cadena de degradación (`live` → `cache` → `reference` → `503`).
 * `tests/test_employability_metodologia.py` verifica la **metodología visible**: los pesos del IDELR y del ICOL suman `1.0`, el endpoint expone las 5 dimensiones y es espejo exacto de `VARIABLES_IDELR` / `DEFAULT_ICOL_WEIGHTS`, y los umbrales de categoría se comprueban en su borde exacto (85 / 70 / 55).
 * Los tests escriben siempre en `tmp_path`: el fixture `output_dirs` es `autouse`, así que la suite no ensucia `data/processed/` ni `data/quarantine/`.
 * Los casos **API-001..API-016** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
