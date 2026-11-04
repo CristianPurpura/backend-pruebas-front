@@ -2,6 +2,11 @@
 
 Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) con el alcance semanal del proyecto[cite: 1].
 
+> **Estado al 04/11/2026:** Sprint 0 y Sprint 1 cerrados; Sprint 2 cerrado en su
+> parte de cálculos (suite **147 tests, 0 omitidos**, ver `docs/QA_ISSUE_58_CONSISTENCIA.md`);
+> Sprint 3 y 4 pendientes. El equipo de Data publicó el 02/11 el módulo de
+> brechas, habilidades y alertas (`/api/v1/ds/*`), que es el insumo de S3/S4.
+
 ## Sprint 0: Configuración y Fundaciones (Semana 0)
 * [x] **Issue #8 (En Ready):** Configurar backend, base de datos y estructura inicial de APIs internas[cite: 1] — *parcial: DB diferida a Sprint 1.*
   * Configurar proyecto base en FastAPI (`pyproject.toml` o `requirements.txt`).[cite: 1]
@@ -28,14 +33,14 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
 
 ## Sprint 3: Series Temporales y Habilidades (Semanas 5 y 6)
 * [ ] Crear endpoints de series históricas optimizados para alimentar gráficos de líneas/barras[cite: 1].
-* [ ] Lógica para clasificar ocupaciones en tendencia: alza, estabilidad o caída[cite: 1].
-* [ ] Exponer modelo relacional de brechas de habilidades (oferta formativa vs. demanda)[cite: 1].
-* [ ] Asegurar trazabilidad completa en cada respuesta (fuente oficial y fecha de actualización)[cite: 1].
+* [ ] Lógica para clasificar ocupaciones en tendencia: alza, estabilidad o caída[cite: 1] — *base lista: `clasificar_tendencia(delta, epsilon=1.0)` en `app/services/calculators/employability.py`; falta exponerla como endpoint (#67).*
+* [ ] Exponer modelo relacional de brechas de habilidades (oferta formativa vs. demanda)[cite: 1] — *contrato ya publicado por Data el 02/11: `GET /api/v1/ds/brechas-habilidades` y `GET /api/v1/ds/comparativa-educativo-laboral` (#74/#75).*
+* [ ] Asegurar trazabilidad completa en cada respuesta (fuente oficial y fecha de actualización)[cite: 1] — *parcial: `fuente_datos`, `metodologia.fuente_metodologia` y `trazabilidad` ya están en las respuestas actuales; falta extenderlo a los endpoints nuevos.*
 
 ## Sprint 4: Automatización y Alertas (Semanas 7 y 8)
 * [ ] Implementar tareas programadas (schedulers) para sincronización automática de APIs oficiales[cite: 1].
-* [ ] Desarrollar motor de detección de variaciones drásticas en indicadores clave[cite: 1].
-* [ ] Exponer `/api/v1/alerts` clasificado por severidad (baja, media, alta)[cite: 1].
+* [ ] Desarrollar motor de detección de variaciones drásticas en indicadores clave[cite: 1] — *reglas R1-R4 ya definidas por Data (`GET /api/v1/ds/reglas-deteccion`); falta el motor propio del backend (#86/#87).*
+* [ ] Exponer `/api/v1/alerts` clasificado por severidad (baja, media, alta)[cite: 1] — *Data ya expone `GET /api/v1/ds/alertas-tendencias` con severidades CRÍTICA/ALTA/MODERADA (#84/#87).*
 * [ ] Registrar logs de ejecuciones automáticas y fallos de red[cite: 1].
 
 ## Sprint 5: Optimización y Estabilización (Semanas 9 y 10)
