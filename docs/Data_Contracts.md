@@ -165,6 +165,11 @@ contrato propio, para que el Frontend no dependa de la forma interna de Data.
 | `indice_oportunidad_icol` | `icol` | |
 | `score_brecha_talento_100` | `score_brecha` | *Talent Gap Score* (0-100) |
 | `coeficiente_cobertura_educativa_cce` | `cce` | Coeficiente de cobertura educativa |
+| `score_demanda_mercado` | `score_demanda_100` | Score de demanda del mercado (0-100) |
+| `score_crecimiento_estimado` | `score_crecimiento_100` | Score de crecimiento estimado (0-100) |
+| (derivado) | `factor_madurez_pais` | `URY 1.05`, `CHL 1.00`, `ARG 0.95` |
+| (derivado) | `brecha_cobertura_pct` | `max(0, 1 − CCE) × 100` |
+| (derivado) | `tgs_desglose` | Desglose 55/25/20 del TGS (demanda, crecimiento y cobertura) |
 | `diagnostico_brecha` / `icono_brecha` / `urgencia_intervencion` | `diagnostico` / `icono` / `urgencia` | |
 | `habilidades_tradicionales` | `habilidades_tradicionales` | Lista (Data puede devolver texto separado por comas) |
 | `habilidades_emergentes_2026` | `habilidades_emergentes` | Lista |
