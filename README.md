@@ -179,6 +179,7 @@ python3 -m uvicorn app.main:app --reload
 | `GET` | `/api/v1/skills` | `Data Science` | Brechas de talento con habilidades emergentes. Filtros: `pais`, `sector` |
 | `GET` | `/api/v1/skills/{ocupacion_id}` | `Data Science` | Brecha de una ocupación en los 3 países. `?pais=ARG` |
 | `GET` | `/api/v1/gaps` | `Data Science` | Oferta formativa: demanda laboral vs. egresados por sector. Filtro: `pais` |
+| `GET` | `/api/v1/gaps/summary` | `Data Science` | Agregados de oferta/demanda por país y sector, con CCE ponderado y brecha de cobertura. Filtros: `pais`, `sector` |
 
 ### Catálogos para el Frontend
 
@@ -462,6 +463,7 @@ publicado el 02/11, a través de un cliente con cache y fallback.
 | `GET /api/v1/skills?pais=&sector=` | Ranking de brechas de talento: *Talent Gap Score* (0-100), diagnóstico, habilidades tradicionales y emergentes 2026+ |
 | `GET /api/v1/skills/{ocupacion_id}?pais=` | Brecha de una ocupación en los 3 países (o en el pedido) |
 | `GET /api/v1/gaps?pais=` | **Oferta formativa**: egresados vs. demanda de nuevos puestos por sector, déficit anual, CCE y semáforo |
+| `GET /api/v1/gaps/summary?pais=&sector=` | **Agregados para el dashboard**: totales por país y sector, CCE ponderado por demanda y brecha de cobertura |
 
 ### Degradación en tres niveles
 
@@ -523,8 +525,9 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual (**183 tests**, 0 omitidos con el repo de Data disponible): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback` y coherencia del ICOL con `/employability`), `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**), `POST /employability/snapshot` + `GET /employability/history` (persistencia histórica) y `GET /skills` / `skills/{id}` / `gaps` (brechas y oferta formativa).
+* Cobertura actual (**232 tests**, 0 omitidos con el repo de Data disponible): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback` y coherencia del ICOL con `/employability`), `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**), `POST /employability/snapshot` + `GET /employability/history` (persistencia histórica) y `GET /skills` / `skills/{id}` / `gaps` / `gaps/summary` (brechas, oferta formativa y agregados para el dashboard).
 * `tests/test_datascience.py` cubre el módulo de brechas **sin usar la red** (`httpx.MockTransport`): normalización del payload de Data, filtros de país y sector, validaciones, y toda la cadena de degradación (`live` → `cache` → `reference` → `503`).
+* `tests/test_datascience_metodologia.py` verifica la **fórmula oficial del TGS**: pesos, umbrales en el borde exacto y paridad con los 60 registros de referencia. `tests/test_datascience_contrato.py` blinda los invariantes (`CCE = O/D`, `déficit = D − O`), los agregados de `gaps/summary` y que el mock `docs/mocks/gaps_summary.json` no se desactualice.
 * `tests/test_employability_metodologia.py` verifica la **metodología visible**: los pesos del IDELR y del ICOL suman `1.0`, el endpoint expone las 5 dimensiones y es espejo exacto de `VARIABLES_IDELR` / `DEFAULT_ICOL_WEIGHTS`, y los umbrales de categoría se comprueban en su borde exacto (85 / 70 / 55).
 * Los tests escriben siempre en `tmp_path`: el fixture `output_dirs` es `autouse`, así que la suite no ensucia `data/processed/` ni `data/quarantine/`.
 * Los casos **API-001..API-016** de la matriz QA se ejecutan contra la API del equipo Data (repo `DataAnalyst`): el fixture la levanta con uvicorn desde `DATA_API_PATH` (por defecto `/tmp/opencode/DataAnalyst`) o usa una instancia corriendo en `DATA_API_URL` (default `http://127.0.0.1:8001`). Si no hay repo ni instancia, esos tests se omiten (skip).
