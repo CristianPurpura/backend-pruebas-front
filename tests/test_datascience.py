@@ -15,8 +15,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.schemas.datascience import DataSourceMeta, GapItem
 from app.services.datascience import client as data_client
 from app.services.datascience import mapper
+from app.services.datascience.summary import construir_resumen
 
 # ---------------------------------------------------------------------------
 # Payloads de ejemplo (misma forma que produce `DataAnalyst`)
@@ -336,6 +338,145 @@ def test_porcentaje_parsea_texto_de_data():
     assert mapper._porcentaje(4.2) == 4.2
     assert mapper._porcentaje("sin numero") is None
     assert mapper._porcentaje(None) is None
+
+
+# ---------------------------------------------------------------------------
+# /gaps/summary
+# ---------------------------------------------------------------------------
+def test_gaps_summary_calcula_agregados(mock_data):
+    """Los totales y el CCE ponderado se calculan en el Backend."""
+    mock_data()
+
+    response = TestClient(app).get("/api/v1/gaps/summary")
+
+    assert response.status_code == 200
+    cuerpo = response.json()
+    assert cuerpo["total_sectores"] == 2
+
+    totales = cuerpo["totales"]
+    assert totales["demanda_anual"] == 10100
+    assert totales["egresados_anuales"] == 5300
+    assert totales["deficit_bruto"] == 4800
+    assert totales["brecha_neta"] == 4800
+    assert totales["superavit_total"] == 0
+    assert totales["cce_ponderado"] == 0.525
+    assert totales["brecha_cobertura_pct"] == 47.5
+
+
+def test_gaps_summary_desglosa_por_pais_y_sector(mock_data):
+    """El resumen expone los agregados por país y las filas enriquecidas."""
+    mock_data()
+
+    response = TestClient(app).get("/api/v1/gaps/summary")
+
+    assert response.status_code == 200
+    cuerpo = response.json()
+
+    por_pais = {fila["pais"]: fila for fila in cuerpo["por_pais"]}
+    assert por_pais["ARG"]["demanda_anual"] == 8900
+    assert por_pais["ARG"]["deficit_bruto"] == 4100
+    assert por_pais["ARG"]["cce_ponderado"] == 0.539
+    assert por_pais["ARG"]["brecha_cobertura_pct"] == 46.1
+    assert por_pais["URY"]["cce_ponderado"] == 0.417
+
+    primero = cuerpo["por_sector"][0]
+    assert primero["pais"] == "ARG"
+    assert primero["sector"] == "Energía"
+    assert primero["deficit_anual"] == 4100
+    assert primero["cce"] == 0.539
+    assert primero["brecha_cobertura_pct"] == 46.1
+    assert primero["crecimiento_matricula_pct"] == 9.1
+    assert primero["estado_cce"] == "CRITICA"
+    assert primero["semaforo"] == "🔴"
+
+
+def test_gaps_summary_filtra_por_sector(mock_data):
+    """El filtro de sector se aplica localmente sobre el payload de Data."""
+    mock_data()
+
+    response = TestClient(app).get("/api/v1/gaps/summary", params={"sector": "Energía"})
+
+    assert response.status_code == 200
+    cuerpo = response.json()
+    assert cuerpo["total_sectores"] == 1
+    assert cuerpo["filtros"]["sector"] == "Energía"
+    assert [fila["sector"] for fila in cuerpo["por_sector"]] == ["Energía"]
+
+
+def test_gaps_summary_rechaza_pais_invalido(mock_data):
+    mock_data()
+
+    response = TestClient(app).get("/api/v1/gaps/summary?pais=BRA")
+
+    assert response.status_code == 400
+
+
+def test_gaps_summary_rechaza_sector_invalido(mock_data):
+    mock_data()
+
+    response = TestClient(app).get("/api/v1/gaps/summary?sector=Automotriz")
+
+    assert response.status_code == 422
+
+
+def test_gaps_summary_sin_data_usa_la_referencia(mock_data):
+    """Sin API de Data el resumen sale del snapshot commiteado."""
+    destino = Path("data/reference")
+    if not (destino / "comparativa.json").exists():
+        pytest.skip("Falta el snapshot de referencia (data/reference/comparativa.json).")
+
+    mock_data(excepcion=httpx.ConnectError("sin conexión"))
+
+    response = TestClient(app).get("/api/v1/gaps/summary")
+
+    assert response.status_code == 200
+    cuerpo = response.json()
+    assert cuerpo["meta"]["fuente"] == "reference"
+    assert cuerpo["total_sectores"] == 15
+    assert cuerpo["totales"]["demanda_anual"] == 165250
+    assert cuerpo["totales"]["egresados_anuales"] == 113450
+    assert cuerpo["totales"]["deficit_bruto"] == 51800
+    assert cuerpo["totales"]["cce_ponderado"] == 0.687
+    assert cuerpo["totales"]["brecha_cobertura_pct"] == 31.3
+
+
+def test_summary_pondera_el_cce_por_demanda():
+    """El CCE agregado no es el promedio simple de los sectores."""
+    items = [
+        GapItem(pais="ARG", sector="A", demanda_anual=1000, egresados_anuales=100, cce=0.1),
+        GapItem(pais="ARG", sector="B", demanda_anual=100, egresados_anuales=100, cce=1.0),
+    ]
+
+    resumen = construir_resumen(items, DataSourceMeta(fuente="reference"))
+
+    assert resumen.totales.cce_ponderado == 0.182
+    assert resumen.totales.cce_ponderado != 0.55  # promedio simple
+
+
+def test_summary_con_demanda_cero_no_divide_por_cero():
+    items = [
+        GapItem(pais="ARG", sector="A", demanda_anual=0, egresados_anuales=100, cce=None),
+    ]
+
+    resumen = construir_resumen(items, DataSourceMeta(fuente="reference"))
+
+    assert resumen.totales.cce_ponderado is None
+    assert resumen.totales.brecha_cobertura_pct is None
+    assert resumen.totales.superavit_total == 100
+
+
+def test_summary_excluye_filas_sin_oferta_de_los_agregados():
+    items = [
+        GapItem(pais="ARG", sector="A", demanda_anual=100, egresados_anuales=50, cce=0.5),
+        GapItem(pais="ARG", sector="B", demanda_anual=100, egresados_anuales=None, cce=None),
+    ]
+
+    resumen = construir_resumen(items, DataSourceMeta(fuente="reference"))
+
+    assert resumen.total_sectores == 2
+    assert resumen.totales.demanda_anual == 100
+    assert resumen.totales.egresados_anuales == 50
+    assert len(resumen.por_sector) == 2
 
 
 # ---------------------------------------------------------------------------
