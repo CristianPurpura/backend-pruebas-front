@@ -17,6 +17,32 @@ class DataSourceMeta(BaseModel):
     detalle: str = ""
 
 
+class TgsComponenteScore(BaseModel):
+    """Aporte de un componente con score propio (demanda o crecimiento)."""
+
+    score: float
+    peso: float
+    aporte: float
+
+
+class TgsComponenteCobertura(BaseModel):
+    """Aporte del déficit de cobertura educativa al TGS."""
+
+    brecha_pct: float
+    peso: float
+    aporte: float
+
+
+class TgsDesglose(BaseModel):
+    """Desglose del Talent Gap Score para explicarlo en el Frontend."""
+
+    demanda: TgsComponenteScore
+    crecimiento: TgsComponenteScore
+    cobertura: TgsComponenteCobertura
+    factor_pais: float
+    tgs_calculado: float
+
+
 class SkillItem(BaseModel):
     """Brecha de talento de una ocupación en un país."""
 
@@ -29,6 +55,21 @@ class SkillItem(BaseModel):
     icol: float | None = Field(default=None, description="Índice de oportunidad laboral (ICOL)")
     score_brecha: float = Field(description="Talent Gap Score (0-100)")
     cce: float | None = Field(default=None, description="Coeficiente de cobertura educativa")
+    score_demanda_100: float | None = Field(
+        default=None, description="Score de demanda del mercado (0-100)."
+    )
+    score_crecimiento_100: float | None = Field(
+        default=None, description="Score de crecimiento estimado (0-100)."
+    )
+    factor_madurez_pais: float | None = Field(
+        default=None, description="Factor de madurez del país aplicado al TGS."
+    )
+    brecha_cobertura_pct: float | None = Field(
+        default=None, description="Brecha de cobertura: max(0, 1 - CCE) * 100."
+    )
+    tgs_desglose: TgsDesglose | None = Field(
+        default=None, description="Desglose 55/25/20 del Talent Gap Score."
+    )
     diagnostico: str = ""
     icono: str = ""
     urgencia: str = ""
@@ -93,4 +134,7 @@ __all__ = [
     "SkillDetailResponse",
     "SkillItem",
     "SkillsResponse",
+    "TgsComponenteCobertura",
+    "TgsComponenteScore",
+    "TgsDesglose",
 ]

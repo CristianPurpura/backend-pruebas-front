@@ -206,11 +206,35 @@ def test_skills_normaliza_el_payload_de_data(mock_data):
     assert primero["score_brecha"] == 87.76
     assert primero["cce"] == 0.571
     assert primero["icol"] == 88.19
+    assert primero["score_demanda_100"] == 100.0
+    assert primero["score_crecimiento_100"] == 80.0
+    assert primero["factor_madurez_pais"] == 1.05
+    assert primero["brecha_cobertura_pct"] == 42.9
+    assert primero["tgs_desglose"]["demanda"]["aporte"] == 55.0
+    assert primero["tgs_desglose"]["crecimiento"]["aporte"] == 20.0
+    assert primero["tgs_desglose"]["cobertura"]["aporte"] == 8.58
+    assert primero["tgs_desglose"]["tgs_calculado"] == 87.76
     assert primero["diagnostico"] == "Déficit Crítico de Talento"
     assert primero["icono"] == "🔴"
     assert primero["habilidades_emergentes"] == ["Arquitecturas RAG", "Edge AI"]
     assert primero["habilidades_tradicionales"] == ["ETL Batch", "Pandas"]
     assert primero["is_projection"] is True
+
+
+def test_mapear_brechas_sin_componentes_del_tgs():
+    """Si Data no envía los scores, el desglose viaja en None (no en cero)."""
+    item = mapper.mapear_brechas(
+        {
+            "pais_codigo_iso3": "ARG",
+            "ocupacion_id": "OCUP_01",
+            "score_brecha_talento_100": 50.0,
+        }
+    )
+
+    assert item.score_demanda_100 is None
+    assert item.score_crecimiento_100 is None
+    assert item.brecha_cobertura_pct is None
+    assert item.tgs_desglose is None
 
 
 def test_skills_filtra_por_pais(mock_data):
