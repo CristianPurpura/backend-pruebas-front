@@ -6,6 +6,7 @@ campos, el ajuste queda acá y no en los endpoints.
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from app.schemas.datascience import (
@@ -19,6 +20,8 @@ from app.schemas.datascience import (
 # Claves con las que Data envuelve cada lista.
 CLAVE_BRECHAS = "brechas_y_habilidades"
 CLAVE_COMPARATIVA = "comparativa_educativo_laboral"
+
+_RE_PORCENTAJE = re.compile(r"([+-]?\d+(?:\.\d+)?)")
 
 
 def _lista(payload: dict[str, Any], clave: str) -> list[dict[str, Any]]:
@@ -40,6 +43,18 @@ def _numero(valor: Any) -> float | None:
         return float(valor)
     except (TypeError, ValueError):
         return None
+
+
+def _porcentaje(valor: Any) -> float | None:
+    """Extrae el número de textos como `"+9.1% anual"` que envía Data."""
+    if valor is None or isinstance(valor, bool):
+        return None
+    if isinstance(valor, (int, float)):
+        return float(valor)
+    if not isinstance(valor, str):
+        return None
+    match = _RE_PORCENTAJE.search(valor)
+    return float(match.group(1)) if match else None
 
 
 def _lista_texto(valor: Any) -> list[str]:
@@ -83,7 +98,7 @@ def mapear_comparativa(fila: dict[str, Any]) -> GapItem:
         egresados_anuales=_numero(fila.get("egresados_anuales_estimados")),
         demanda_anual=_numero(fila.get("demanda_anual_puestos_nuevos")),
         deficit_anual=_numero(fila.get("brecha_anual_puestos_deficit")),
-        crecimiento_matricula_pct=_numero(fila.get("crecimiento_matricula_anual")),
+        crecimiento_matricula_pct=_porcentaje(fila.get("crecimiento_matricula_anual")),
         cce=_numero(fila.get("coeficiente_cobertura_educativa_cce")),
         diagnostico=_texto(fila.get("diagnostico_descalce")),
         estado=_texto(fila.get("estado_alerta")),
