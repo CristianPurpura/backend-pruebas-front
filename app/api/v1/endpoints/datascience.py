@@ -15,11 +15,12 @@ from fastapi import APIRouter, HTTPException, Query
 from app.core import catalogs
 from app.schemas.datascience import (
     GapsResponse,
+    GapsSummaryResponse,
     SkillDetailResponse,
     SkillsResponse,
 )
 from app.services.datascience import client as data_client
-from app.services.datascience import mapper
+from app.services.datascience import mapper, summary
 
 router = APIRouter(prefix="/skills", tags=["Data Science"])
 
@@ -178,6 +179,47 @@ async def listar_brechas_formativas(
         respuesta.fuente,
         respuesta.actualizado,
         {"pais": codigo_pais},
+    )
+
+
+@gaps_router.get("/summary", response_model=GapsSummaryResponse)
+async def resumen_brechas_formativas(
+    pais: Annotated[str | None, Query(description="Código ISO-3 (ARG, CHL, URY)")] = None,
+    sector: Annotated[str | None, Query(description="Sector (código, slug o nombre)")] = None,
+) -> GapsSummaryResponse:
+    """Totales y campos derivados de oferta/demanda y brecha para el dashboard.
+
+    Devuelve los agregados regionales, por país y por sector, con el CCE
+    ponderado por demanda y la brecha de cobertura calculada en el Backend.
+    """
+    codigo_pais = _validar_pais(pais)
+    nombre_sector = _validar_sector(sector)
+
+    respuesta = await data_client.consultar_data(
+        data_client.RUTA_COMPARATIVA, {"pais": codigo_pais}
+    )
+    if respuesta is None:
+        raise _sin_datos()
+
+    cuerpo = mapper.respuesta_comparativa(
+        respuesta.datos,
+        respuesta.fuente,
+        respuesta.actualizado,
+        {"pais": codigo_pais, "sector": nombre_sector},
+    )
+
+    items = cuerpo.items
+    if nombre_sector:
+        items = [
+            item
+            for item in items
+            if item.sector.strip().lower() == nombre_sector.strip().lower()
+        ]
+
+    return summary.construir_resumen(
+        items,
+        cuerpo.meta,
+        {"pais": codigo_pais, "sector": nombre_sector},
     )
 
 

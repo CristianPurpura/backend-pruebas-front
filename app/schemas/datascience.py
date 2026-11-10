@@ -127,10 +127,68 @@ class GapsResponse(BaseModel):
     items: list[GapItem] = Field(default_factory=list)
 
 
+class GapTotales(BaseModel):
+    """Agregados de oferta, demanda y brecha para un recorte."""
+
+    demanda_anual: float
+    egresados_anuales: float
+    deficit_bruto: float
+    brecha_neta: float
+    superavit_total: float
+    cce_ponderado: float | None = Field(
+        default=None, description="Σ egresados / Σ demanda (no promedio simple)."
+    )
+    brecha_cobertura_pct: float | None = Field(
+        default=None, description="max(0, 1 - CCE ponderado) * 100."
+    )
+
+
+class GapPaisResumen(GapTotales):
+    """Agregados de un país."""
+
+    pais: str
+    pais_nombre: str = ""
+
+
+class GapSectorResumen(BaseModel):
+    """Fila país × sector con los campos derivados para el dashboard."""
+
+    pais: str
+    pais_nombre: str = ""
+    sector: str = ""
+    demanda_anual: float | None = Field(default=None)
+    egresados_anuales: float | None = Field(default=None)
+    deficit_anual: float | None = Field(default=None)
+    cce: float | None = Field(default=None)
+    brecha_cobertura_pct: float | None = Field(default=None)
+    crecimiento_matricula_pct: float | None = Field(default=None)
+    estado_cce: str = ""
+    semaforo: str = ""
+    diagnostico: str = ""
+    carreras_afines: list[str] = Field(default_factory=list)
+    fuentes: list[str] = Field(default_factory=list)
+    is_projection: bool = True
+
+
+class GapsSummaryResponse(BaseModel):
+    """Respuesta de `GET /api/v1/gaps/summary`."""
+
+    meta: DataSourceMeta
+    filtros: dict[str, Any] = Field(default_factory=dict)
+    total_sectores: int = 0
+    totales: GapTotales
+    por_pais: list[GapPaisResumen] = Field(default_factory=list)
+    por_sector: list[GapSectorResumen] = Field(default_factory=list)
+
+
 __all__ = [
     "DataSourceMeta",
     "GapItem",
+    "GapPaisResumen",
+    "GapSectorResumen",
     "GapsResponse",
+    "GapsSummaryResponse",
+    "GapTotales",
     "SkillDetailResponse",
     "SkillItem",
     "SkillsResponse",
