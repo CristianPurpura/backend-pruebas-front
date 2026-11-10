@@ -631,3 +631,4 @@ Para más detalles sobre la arquitectura y contratos:
 * [Runbook de conexión a Supabase (`docs/CONEXION_SUPABASE.md`)](docs/CONEXION_SUPABASE.md)
 * [Roadmap y Sprints Kanban (`docs/ROADMAP_BACKEND.md`)](docs/ROADMAP_BACKEND.md)
 * [Mocks JSON para Frontend (`docs/mocks/`)](docs/mocks/)
+* [Cambios de noviembre 2026 (capturas)](docs/CAMBIOS_2026-11.md)
