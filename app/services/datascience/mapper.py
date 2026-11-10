@@ -15,6 +15,12 @@ from app.schemas.datascience import (
     GapsResponse,
     SkillItem,
     SkillsResponse,
+    TgsDesglose,
+)
+from app.services.datascience.metrics import (
+    FACTOR_MADUREZ_PAIS,
+    brecha_cobertura_pct,
+    desglosar_tgs,
 )
 
 # Claves con las que Data envuelve cada lista.
@@ -67,8 +73,19 @@ def _lista_texto(valor: Any) -> list[str]:
 
 def mapear_brechas(fila: dict[str, Any]) -> SkillItem:
     """Convierte una fila de `brechas_y_habilidades` en `SkillItem`."""
+    pais = _texto(fila.get("pais_codigo_iso3")).upper()
+    score_demanda = _numero(fila.get("score_demanda_mercado"))
+    score_crecimiento = _numero(fila.get("score_crecimiento_estimado"))
+    cce = _numero(fila.get("coeficiente_cobertura_educativa_cce"))
+
+    desglose = None
+    if score_demanda is not None or score_crecimiento is not None:
+        desglose = TgsDesglose(
+            **desglosar_tgs(score_demanda, score_crecimiento, cce, pais)
+        )
+
     return SkillItem(
-        pais=_texto(fila.get("pais_codigo_iso3")).upper(),
+        pais=pais,
         pais_nombre=_texto(fila.get("pais_nombre")),
         sector=_texto(fila.get("sector")),
         ocupacion_id=_texto(fila.get("ocupacion_id")).upper(),
@@ -76,7 +93,12 @@ def mapear_brechas(fila: dict[str, Any]) -> SkillItem:
         ciuo08=_texto(fila.get("codigo_ciuo08_oit")),
         icol=_numero(fila.get("indice_oportunidad_icol")),
         score_brecha=_numero(fila.get("score_brecha_talento_100")) or 0.0,
-        cce=_numero(fila.get("coeficiente_cobertura_educativa_cce")),
+        cce=cce,
+        score_demanda_100=score_demanda,
+        score_crecimiento_100=score_crecimiento,
+        factor_madurez_pais=FACTOR_MADUREZ_PAIS.get(pais),
+        brecha_cobertura_pct=brecha_cobertura_pct(cce),
+        tgs_desglose=desglose,
         diagnostico=_texto(fila.get("diagnostico_brecha")),
         icono=_texto(fila.get("icono_brecha")),
         urgencia=_texto(fila.get("urgencia_intervencion")),
