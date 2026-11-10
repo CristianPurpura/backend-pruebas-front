@@ -16,6 +16,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.services.datascience import client as data_client
+from app.services.datascience import mapper
 
 # ---------------------------------------------------------------------------
 # Payloads de ejemplo (misma forma que produce `DataAnalyst`)
@@ -312,6 +313,7 @@ def test_gaps_normaliza_el_payload_de_data(mock_data):
     assert primero["demanda_anual"] == 8900
     assert primero["deficit_anual"] == 4100
     assert primero["cce"] == 0.539
+    assert primero["crecimiento_matricula_pct"] == 9.1
     assert primero["estado"] == "CRITICA"
     assert primero["semaforo"] == "🔴"
     # Las carreras vienen como texto separado por comas en Data.
@@ -325,6 +327,15 @@ def test_gaps_rechaza_pais_invalido(mock_data):
     response = TestClient(app).get("/api/v1/gaps?pais=BRA")
 
     assert response.status_code == 400
+
+
+def test_porcentaje_parsea_texto_de_data():
+    """`crecimiento_matricula_anual` llega como texto ("+9.1% anual")."""
+    assert mapper._porcentaje("+9.1% anual") == 9.1
+    assert mapper._porcentaje("+3.0% anual") == 3.0
+    assert mapper._porcentaje(4.2) == 4.2
+    assert mapper._porcentaje("sin numero") is None
+    assert mapper._porcentaje(None) is None
 
 
 # ---------------------------------------------------------------------------
