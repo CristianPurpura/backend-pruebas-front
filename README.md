@@ -505,6 +505,17 @@ python scripts/generar_referencia.py
       "icol": 88.19,
       "score_brecha": 87.76,
       "cce": 0.571,
+      "score_demanda_100": 100.0,
+      "score_crecimiento_100": 80.0,
+      "factor_madurez_pais": 1.05,
+      "brecha_cobertura_pct": 42.9,
+      "tgs_desglose": {
+        "demanda": { "score": 100.0, "peso": 0.55, "aporte": 55.0 },
+        "crecimiento": { "score": 80.0, "peso": 0.25, "aporte": 20.0 },
+        "cobertura": { "brecha_pct": 42.9, "peso": 0.20, "aporte": 8.58 },
+        "factor_pais": 1.05,
+        "tgs_calculado": 87.76
+      },
       "diagnostico": "Déficit Crítico de Talento",
       "icono": "🔴",
       "habilidades_emergentes": ["Arquitecturas RAG", "Edge AI", "LLMOps & Model Governance"],
@@ -516,6 +527,28 @@ python scripts/generar_referencia.py
 
 > Las cifras educativas y de demanda son **estimaciones** (`is_projection: true`): por eso cada
 > ítem incluye el semáforo y las fuentes oficiales que reporta Data.
+
+```jsonc
+// GET /api/v1/gaps/summary  →  200 OK
+{
+  "meta": { "fuente": "reference", "actualizado": "2026-11-04T16:33:36+00:00", "detalle": "" },
+  "filtros": { "pais": null, "sector": null },
+  "total_sectores": 15,
+  "totales": {
+    "demanda_anual": 165250.0,
+    "egresados_anuales": 113450.0,
+    "deficit_bruto": 51800.0,
+    "brecha_neta": 51800.0,
+    "superavit_total": 0.0,
+    "cce_ponderado": 0.687,
+    "brecha_cobertura_pct": 31.3
+  },
+  "por_pais": [ ... ],
+  "por_sector": [ ... ]
+}
+```
+
+> El ejemplo completo está en `docs/mocks/gaps_summary.json` y las fórmulas en `docs/Data_Contracts.md` §4.5.
 
 ## 8. Tests
 
