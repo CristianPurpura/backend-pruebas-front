@@ -172,6 +172,7 @@ contrato propio, para que el Frontend no dependa de la forma interna de Data.
 | `egresados_anuales_estimados` | `egresados_anuales` | Estimación (`is_projection: true`) |
 | `demanda_anual_puestos_nuevos` | `demanda_anual` | Estimación |
 | `brecha_anual_puestos_deficit` | `deficit_anual` | Estimación |
+| `crecimiento_matricula_anual` | `crecimiento_matricula_pct` | Se extrae el número de textos como `"+14.2% anual"` |
 | `diagnostico_descalce` / `estado_alerta` / `semaforo` | `diagnostico` / `estado` / `semaforo` | |
 | `fuentes_oficiales_cruzadas` | `fuentes` | Lista |
 
@@ -201,6 +202,105 @@ contrato propio, para que el Frontend no dependa de la forma interna de Data.
 | `ocupacion_id` válido pero fuera de catálogo (`OCUP_99`) | **404** |
 | Ocupación sin datos de brecha | **404** |
 | Data caído, sin caché y sin referencia | **503** |
+
+## 4.5 Agregados para el dashboard (`GET /api/v1/gaps/summary`)
+
+`GET /api/v1/gaps/summary?pais=&sector=` devuelve los totales de oferta,
+demanda y brecha, más una fila enriquecida por país × sector. Se calcula
+sobre el mismo payload de Data que `/gaps` (degradación `live` → `cache` →
+`reference`) y **no modifica** el contrato de `/gaps`.
+
+### 4.5.1 Fórmulas
+
+Para cada país `p` y sector `s`:
+
+- **D** = `demanda_anual_puestos_nuevos`
+- **O** = `egresados_anuales_estimados`
+
+```text
+Déficit bruto     = Σ max(0, D − O)
+Brecha neta       = Σ (D − O)
+Superávit total   = Σ max(0, O − D)
+CCE               = O / D
+CCE ponderado     = Σ O / Σ D        (nunca promedio simple)
+Brecha cobertura  = max(0, 1 − CCE) × 100
+TGS               = min(100, (0.55·demanda + 0.25·crecimiento
+                      + 0.20·max(0, 1 − CCE)·100) · factor_país)
+```
+
+`factor_país`: URY `1.05`, CHL `1.00`, ARG `0.95`.
+
+Las filas sin demanda u oferta **no entran** en los agregados. Si `D = 0`,
+`cce_ponderado` y `brecha_cobertura_pct` viajan en `null`.
+
+### 4.5.2 Umbrales
+
+**CCE (cobertura educativa):**
+
+| Rango CCE | Diagnóstico | Estado | Semáforo |
+| :--- | :--- | :---: | :---: |
+| `< 0.60` | Déficit Formativo Severo | `CRITICA` | 🔴 |
+| `0.60 – 0.85` | Déficit Formativo Moderado | `ALERTA` | 🟡 |
+| `0.85 – 1.20` | Equilibrio Formativo-Laboral | `ESTABLE` | 🟢 |
+| `> 1.20` | Superávit / Riesgo de subempleo | `ATENCION` | 🔵 |
+
+**TGS (brecha de talento):**
+
+| Rango TGS | Diagnóstico | Prioridad |
+| :--- | :--- | :--- |
+| `≥ 82.0` | Déficit Crítico de Talento | 1 — Formación acelerada |
+| `68.0 – 82.0` | Déficit Moderado de Especialistas | 2 — Actualización curricular |
+| `50.0 – 68.0` | Equilibrio Oferta-Demanda | 3 — Monitoreo regular |
+| `< 50.0` | Superávit Relativo / Saturación | 4 — Reconversión |
+
+La regla de alerta **R3** de Data dispara con `CCE < 0.60` o `CCE > 1.40`;
+el semáforo del dashboard usa `1.20` como corte de superávit.
+
+### 4.5.3 Respuesta (extracto)
+
+```json
+{
+  "meta": { "fuente": "reference", "actualizado": "2026-11-04T16:33:36+00:00", "detalle": "" },
+  "filtros": { "pais": null, "sector": null },
+  "total_sectores": 15,
+  "totales": {
+    "demanda_anual": 165250.0,
+    "egresados_anuales": 113450.0,
+    "deficit_bruto": 51800.0,
+    "brecha_neta": 51800.0,
+    "superavit_total": 0.0,
+    "cce_ponderado": 0.687,
+    "brecha_cobertura_pct": 31.3
+  },
+  "por_pais": [ ... ],
+  "por_sector": [
+    {
+      "pais": "ARG",
+      "sector": "Tecnología",
+      "demanda_anual": 22000.0,
+      "egresados_anuales": 12500.0,
+      "deficit_anual": 9500.0,
+      "cce": 0.568,
+      "brecha_cobertura_pct": 43.2,
+      "crecimiento_matricula_pct": 14.2,
+      "estado_cce": "CRITICA",
+      "semaforo": "🔴",
+      "is_projection": true
+    }
+  ]
+}
+```
+
+El ejemplo completo y copiable está en `docs/mocks/gaps_summary.json`.
+
+### 4.5.4 Trazabilidad y notas
+
+- Fórmulas y umbrales: `DataAnalyst/etl/data_science.py`, commit `45abdfc`.
+- Snapshot de referencia: `data/reference/comparativa.json`.
+- Todas las cifras son estimaciones (`is_projection: true`).
+- La rama `BranchDaniel_ft_76-77-78` de Data (sin mergear) agrega un ETL de
+  egresados por áreas OECD. Si se adopta, **pueden cambiar los valores de
+  oferta**; las fórmulas de este contrato no cambian.
 
 ## 5. Desviaciones respecto de la definición aprobada
 

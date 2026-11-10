@@ -1,0 +1,412 @@
+{
+  "meta": {
+    "fuente": "reference",
+    "actualizado": "2026-11-04T16:33:36+00:00",
+    "detalle": ""
+  },
+  "filtros": {
+    "pais": null,
+    "sector": null
+  },
+  "total_sectores": 15,
+  "totales": {
+    "demanda_anual": 165250.0,
+    "egresados_anuales": 113450.0,
+    "deficit_bruto": 51800.0,
+    "brecha_neta": 51800.0,
+    "superavit_total": 0.0,
+    "cce_ponderado": 0.687,
+    "brecha_cobertura_pct": 31.3
+  },
+  "por_pais": [
+    {
+      "demanda_anual": 89900.0,
+      "egresados_anuales": 59000.0,
+      "deficit_bruto": 30900.0,
+      "brecha_neta": 30900.0,
+      "superavit_total": 0.0,
+      "cce_ponderado": 0.656,
+      "brecha_cobertura_pct": 34.4,
+      "pais": "ARG",
+      "pais_nombre": "Argentina"
+    },
+    {
+      "demanda_anual": 60500.0,
+      "egresados_anuales": 44100.0,
+      "deficit_bruto": 16400.0,
+      "brecha_neta": 16400.0,
+      "superavit_total": 0.0,
+      "cce_ponderado": 0.729,
+      "brecha_cobertura_pct": 27.1,
+      "pais": "CHL",
+      "pais_nombre": "Chile"
+    },
+    {
+      "demanda_anual": 14850.0,
+      "egresados_anuales": 10350.0,
+      "deficit_bruto": 4500.0,
+      "brecha_neta": 4500.0,
+      "superavit_total": 0.0,
+      "cce_ponderado": 0.697,
+      "brecha_cobertura_pct": 30.3,
+      "pais": "URY",
+      "pais_nombre": "Uruguay"
+    }
+  ],
+  "por_sector": [
+    {
+      "pais": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Energía",
+      "demanda_anual": 8900.0,
+      "egresados_anuales": 4800.0,
+      "deficit_anual": 4100.0,
+      "cce": 0.539,
+      "brecha_cobertura_pct": 46.1,
+      "crecimiento_matricula_pct": 9.1,
+      "estado_cce": "CRITICA",
+      "semaforo": "🔴",
+      "diagnostico": "Déficit Formativo Severo (Alerta Roja)",
+      "carreras_afines": [
+        "Ing. Eléctrica",
+        "Ing. Química/Petróleo",
+        "Tecnicaturas en Energías Renovables",
+        "Minería"
+      ],
+      "fuentes": [
+        "Secretaría de Energía / CONEAU / SPU"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Tecnología",
+      "demanda_anual": 22000.0,
+      "egresados_anuales": 12500.0,
+      "deficit_anual": 9500.0,
+      "cce": 0.568,
+      "brecha_cobertura_pct": 43.2,
+      "crecimiento_matricula_pct": 14.2,
+      "estado_cce": "CRITICA",
+      "semaforo": "🔴",
+      "diagnostico": "Déficit Formativo Severo (Alerta Roja)",
+      "carreras_afines": [
+        "Lic. en Sistemas",
+        "Ing. Informática",
+        "Tecnicaturas en Programación",
+        "Ciencia de Datos"
+      ],
+      "fuentes": [
+        "SPU / Secretaría de Educación / CESSI Argentina"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Tecnología",
+      "demanda_anual": 4200.0,
+      "egresados_anuales": 2400.0,
+      "deficit_anual": 1800.0,
+      "cce": 0.571,
+      "brecha_cobertura_pct": 42.9,
+      "crecimiento_matricula_pct": 15.6,
+      "estado_cce": "CRITICA",
+      "semaforo": "🔴",
+      "diagnostico": "Déficit Formativo Severo (Alerta Roja)",
+      "carreras_afines": [
+        "Ingeniería en Computación (UdelaR/ORT)",
+        "Tecnólogo en Informática (UTEC)",
+        "Analista TI"
+      ],
+      "fuentes": [
+        "MEC / Monitor Educativo ANEP / UdelaR / CUTI"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Tecnología",
+      "demanda_anual": 14500.0,
+      "egresados_anuales": 8900.0,
+      "deficit_anual": 5600.0,
+      "cce": 0.614,
+      "brecha_cobertura_pct": 38.6,
+      "crecimiento_matricula_pct": 12.8,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Ingeniería Civil Informática",
+        "Computación",
+        "Ciberseguridad",
+        "Analista Programador"
+      ],
+      "fuentes": [
+        "Mineduc / SIES (Servicio de Información de Educación Superior) / ACTI"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Energía",
+      "demanda_anual": 8100.0,
+      "egresados_anuales": 5400.0,
+      "deficit_anual": 2700.0,
+      "cce": 0.667,
+      "brecha_cobertura_pct": 33.3,
+      "crecimiento_matricula_pct": 10.4,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Ingeniería en Minas",
+        "Ingeniería Eléctrica/Energías Renovables",
+        "Metalurgia"
+      ],
+      "fuentes": [
+        "SIES Mineduc / Consejo Minero / Ministerio de Energía"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Economía del Conocimiento",
+      "demanda_anual": 24500.0,
+      "egresados_anuales": 16400.0,
+      "deficit_anual": 8100.0,
+      "cce": 0.669,
+      "brecha_cobertura_pct": 33.1,
+      "crecimiento_matricula_pct": 11.5,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Biotecnología",
+        "Diseño Digital/Multimedia",
+        "Economía y Finanzas",
+        "Administración de Empresas"
+      ],
+      "fuentes": [
+        "Subsecretaría de Economía del Conocimiento / SPU / Argencon"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Economía del Conocimiento",
+      "demanda_anual": 4600.0,
+      "egresados_anuales": 3100.0,
+      "deficit_anual": 1500.0,
+      "cce": 0.674,
+      "brecha_cobertura_pct": 32.6,
+      "crecimiento_matricula_pct": 9.7,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Lic. en Biología Humana/Biotecnología",
+        "Lic. en Economía",
+        "Diseño y Comunicación Visual"
+      ],
+      "fuentes": [
+        "MEC / UdelaR / Uruguay XXI / Institut Pasteur"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Energía",
+      "demanda_anual": 1100.0,
+      "egresados_anuales": 750.0,
+      "deficit_anual": 350.0,
+      "cce": 0.682,
+      "brecha_cobertura_pct": 31.8,
+      "crecimiento_matricula_pct": 12.1,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Ingeniería Industrial Mecánica/Eléctrica",
+        "Tecnólogo en Energías Renovables (UTEC)"
+      ],
+      "fuentes": [
+        "MEC / UTEC / MIEM Uruguay"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Salud",
+      "demanda_anual": 26000.0,
+      "egresados_anuales": 18200.0,
+      "deficit_anual": 7800.0,
+      "cce": 0.7,
+      "brecha_cobertura_pct": 30.0,
+      "crecimiento_matricula_pct": 3.8,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Medicina",
+        "Lic. en Enfermería",
+        "Bioquímica",
+        "Farmacia",
+        "Diagnóstico por Imágenes"
+      ],
+      "fuentes": [
+        "Ministerio de Salud / SPU Relevamiento Universitario"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Economía del Conocimiento",
+      "demanda_anual": 15900.0,
+      "egresados_anuales": 11800.0,
+      "deficit_anual": 4100.0,
+      "cce": 0.742,
+      "brecha_cobertura_pct": 25.8,
+      "crecimiento_matricula_pct": 8.9,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Ingeniería Comercial",
+        "Diseño y Animación Digital",
+        "Bioingeniería",
+        "Finanzas"
+      ],
+      "fuentes": [
+        "SIES Mineduc / CORFO / FinteChile"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Salud",
+      "demanda_anual": 16200.0,
+      "egresados_anuales": 13100.0,
+      "deficit_anual": 3100.0,
+      "cce": 0.809,
+      "brecha_cobertura_pct": 19.1,
+      "crecimiento_matricula_pct": 4.1,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Medicina",
+        "Enfermería",
+        "Tecnología Médica",
+        "Química y Farmacia"
+      ],
+      "fuentes": [
+        "SIES Mineduc / Superintendencia de Salud / DEIS"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Turismo",
+      "demanda_anual": 1450.0,
+      "egresados_anuales": 1200.0,
+      "deficit_anual": 250.0,
+      "cce": 0.828,
+      "brecha_cobertura_pct": 17.2,
+      "crecimiento_matricula_pct": 2.1,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Tecnicatura en Gestión Hotelera y Turística (UTU/UdelaR)",
+        "Guía Turístico",
+        "Gastronomía"
+      ],
+      "fuentes": [
+        "MEC / DGETP-UTU / Ministerio de Turismo"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "URY",
+      "pais_nombre": "Uruguay",
+      "sector": "Salud",
+      "demanda_anual": 3500.0,
+      "egresados_anuales": 2900.0,
+      "deficit_anual": 600.0,
+      "cce": 0.829,
+      "brecha_cobertura_pct": 17.1,
+      "crecimiento_matricula_pct": 3.4,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Doctor en Medicina",
+        "Lic. en Enfermería",
+        "Química Farmacéutica",
+        "Escuela Universitaria de Tecnología Médica"
+      ],
+      "fuentes": [
+        "MEC / UdelaR / MSP Uruguay"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Turismo",
+      "demanda_anual": 8500.0,
+      "egresados_anuales": 7100.0,
+      "deficit_anual": 1400.0,
+      "cce": 0.835,
+      "brecha_cobertura_pct": 16.5,
+      "crecimiento_matricula_pct": 2.5,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Lic. en Turismo y Hotelería",
+        "Guía de Turismo",
+        "Gastronomía Profesional",
+        "Gestión de Servicios"
+      ],
+      "fuentes": [
+        "Secretaría de Turismo / DiNIECE / AHRCC"
+      ],
+      "is_projection": true
+    },
+    {
+      "pais": "CHL",
+      "pais_nombre": "Chile",
+      "sector": "Turismo",
+      "demanda_anual": 5800.0,
+      "egresados_anuales": 4900.0,
+      "deficit_anual": 900.0,
+      "cce": 0.845,
+      "brecha_cobertura_pct": 15.5,
+      "crecimiento_matricula_pct": 3.2,
+      "estado_cce": "ALERTA",
+      "semaforo": "🟡",
+      "diagnostico": "Déficit Formativo Moderado",
+      "carreras_afines": [
+        "Administración Hotelera y Turismo",
+        "Ecoturismo",
+        "Gastronomía Internacional"
+      ],
+      "fuentes": [
+        "SIES Mineduc / Sernatur / Fedetur"
+      ],
+      "is_projection": true
+    }
+  ]
+}
