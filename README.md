@@ -21,7 +21,7 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 | Matriz de casos QA | ✅ **28/28** | API-001..016 (contra la API de Data) + LOAD-001..012 (contra este backend) |
 | Base de datos | ✅ | Conexión a **Supabase** (pooler session, `?ssl=require`) + modelos ORM y **Alembic** async: primera tabla `raw_data_logs` |
 | Endpoint de indicadores | ⏸ | `GET /indicators` con filtros por país, sector y período |
-| Perfil de ocupación | ✅ | `/occupations/{id}` devuelve el perfil de las 20 ocupaciones: ficha del catálogo + ICOL, rankings y comparación entre países |
+| Perfil de ocupación | ✅ | `/occupations/{id}` devuelve el perfil de las 20 ocupaciones: ficha del catálogo + ICOL, rankings, comparación entre países y bloque `brechas` |
 | Despliegue | ⏸ | Railway/Render diferido (pasos en §10) |
 
 **Pendientes de coordinación con el equipo de Data:**
@@ -171,7 +171,7 @@ python3 -m uvicorn app.main:app --reload
 | `GET` | `/api/v1/countries` | `Catalogs` | Países del alcance regional (`id` ISO-3, `nombre`, `iso2`, `iso3`) |
 | `GET` | `/api/v1/sectors` | `Catalogs` | Sectores productivos (`id` canónico, `slug` para el frontend, `nombre`) |
 | `GET` | `/api/v1/occupations` | `Catalogs` | Catálogo de ocupaciones (CIUO-08, demanda, crecimiento y habilidades). Filtro `?sector=TEC` o `?sector=economia-conocimiento` |
-| `GET` | `/api/v1/occupations/{id}` | `Occupations` | Perfil de la ocupación: ficha del catálogo + ICOL con rankings y comparación entre países. `?pais=ARG` (default) |
+| `GET` | `/api/v1/occupations/{id}` | `Occupations` | Perfil de la ocupación: ficha del catálogo + ICOL con rankings y comparación entre países + bloque `brechas` (TGS y habilidades emergentes, con degradación explícita). `?pais=ARG` (default) |
 | `POST` | `/api/v1/datasets/upload` | `Datasets` | Carga, validación y normalización de archivos CSV o Excel |
 | `GET` | `/api/v1/employability` | `Employability` | Índice de empleabilidad: serie macro (IDELR) y ranking por ocupación (ICOL) |
 | `POST` | `/api/v1/employability/snapshot` | `Snapshots` | Calcula los índices y **guarda** el resultado en la base para poder mirar el pasado (idempotente) |
@@ -281,9 +281,39 @@ coinciden exactamente.
     "is_projection": true,
     "origen_indice": "fallback",
     "datasets": []
+  },
+  "brechas": {
+    "meta": { "fuente": "reference", "actualizado": "2026-11-04T16:33:36+00:00", "detalle": "" },
+    "actual": {
+      "pais": "ARG", "pais_nombre": "Argentina", "sector": "Tecnología",
+      "ocupacion_id": "OCUP_01", "ocupacion_nombre": "Desarrollador de Software y Aplicaciones",
+      "ciuo08": "2512", "icol": 70.67,
+      "score_brecha": 84.5, "cce": 0.55,
+      "score_demanda_100": 100.0, "score_crecimiento_100": 61.67,
+      "factor_madurez_pais": 1.0, "brecha_cobertura_pct": 45.0,
+      "tgs_desglose": { "demanda": { "score": 100.0, "peso": 0.55, "aporte": 55.0 },
+                        "crecimiento": { "score": 61.67, "peso": 0.25, "aporte": 15.42 },
+                        "cobertura": { "brecha_pct": 45.0, "peso": 0.2, "aporte": 9.0 },
+                        "factor_pais": 1.0, "tgs_calculado": 79.42 },
+      "diagnostico": "Déficit Crítico de Talento", "icono": "🔴", "urgencia": "Prioridad 1",
+      "habilidades_tradicionales": ["Python", "SQL"],
+      "habilidades_emergentes": ["Arquitecturas RAG"],
+      "nivel_adopcion": "Muy Alta", "impacto_ia": "Acelerador Fundamental",
+      "obsolescencia": "Alta", "is_projection": true
+    },
+    "por_pais": [ /* las 3 filas: el país pedido primero */ ],
+    "brecha_disponible": true
   }
 }
 ```
+
+* `brechas.meta.fuente` indica la procedencia del bloque: `live` (API de Data),
+  `cache` (TTL en memoria), `reference` (snapshot commiteado) o `unavailable`
+  (Data caído y sin snapshot). En `unavailable` el perfil responde **igual** con
+  `brecha_disponible: false`: el perfil nunca depende de que Data esté levantado.
+* `brechas.actual` y cada fila de `brechas.por_pais` usan el mismo schema que
+  `GET /api/v1/skills/{id}` (`SkillItem`), así que el Frontend puede reutilizar el
+  mismo componente para ambos endpoints.
 
 * `trazabilidad.origen_indice` avisa si el índice salió de datasets cargados (`processed`)
   o de los valores de referencia del entorno macro (`fallback`).
@@ -558,7 +588,7 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual (**232 tests**, 0 omitidos con el repo de Data disponible): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback` y coherencia del ICOL con `/employability`), `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**), `POST /employability/snapshot` + `GET /employability/history` (persistencia histórica) y `GET /skills` / `skills/{id}` / `gaps` / `gaps/summary` (brechas, oferta formativa y agregados para el dashboard).
+* Cobertura actual (**237 tests**, 0 omitidos con el repo de Data disponible): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback`, coherencia del ICOL con `/employability` y bloque `brechas` con paridad contra `/skills/{id}` y degradación `unavailable`), `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**), `POST /employability/snapshot` + `GET /employability/history` (persistencia histórica) y `GET /skills` / `skills/{id}` / `gaps` / `gaps/summary` (brechas, oferta formativa y agregados para el dashboard).
 * `tests/test_datascience.py` cubre el módulo de brechas **sin usar la red** (`httpx.MockTransport`): normalización del payload de Data, filtros de país y sector, validaciones, y toda la cadena de degradación (`live` → `cache` → `reference` → `503`).
 * `tests/test_datascience_metodologia.py` verifica la **fórmula oficial del TGS**: pesos, umbrales en el borde exacto y paridad con los 60 registros de referencia. `tests/test_datascience_contrato.py` blinda los invariantes (`CCE = O/D`, `déficit = D − O`), los agregados de `gaps/summary` y que el mock `docs/mocks/gaps_summary.json` no se desactualice.
 * `tests/test_employability_metodologia.py` verifica la **metodología visible**: los pesos del IDELR y del ICOL suman `1.0`, el endpoint expone las 5 dimensiones y es espejo exacto de `VARIABLES_IDELR` / `DEFAULT_ICOL_WEIGHTS`, y los umbrales de categoría se comprueban en su borde exacto (85 / 70 / 55).

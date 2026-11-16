@@ -307,6 +307,57 @@ El ejemplo completo y copiable está en `docs/mocks/gaps_summary.json`.
   egresados por áreas OECD. Si se adopta, **pueden cambiar los valores de
   oferta**; las fórmulas de este contrato no cambian.
 
+## 4.6 Bloque de brechas en el perfil de ocupación (issue #75)
+
+`GET /api/v1/occupations/{occupation_id}` incluye un bloque `brechas` con el
+*Talent Gap Score* (TGS) de la ocupación. Reutiliza el mismo `SkillItem` de
+`GET /api/v1/skills/{ocupacion_id}`, así que **ambas respuestas son
+intercambiables** para el Frontend.
+
+```jsonc
+// GET /api/v1/occupations/OCUP_01?pais=ARG
+{
+  "pais": { "codigo": "ARG", "nombre": "Argentina" },
+  "ocupacion": { "id": "OCUP_01", "...": "..." },
+  "indicadores": { "icol": 70.67, "...": "..." },
+  "brechas": {
+    "meta": {
+      "fuente": "live",          // live | cache | reference | unavailable
+      "actualizado": null,
+      "detalle": ""
+    },
+    "actual": { "pais": "ARG", "score_brecha": 84.5, "...": "..." },
+    "por_pais": [
+      { "pais": "ARG", "score_brecha": 84.5, "...": "..." },
+      { "pais": "CHL", "score_brecha": 79.1, "...": "..." },
+      { "pais": "URY", "score_brecha": 87.8, "...": "..." }
+    ],
+    "brecha_disponible": true
+  }
+}
+```
+
+Reglas del bloque:
+
+| Situación | `meta.fuente` | `brecha_disponible` | `actual` / `por_pais` |
+| :--- | :--- | :--- | :--- |
+| API de Data disponible | `live` | `true` | filas de la ocupación |
+| Data caído, cache vigente | `cache` | `true` | filas de la ocupación |
+| Data caído, sin cache | `reference` | `true` | filas del snapshot |
+| Data caído, sin cache ni snapshot | `unavailable` | `false` | `null` / `[]` |
+| Payload sin esa ocupación | fuente real | `false` | `null` / `[]` |
+
+Notas:
+
+- El endpoint **nunca** responde `503` por brechas: el perfil sigue siendo
+  válido y la degradación se informa en el bloque.
+- `por_pais` ordena primero el país consultado y luego el orden del catálogo
+  (`ARG`, `CHL`, `URY`).
+- La consulta se hace en el mismo request; el cliente de Data aplica su cache
+  TTL (`DATA_CACHE_TTL`, 300 s por defecto).
+- Snapshot de referencia: `data/reference/brechas.json`.
+- Ejemplo completo: `docs/mocks/ocupacion_OCUP_01.json`.
+
 ## 5. Desviaciones respecto de la definición aprobada
 
 Las desviaciones están acordadas con el equipo de Data y quedan pendientes de
