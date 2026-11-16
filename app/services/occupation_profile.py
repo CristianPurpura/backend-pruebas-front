@@ -9,6 +9,9 @@ empleabilidad: no hay dos fórmulas.
 from typing import Any
 
 from app.core import catalogs
+from app.schemas.datascience import DataSourceMeta
+from app.schemas.occupation import BrechasPerfil
+from app.services.datascience.brechas import brechas_de_ocupacion
 from app.services.calculators import (
     calcular_icol,
     calcular_idelr,
@@ -83,6 +86,51 @@ def construir_perfil(ocupacion_id: str, pais: str) -> dict[str, Any]:
     }
 
 
+async def construir_bloque_brechas(ocupacion_id: str, pais: str) -> BrechasPerfil:
+    """Bloque de brechas del perfil, con degradación explícita.
+
+    * Con datos: `brecha_disponible: true`, el país consultado primero y el
+      resto del alcance regional después.
+    * Sin fuente (Data caído, sin cache ni referencia): `brecha_disponible:
+      false` y `meta.fuente = "unavailable"`. El perfil sigue respondiendo.
+    """
+    resultado = await brechas_de_ocupacion(ocupacion_id, pais)
+
+    if resultado is None:
+        return BrechasPerfil(
+            meta=DataSourceMeta(
+                fuente="unavailable",
+                detalle=(
+                    "La API de Data no respondió y no hay caché ni snapshot de "
+                    "referencia: el bloque de brechas no está disponible."
+                ),
+            ),
+            actual=None,
+            por_pais=[],
+            brecha_disponible=False,
+        )
+
+    meta, items = resultado
+    if not items:
+        return BrechasPerfil(
+            meta=meta,
+            actual=None,
+            por_pais=[],
+            brecha_disponible=False,
+        )
+
+    indice = {item.pais: item for item in items}
+    orden = [pais] + [codigo for codigo in catalogs.PAISES_INFO if codigo != pais]
+    por_pais = [indice[codigo] for codigo in orden if codigo in indice]
+
+    return BrechasPerfil(
+        meta=meta,
+        actual=indice.get(pais),
+        por_pais=por_pais,
+        brecha_disponible=bool(por_pais),
+    )
+
+
 def _comparacion_paises(combinaciones: list[dict[str, Any]], pais_seleccionado: str) -> list[dict[str, Any]]:
     """Filas de los 3 países: el seleccionado primero y luego el orden del catálogo."""
     orden = [pais_seleccionado] + [codigo for codigo in catalogs.PAISES_INFO if codigo != pais_seleccionado]
@@ -100,4 +148,4 @@ def _comparacion_paises(combinaciones: list[dict[str, Any]], pais_seleccionado: 
     ]
 
 
-__all__ = ["construir_perfil"]
+__all__ = ["construir_bloque_brechas", "construir_perfil"]

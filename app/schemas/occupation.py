@@ -1,9 +1,10 @@
 """Ficha consolidada de una ocupación (`GET /api/v1/occupations/{id}`).
 
-El perfil mezcla tres cosas: la ficha técnica del catálogo canónico
+El perfil mezcla cuatro cosas: la ficha técnica del catálogo canónico
 (`app/core/catalogs.py`), el índice de oportunidad ICOL calculado con la
-metodología del equipo de Data y la comparación entre los tres países del
-alcance regional.
+metodología del equipo de Data, la comparación entre los tres países del
+alcance regional y el bloque de brechas de talento (`brechas`), que se
+degrada a `brecha_disponible: false` si la API de Data no responde.
 
 > Contrato v2: el bloque `trazabilidad` ya no expone `data_type` (que en el
 > contrato de carga pasó a ser la unidad de medida). La semántica de dato
@@ -11,6 +12,8 @@ alcance regional.
 """
 
 from pydantic import BaseModel, Field
+
+from app.schemas.datascience import DataSourceMeta, SkillItem
 
 
 class PaisPerfil(BaseModel):
@@ -75,6 +78,31 @@ class ComparacionPais(BaseModel):
     categoria_oportunidad: str
 
 
+class BrechasPerfil(BaseModel):
+    """Brecha de talento de la ocupación (issue #75).
+
+    Reutiliza `SkillItem` del módulo de Data Science para que el bloque sea
+    **idéntico** al de `GET /api/v1/skills/{ocupacion_id}`: una sola forma de
+    contrato para el Frontend y una sola fuente de verdad.
+    """
+
+    meta: DataSourceMeta = Field(
+        description="Procedencia de los datos: live | cache | reference | unavailable."
+    )
+    actual: SkillItem | None = Field(
+        default=None, description="Brecha de la ocupación en el país consultado."
+    )
+    por_pais: list[SkillItem] = Field(
+        default_factory=list, description="Brecha de la misma ocupación en los 3 países."
+    )
+    brecha_disponible: bool = Field(
+        description=(
+            "False cuando no hay datos de brechas disponibles (Data caído, sin "
+            "caché ni referencia). El resto del perfil sigue siendo válido."
+        )
+    )
+
+
 class TrazabilidadPerfil(BaseModel):
     """Origen del perfil y del índice que expone."""
 
@@ -101,9 +129,14 @@ class OccupationResponse(BaseModel):
     habilidades: list[str] = Field(default_factory=list)
     comparacion_paises: list[ComparacionPais] = Field(default_factory=list)
     trazabilidad: TrazabilidadPerfil
+    # Bloque opcional: las brechas vienen del módulo de Data Science. Si la API
+    # de Data no está disponible, el bloque viaja con `brecha_disponible: false`
+    # y el resto del perfil sigue intacto.
+    brechas: BrechasPerfil | None = None
 
 
 __all__ = [
+    "BrechasPerfil",
     "ComparacionPais",
     "IndicadoresPerfil",
     "OcupacionPerfil",

@@ -205,3 +205,124 @@ def test_trazabilidad_sigue_el_contrato_v2(client):
     assert trazabilidad["fuente"] and trazabilidad["fuente_url"]
     assert trazabilidad["actualizado"] == "2026-10-15"
     assert trazabilidad["origen_indice"] in {"processed", "fallback"}
+
+
+# ---------------------------------------------------------------------------
+# Bloque de brechas (issue #75)
+# ---------------------------------------------------------------------------
+def _fila_brecha(pais: str, nombre: str, score: float, emergentes: list[str]) -> dict:
+    return {
+        "pais_codigo_iso3": pais,
+        "pais_nombre": nombre,
+        "sector": "Tecnología",
+        "ocupacion_id": "OCUP_01",
+        "ocupacion_nombre": "Desarrollador de Software y Aplicaciones",
+        "codigo_ciuo08_oit": "2512",
+        "indice_oportunidad_icol": 80.0,
+        "score_demanda_mercado": 100.0,
+        "score_crecimiento_estimado": 90.0,
+        "coeficiente_cobertura_educativa_cce": 0.55,
+        "score_brecha_talento_100": score,
+        "diagnostico_brecha": "Déficit Crítico de Talento",
+        "icono_brecha": "🔴",
+        "urgencia_intervencion": "Prioridad 1",
+        "habilidades_tradicionales": ["Python", "SQL"],
+        "habilidades_emergentes_2026": emergentes,
+        "nivel_adopcion_habilidades": "Muy Alta",
+        "impacto_ia_automatizacion": "Acelerador Fundamental",
+        "velocidad_obsolescencia": "Alta",
+    }
+
+
+PAYLOAD_BRECHAS_PERFIL = {
+    "brechas_y_habilidades": [
+        _fila_brecha("ARG", "Argentina", 84.5, ["Arquitecturas RAG"]),
+        _fila_brecha("CHL", "Chile", 79.1, ["Edge AI"]),
+        _fila_brecha("URY", "Uruguay", 87.8, ["MLOps"]),
+    ]
+}
+
+
+@pytest.fixture()
+def mock_brechas(monkeypatch):
+    """Reemplaza la consulta a Data para controlar live/reference/sin datos."""
+    from app.services.datascience import client as data_client
+    from app.services.datascience.client import RespuestaData
+
+    def _configurar(
+        payload: dict | None = PAYLOAD_BRECHAS_PERFIL,
+        fuente: str = "live",
+        actualizado: str | None = None,
+    ) -> None:
+        async def _consultar(ruta, params=None, client=None):
+            if ruta != data_client.RUTA_BRECHAS or payload is None:
+                return None
+            return RespuestaData(datos=payload, fuente=fuente, actualizado=actualizado)
+
+        monkeypatch.setattr(data_client, "consultar_data", _consultar)
+
+    return _configurar
+
+
+def test_perfil_incluye_bloque_de_brechas(client, mock_brechas):
+    mock_brechas()
+
+    body = client.get(f"{OCCUPATIONS_URL}/OCUP_01", params={"pais": "ARG"}).json()
+    brechas = body["brechas"]
+
+    assert brechas["brecha_disponible"] is True
+    assert brechas["meta"]["fuente"] == "live"
+    assert brechas["actual"]["pais"] == "ARG"
+    assert brechas["actual"]["score_brecha"] == 84.5
+    assert [fila["pais"] for fila in brechas["por_pais"]] == ["ARG", "CHL", "URY"]
+
+
+def test_brechas_del_perfil_coinciden_con_skills(client, mock_brechas):
+    mock_brechas()
+
+    perfil = client.get(f"{OCCUPATIONS_URL}/OCUP_01", params={"pais": "CHL"}).json()
+    detalle = client.get("/api/v1/skills/OCUP_01", params={"pais": "CHL"}).json()
+
+    fila_chile = next(item for item in detalle["items"] if item["pais"] == "CHL")
+    assert perfil["brechas"]["actual"] == fila_chile
+    assert perfil["brechas"]["meta"] == detalle["meta"]
+
+
+def test_perfil_sin_data_marca_brecha_no_disponible(client, mock_brechas):
+    mock_brechas(payload=None)
+
+    response = client.get(f"{OCCUPATIONS_URL}/OCUP_01")
+
+    assert response.status_code == 200
+    brechas = response.json()["brechas"]
+    assert brechas["brecha_disponible"] is False
+    assert brechas["meta"]["fuente"] == "unavailable"
+    assert brechas["meta"]["detalle"]
+    assert brechas["actual"] is None
+    assert brechas["por_pais"] == []
+    # El resto del perfil sigue intacto.
+    assert response.json()["indicadores"]["icol"] > 0
+
+
+def test_brechas_por_referencia_siguen_disponibles(client, mock_brechas):
+    mock_brechas(fuente="reference", actualizado="2026-11-04T00:00:00+00:00")
+
+    body = client.get(f"{OCCUPATIONS_URL}/OCUP_01").json()
+    brechas = body["brechas"]
+
+    assert brechas["brecha_disponible"] is True
+    assert brechas["meta"]["fuente"] == "reference"
+    assert brechas["meta"]["actualizado"] == "2026-11-04T00:00:00+00:00"
+
+
+def test_ocupacion_sin_filas_de_brechas_no_rompe_el_perfil(client, mock_brechas):
+    otra = _fila_brecha("ARG", "Argentina", 60.0, ["DataOps"])
+    otra["ocupacion_id"] = "OCUP_02"
+    mock_brechas(payload={"brechas_y_habilidades": [otra]})
+
+    body = client.get(f"{OCCUPATIONS_URL}/OCUP_01").json()
+    brechas = body["brechas"]
+
+    assert brechas["brecha_disponible"] is False
+    assert brechas["meta"]["fuente"] == "live"
+    assert body["indicadores"]["icol"] > 0

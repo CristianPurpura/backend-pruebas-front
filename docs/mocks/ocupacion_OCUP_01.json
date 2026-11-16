@@ -1,5 +1,5 @@
 {
-  "comentario": "Respuesta de referencia de GET /api/v1/occupations/OCUP_01 (default: pais=ARG).",
+  "comentario": "Respuesta de referencia de GET /api/v1/occupations/OCUP_01 (default: pais=ARG). Incluye el bloque `brechas` (issue #75).",
   "pais": {
     "codigo": "ARG",
     "nombre": "Argentina"
@@ -70,5 +70,235 @@
     "is_projection": true,
     "origen_indice": "fallback",
     "datasets": []
+  },
+  "brechas": {
+    "meta": {
+      "fuente": "reference",
+      "actualizado": "2026-11-04T16:33:36+00:00",
+      "detalle": ""
+    },
+    "actual": {
+      "pais": "ARG",
+      "pais_nombre": "Argentina",
+      "sector": "Tecnología",
+      "ocupacion_id": "OCUP_01",
+      "ocupacion_nombre": "Desarrollador de Software y Aplicaciones",
+      "ciuo08": "2512",
+      "icol": 65.38,
+      "score_brecha": 75.1,
+      "cce": 0.568,
+      "score_demanda_100": 100.0,
+      "score_crecimiento_100": 61.67,
+      "factor_madurez_pais": 0.95,
+      "brecha_cobertura_pct": 43.2,
+      "tgs_desglose": {
+        "demanda": {
+          "score": 100.0,
+          "peso": 0.55,
+          "aporte": 55.0
+        },
+        "crecimiento": {
+          "score": 61.67,
+          "peso": 0.25,
+          "aporte": 15.42
+        },
+        "cobertura": {
+          "brecha_pct": 43.2,
+          "peso": 0.2,
+          "aporte": 8.64
+        },
+        "factor_pais": 0.95,
+        "tgs_calculado": 75.1
+      },
+      "diagnostico": "Déficit Moderado de Especialistas",
+      "icono": "🟡",
+      "urgencia": "Prioridad 2: Actualización de Currículas",
+      "habilidades_tradicionales": [
+        "JavaScript",
+        "Python",
+        "SQL",
+        "Git",
+        "HTML/CSS"
+      ],
+      "habilidades_emergentes": [
+        "Generative AI Coding",
+        "LLM Orchestration (LangChain/LlamaIndex)",
+        "Micro-frontends",
+        "Rust",
+        "WebAssembly"
+      ],
+      "nivel_adopcion": "Alta",
+      "impacto_ia": "Disruptivo / Complementario",
+      "obsolescencia": "Muy Rápida (< 18 meses)",
+      "is_projection": true
+    },
+    "por_pais": [
+      {
+        "pais": "ARG",
+        "pais_nombre": "Argentina",
+        "sector": "Tecnología",
+        "ocupacion_id": "OCUP_01",
+        "ocupacion_nombre": "Desarrollador de Software y Aplicaciones",
+        "ciuo08": "2512",
+        "icol": 65.38,
+        "score_brecha": 75.1,
+        "cce": 0.568,
+        "score_demanda_100": 100.0,
+        "score_crecimiento_100": 61.67,
+        "factor_madurez_pais": 0.95,
+        "brecha_cobertura_pct": 43.2,
+        "tgs_desglose": {
+          "demanda": {
+            "score": 100.0,
+            "peso": 0.55,
+            "aporte": 55.0
+          },
+          "crecimiento": {
+            "score": 61.67,
+            "peso": 0.25,
+            "aporte": 15.42
+          },
+          "cobertura": {
+            "brecha_pct": 43.2,
+            "peso": 0.2,
+            "aporte": 8.64
+          },
+          "factor_pais": 0.95,
+          "tgs_calculado": 75.1
+        },
+        "diagnostico": "Déficit Moderado de Especialistas",
+        "icono": "🟡",
+        "urgencia": "Prioridad 2: Actualización de Currículas",
+        "habilidades_tradicionales": [
+          "JavaScript",
+          "Python",
+          "SQL",
+          "Git",
+          "HTML/CSS"
+        ],
+        "habilidades_emergentes": [
+          "Generative AI Coding",
+          "LLM Orchestration (LangChain/LlamaIndex)",
+          "Micro-frontends",
+          "Rust",
+          "WebAssembly"
+        ],
+        "nivel_adopcion": "Alta",
+        "impacto_ia": "Disruptivo / Complementario",
+        "obsolescencia": "Muy Rápida (< 18 meses)",
+        "is_projection": true
+      },
+      {
+        "pais": "CHL",
+        "pais_nombre": "Chile",
+        "sector": "Tecnología",
+        "ocupacion_id": "OCUP_01",
+        "ocupacion_nombre": "Desarrollador de Software y Aplicaciones",
+        "ciuo08": "2512",
+        "icol": 77.97,
+        "score_brecha": 78.14,
+        "cce": 0.614,
+        "score_demanda_100": 100.0,
+        "score_crecimiento_100": 61.67,
+        "factor_madurez_pais": 1.0,
+        "brecha_cobertura_pct": 38.6,
+        "tgs_desglose": {
+          "demanda": {
+            "score": 100.0,
+            "peso": 0.55,
+            "aporte": 55.0
+          },
+          "crecimiento": {
+            "score": 61.67,
+            "peso": 0.25,
+            "aporte": 15.42
+          },
+          "cobertura": {
+            "brecha_pct": 38.6,
+            "peso": 0.2,
+            "aporte": 7.72
+          },
+          "factor_pais": 1.0,
+          "tgs_calculado": 78.14
+        },
+        "diagnostico": "Déficit Moderado de Especialistas",
+        "icono": "🟡",
+        "urgencia": "Prioridad 2: Actualización de Currículas",
+        "habilidades_tradicionales": [
+          "JavaScript",
+          "Python",
+          "SQL",
+          "Git",
+          "HTML/CSS"
+        ],
+        "habilidades_emergentes": [
+          "Generative AI Coding",
+          "LLM Orchestration (LangChain/LlamaIndex)",
+          "Micro-frontends",
+          "Rust",
+          "WebAssembly"
+        ],
+        "nivel_adopcion": "Alta",
+        "impacto_ia": "Disruptivo / Complementario",
+        "obsolescencia": "Muy Rápida (< 18 meses)",
+        "is_projection": true
+      },
+      {
+        "pais": "URY",
+        "pais_nombre": "Uruguay",
+        "sector": "Tecnología",
+        "ocupacion_id": "OCUP_01",
+        "ocupacion_nombre": "Desarrollador de Software y Aplicaciones",
+        "ciuo08": "2512",
+        "icol": 83.38,
+        "score_brecha": 82.95,
+        "cce": 0.571,
+        "score_demanda_100": 100.0,
+        "score_crecimiento_100": 61.67,
+        "factor_madurez_pais": 1.05,
+        "brecha_cobertura_pct": 42.9,
+        "tgs_desglose": {
+          "demanda": {
+            "score": 100.0,
+            "peso": 0.55,
+            "aporte": 55.0
+          },
+          "crecimiento": {
+            "score": 61.67,
+            "peso": 0.25,
+            "aporte": 15.42
+          },
+          "cobertura": {
+            "brecha_pct": 42.9,
+            "peso": 0.2,
+            "aporte": 8.58
+          },
+          "factor_pais": 1.05,
+          "tgs_calculado": 82.95
+        },
+        "diagnostico": "Déficit Crítico de Talento",
+        "icono": "🔴",
+        "urgencia": "Prioridad 1: Formación Acelerada Inmediata",
+        "habilidades_tradicionales": [
+          "JavaScript",
+          "Python",
+          "SQL",
+          "Git",
+          "HTML/CSS"
+        ],
+        "habilidades_emergentes": [
+          "Generative AI Coding",
+          "LLM Orchestration (LangChain/LlamaIndex)",
+          "Micro-frontends",
+          "Rust",
+          "WebAssembly"
+        ],
+        "nivel_adopcion": "Alta",
+        "impacto_ia": "Disruptivo / Complementario",
+        "obsolescencia": "Muy Rápida (< 18 meses)",
+        "is_projection": true
+      }
+    ],
+    "brecha_disponible": true
   }
 }

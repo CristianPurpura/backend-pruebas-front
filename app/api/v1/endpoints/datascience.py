@@ -21,6 +21,7 @@ from app.schemas.datascience import (
 )
 from app.services.datascience import client as data_client
 from app.services.datascience import mapper, summary
+from app.services.datascience.brechas import brechas_de_ocupacion
 
 router = APIRouter(prefix="/skills", tags=["Data Science"])
 
@@ -117,19 +118,11 @@ async def detalle_brechas(
 
     codigo_pais = _validar_pais(pais)
 
-    respuesta = await data_client.consultar_data(
-        data_client.RUTA_BRECHAS, {"pais": codigo_pais}
-    )
-    if respuesta is None:
+    resultado = await brechas_de_ocupacion(clave, codigo_pais)
+    if resultado is None:
         raise _sin_datos()
 
-    cuerpo = mapper.respuesta_brechas(
-        respuesta.datos,
-        respuesta.fuente,
-        respuesta.actualizado,
-        {"pais": codigo_pais, "ocupacion": clave},
-    )
-    items = [item for item in cuerpo.items if item.ocupacion_id == clave]
+    meta, items = resultado
     if not items:
         raise HTTPException(
             status_code=404,
@@ -146,7 +139,7 @@ async def detalle_brechas(
     }
 
     return SkillDetailResponse(
-        meta=cuerpo.meta,
+        meta=meta,
         ocupacion=ocupacion,
         total=len(items),
         items=items,
