@@ -36,7 +36,7 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
 ## Sprint 3: Series Temporales y Habilidades (Semanas 5 y 6)
 * [ ] Crear endpoints de series históricas optimizados para alimentar gráficos de líneas/barras[cite: 1].
 * [ ] Lógica para clasificar ocupaciones en tendencia: alza, estabilidad o caída[cite: 1] — *base lista: `clasificar_tendencia(delta, epsilon=1.0)` en `app/services/calculators/employability.py`; falta exponerla como endpoint (#67).*
-* [ ] Exponer modelo relacional de brechas de habilidades (oferta formativa vs. demanda)[cite: 1] — *hecho (#74): `GET /api/v1/skills`, `GET /api/v1/skills/{ocupacion_id}` y `GET /api/v1/gaps` consumen el módulo de Data Science con cache y fallback (`live` → `cache` → `reference` → 503). Pendiente #75: integrar las brechas al perfil de ocupación.*
+* [x] Exponer modelo relacional de brechas de habilidades (oferta formativa vs. demanda)[cite: 1] — *hecho (#74 y #75): `GET /api/v1/skills`, `GET /api/v1/skills/{ocupacion_id}` y `GET /api/v1/gaps` consumen el módulo de Data Science con cache y fallback (`live` → `cache` → `reference` → 503), y `GET /api/v1/occupations/{id}` integra el bloque `brechas` (TGS, habilidades emergentes y comparación por país) reutilizando el mismo `SkillItem`, con degradación `unavailable`.*
 * [ ] Asegurar trazabilidad completa en cada respuesta (fuente oficial y fecha de actualización)[cite: 1] — *parcial: `fuente_datos`, `metodologia.fuente_metodologia` y `trazabilidad` ya están en las respuestas actuales; falta extenderlo a los endpoints nuevos.*
 
 ## Sprint 4: Automatización y Alertas (Semanas 7 y 8)

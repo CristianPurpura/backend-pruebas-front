@@ -22,6 +22,7 @@ Provee la ingesta y validación de datos (APIs externas y carga manual de archiv
 | Base de datos | ✅ | Conexión a **Supabase** (pooler session, `?ssl=require`) + modelos ORM y **Alembic** async: primera tabla `raw_data_logs` |
 | Endpoint de indicadores | ⏸ | `GET /indicators` con filtros por país, sector y período |
 | Perfil de ocupación | ✅ | `/occupations/{id}` devuelve el perfil de las 20 ocupaciones: ficha del catálogo + ICOL, rankings, comparación entre países y bloque `brechas` |
+| Brechas y oferta formativa | ✅ | `GET /skills`, `/skills/{id}`, `/gaps` y `/gaps/summary` sobre el módulo de Data Science, con degradación `live` → `cache` → `reference` → `503` |
 | Despliegue | ⏸ | Railway/Render diferido (pasos en §10) |
 
 **Pendientes de coordinación con el equipo de Data:**
