@@ -632,3 +632,5 @@ Para más detalles sobre la arquitectura y contratos:
 * [Roadmap y Sprints Kanban (`docs/ROADMAP_BACKEND.md`)](docs/ROADMAP_BACKEND.md)
 * [Mocks JSON para Frontend (`docs/mocks/`)](docs/mocks/)
 * [Cambios de noviembre 2026 (capturas)](docs/CAMBIOS_2026-11.md)
+* [Funcionalidades fuera del alcance del MVP (`docs/FUERA_DE_ALCANCE.md`)](docs/FUERA_DE_ALCANCE.md) — incluye por qué el filtro de provincias no está implementado.
+* [Prototipo MVP/QA archivado (`docs/prototipos/mvp-qa/`)](docs/prototipos/mvp-qa/README.md) — material de referencia, no forma parte del backend.

@@ -12,6 +12,8 @@ dataset_prueba.csv
 data/raw/
 data/processed/
 data/quarantine/
+# Salida del prototipo archivado (docs/prototipos/mvp-qa), si se ejecuta aislado.
+data_storage/
 # `data/reference/` NO se ignora: son los snapshots de referencia de Data,
 # commiteados a propósito para que el Backend pueda responder sin la API.
 docs/DEMO_ISSUES_18_19.md

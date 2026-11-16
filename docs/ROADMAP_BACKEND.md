@@ -51,6 +51,15 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
 * [ ] Manejo de resiliencia (reintentos, circuit breaker y fallbacks ante APIs caídas)[cite: 1].
 * [ ] Resolver tickets de bugs reportados por QA[cite: 1].
 
+## Fuera de alcance del MVP
+
+* **Filtro / selector de provincias (post-MVP):** deseable, pero los datos y el
+  contrato con el equipo de Data solo tienen dimensión `país` (ARG, CHL, URY).
+  Requiere ampliar el contrato, el esquema de normalización, la persistencia y
+  las fuentes antes de implementarse. Ver
+  [`docs/FUERA_DE_ALCANCE.md`](FUERA_DE_ALCANCE.md). Seguimiento: issue
+  [#16](https://github.com/InnovaLab-2C-2026-Equipo-6/app-backend/issues/16).
+
 ## Sprint 6: Cierre y Demo Day (Semanas 11 y 12)
 * [ ] Congelamiento de código (*feature freeze*)[cite: 1].
 * [ ] Carga de datasets de respaldo validados en producción para garantizar una demo fluida[cite: 1].
