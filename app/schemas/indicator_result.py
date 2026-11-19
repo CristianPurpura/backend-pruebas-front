@@ -49,9 +49,35 @@ class HistoryResponse(BaseModel):
     resultados: list[HistoryEntry] = Field(default_factory=list)
 
 
+class LatestEntry(BaseModel):
+    """Último snapshot de una combinación (sin el `payload` completo)."""
+
+    tipo: str
+    pais: str
+    anio: int | None = None
+    ocupacion_id: str | None = None
+    valor: float
+    categoria: str | None = None
+    cobertura_pct: float | None = None
+    metodologia_version: str
+    calculado_en: datetime
+
+
+class LatestResponse(BaseModel):
+    """Respuesta de `GET /api/v1/employability/latest`."""
+
+    generated_at: str
+    tipo: str | None = None
+    fecha_snapshot: datetime | None = None
+    total: int
+    resultados: list[LatestEntry] = Field(default_factory=list)
+
+
 __all__ = [
     "HistoryEntry",
     "HistoryResponse",
+    "LatestEntry",
+    "LatestResponse",
     "SnapshotResponse",
     "SnapshotSaved",
 ]

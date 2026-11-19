@@ -97,6 +97,8 @@ def output_dirs(tmp_path, monkeypatch):
     quarantine = tmp_path / "quarantine"
     monkeypatch.setenv("PROCESSED_DIR", str(processed))
     monkeypatch.setenv("QUARANTINE_DIR", str(quarantine))
+    # Las cargas de la suite no deben disparar snapshots salvo el test dedicado.
+    monkeypatch.setenv("AUTO_SNAPSHOT_AFTER_UPLOAD", "false")
     get_settings.cache_clear()
     try:
         yield processed, quarantine

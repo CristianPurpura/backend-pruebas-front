@@ -34,8 +34,9 @@ Este plan vincula las tarjetas del Kanban de GitHub (`observatorio-predictivo`) 
 * [x] **Issue #74:** preparar endpoints para habilidades y oferta formativa[cite: 1] — *hecho: `GET /api/v1/skills`, `GET /api/v1/skills/{ocupacion_id}` y `GET /api/v1/gaps`, que consumen el módulo de Data Science (`DataAnalyst/etl/data_science.py`) con degradación `live` → `cache` → `reference` → `503`.*
 
 ## Sprint 3: Series Temporales y Habilidades (Semanas 5 y 6)
-* [ ] Crear endpoints de series históricas optimizados para alimentar gráficos de líneas/barras[cite: 1].
-* [ ] Lógica para clasificar ocupaciones en tendencia: alza, estabilidad o caída[cite: 1] — *base lista: `clasificar_tendencia(delta, epsilon=1.0)` en `app/services/calculators/employability.py`; falta exponerla como endpoint (#67).*
+* [x] Crear endpoints de series históricas optimizados para alimentar gráficos de líneas/barras[cite: 1] — *hecho (#64): `GET /api/v1/employability/series` devuelve puntos planos (`periodo`, `valor`, `tendencia`) para IDELR e ICOL, con degradación a cálculo en vivo si no hay snapshots.*
+* [x] Lógica para clasificar ocupaciones en tendencia: alza, estabilidad o caída[cite: 1] — *hecho (#64): `GET /api/v1/employability/trends` expone `clasificar_tendencia` con `epsilon` configurable y la misma banda muerta que `/employability`.*
+* [x] **Issue #65 (parcial):** consolidar almacenamiento y actualización de indicadores — *hecho: `GET /employability/latest` + snapshot automático post-carga (`AUTO_SNAPSHOT_AFTER_UPLOAD`). La ejecución programada queda para #92.*
 * [x] Exponer modelo relacional de brechas de habilidades (oferta formativa vs. demanda)[cite: 1] — *hecho (#74 y #75): `GET /api/v1/skills`, `GET /api/v1/skills/{ocupacion_id}` y `GET /api/v1/gaps` consumen el módulo de Data Science con cache y fallback (`live` → `cache` → `reference` → 503), y `GET /api/v1/occupations/{id}` integra el bloque `brechas` (TGS, habilidades emergentes y comparación por país) reutilizando el mismo `SkillItem`, con degradación `unavailable`.*
 * [ ] Asegurar trazabilidad completa en cada respuesta (fuente oficial y fecha de actualización)[cite: 1] — *parcial: `fuente_datos`, `metodologia.fuente_metodologia` y `trazabilidad` ya están en las respuestas actuales; falta extenderlo a los endpoints nuevos.*
 

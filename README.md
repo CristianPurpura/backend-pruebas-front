@@ -177,6 +177,9 @@ python3 -m uvicorn app.main:app --reload
 | `GET` | `/api/v1/employability` | `Employability` | Índice de empleabilidad: serie macro (IDELR) y ranking por ocupación (ICOL) |
 | `POST` | `/api/v1/employability/snapshot` | `Snapshots` | Calcula los índices y **guarda** el resultado en la base para poder mirar el pasado (idempotente) |
 | `GET` | `/api/v1/employability/history` | `Snapshots` | Histórico de resultados guardados. Filtros: `tipo`, `pais`, `ocupacion`, `anio_desde`, `anio_hasta`, `limite` |
+| `GET` | `/api/v1/employability/latest` | `Snapshots` | Último snapshot de cada combinación (sin `payload`). Filtros: `tipo`, `pais`, `ocupacion` |
+| `GET` | `/api/v1/employability/series` | `Employability` | Serie histórica plana lista para gráficos. Filtros: `tipo`, `pais`, `ocupacion`, `anio_desde`, `anio_hasta`, `limite` |
+| `GET` | `/api/v1/employability/trends` | `Employability` | Clasificación alza/estabilidad/caída entre los dos últimos puntos. Filtros: los mismos + `epsilon` |
 | `GET` | `/api/v1/skills` | `Data Science` | Brechas de talento con habilidades emergentes. Filtros: `pais`, `sector` |
 | `GET` | `/api/v1/skills/{ocupacion_id}` | `Data Science` | Brecha de una ocupación en los 3 países. `?pais=ARG` |
 | `GET` | `/api/v1/gaps` | `Data Science` | Oferta formativa: demanda laboral vs. egresados por sector. Filtro: `pais` |
@@ -484,7 +487,68 @@ curl "http://localhost:8000/api/v1/employability/history?tipo=IDELR&anio_desde=2
 > `metodologia_version` permite distinguir snapshots comparables: si cambia la fórmula o los
 > pesos, se incrementa la versión y los históricos de cada versión siguen siendo distinguibles.
 
-## 7.c Brechas de talento y oferta formativa (Issue #74)
+## 7.c Series históricas y tendencias (Issue #64)
+
+`GET /api/v1/employability/series` devuelve los datos **planos y chart-ready**
+para alimentar gráficos de líneas o barras, sin que el Frontend tenga que
+desanidar el `payload` de cada snapshot.
+
+* `tipo=IDELR` (default): un punto por país y año, calculado desde
+  `data/processed/`.
+* `tipo=ICOL`: un punto por snapshot guardado (país × ocupación × fecha); si
+  no hay base o no hay snapshots, devuelve el cálculo actual como **un único
+  punto** (`fuente="live"`).
+* `periodo` es el valor del eje X (`"2023"` para IDELR, `"2026-11-04"` para
+  ICOL).
+
+```bash
+# Serie macro de Argentina, 2020-2024
+curl "http://localhost:8000/api/v1/employability/series?tipo=IDELR&pais=ARG&anio_desde=2020&anio_hasta=2024"
+
+# Evolución del ICOL para una ocupación
+curl "http://localhost:8000/api/v1/employability/series?tipo=ICOL&ocupacion=OCUP_01"
+
+# Clasificación de tendencia (misma banda muerta que /employability)
+curl "http://localhost:8000/api/v1/employability/trends?tipo=IDELR&pais=URY"
+curl "http://localhost:8000/api/v1/employability/trends?epsilon=2.5"
+```
+
+```jsonc
+// GET /employability/series?tipo=IDELR&pais=ARG  →  200 OK
+{
+  "generated_at": "2026-11-18T10:00:00+00:00",
+  "tipo": "IDELR",
+  "fuente": "processed",       // processed | database | live | fallback
+  "detalle": "2 archivo(s) normalizado(s) leídos de data/processed/.",
+  "filtros": { "tipo": "IDELR", "pais": "ARG", "ocupacion": null,
+               "anio_desde": 2020, "anio_hasta": 2024 },
+  "total": 3,
+  "puntos": [
+    { "pais": "ARG", "ocupacion_id": null, "periodo": "2022", "anio": 2022,
+      "fecha_calculo": null, "valor": 54.3, "categoria": "ESTABILIDAD",
+      "tendencia": "ESTABILIDAD", "cobertura_pct": 100.0,
+      "metodologia_version": null }
+  ]
+}
+```
+
+`GET /employability/trends` resume la evolución con los **dos últimos puntos**
+de cada país/ocupación y devuelve `CRECIMIENTO`, `ESTABILIDAD`, `DISMINUCION`
+o `BASE` (sin punto previo), junto con `variacion_pct` e `icono`.
+
+### Actualización automática de snapshots
+
+Si `DATABASE_URL` está configurada y `AUTO_SNAPSHOT_AFTER_UPLOAD=true`
+(default), una carga manual exitosa (`POST /datasets/upload` con
+`persist=true`) **encola** un snapshot de IDELR/ICOL en segundo plano. La
+respuesta de carga no se bloquea y sigue siendo `200` aunque el snapshot
+falle; el error queda en logs. `snapshot_programado` indica si se encoló.
+
+`GET /employability/latest` devuelve el último snapshot de cada combinación
+sin el `payload` completo. Es la vista DB para el estado actual; a diferencia
+de `/series`, requiere base de datos y responde `503` si no está configurada.
+
+## 7.d Brechas de talento y oferta formativa (Issue #74)
 
 Consume el **módulo de Data Science** del equipo de Data (`DataAnalyst/etl/data_science.py`),
 publicado el 02/11, a través de un cliente con cache y fallback.
@@ -589,7 +653,7 @@ La suite está construida con **Pytest** + `TestClient` de FastAPI (sin necesida
 python -m pytest -v
 ```
 
-* Cobertura actual (**237 tests**, 0 omitidos con el repo de Data disponible): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común y cuarentena), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback`, coherencia del ICOL con `/employability` y bloque `brechas` con paridad contra `/skills/{id}` y degradación `unavailable`), `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**), `POST /employability/snapshot` + `GET /employability/history` (persistencia histórica) y `GET /skills` / `skills/{id}` / `gaps` / `gaps/summary` (brechas, oferta formativa y agregados para el dashboard).
+* Cobertura actual (**244 tests**, 19 omitidos sin el repo de Data): `POST /datasets/upload` (casos **LOAD-001..LOAD-012** de la matriz QA: validación de columnas, de país, de unidad, de período, de `metric_value`, catálogo de ocupaciones `OCUP_01..20`, duplicados, cobertura 45/135, transformación al esquema común, cuarentena y snapshot automático post-carga), `GET /countries` / `sectors` / `occupations` (conteos, slugs, filtro por sector y `422` ante sector desconocido), `GET /health` (3 estados del chequeo de DB), `GET /occupations/{id}` (perfil de las 20 ocupaciones, validaciones `404`/`422`/`400`, comparación de países, origen `processed` vs `fallback`, coherencia del ICOL con `/employability` y bloque `brechas` con paridad contra `/skills/{id}` y degradación `unavailable`), `GET /employability` (filtros, invariantes del índice y **paridad exacta con la API de Data**), `POST /employability/snapshot` + `GET /employability/history` + `GET /employability/latest` (persistencia histórica), `GET /employability/series` + `/trends` (series chart-ready y clasificación de tendencias, con y sin DB) y `GET /skills` / `skills/{id}` / `gaps` / `gaps/summary` (brechas, oferta formativa y agregados para el dashboard).
 * `tests/test_datascience.py` cubre el módulo de brechas **sin usar la red** (`httpx.MockTransport`): normalización del payload de Data, filtros de país y sector, validaciones, y toda la cadena de degradación (`live` → `cache` → `reference` → `503`).
 * `tests/test_datascience_metodologia.py` verifica la **fórmula oficial del TGS**: pesos, umbrales en el borde exacto y paridad con los 60 registros de referencia. `tests/test_datascience_contrato.py` blinda los invariantes (`CCE = O/D`, `déficit = D − O`), los agregados de `gaps/summary` y que el mock `docs/mocks/gaps_summary.json` no se desactualice.
 * `tests/test_employability_metodologia.py` verifica la **metodología visible**: los pesos del IDELR y del ICOL suman `1.0`, el endpoint expone las 5 dimensiones y es espejo exacto de `VARIABLES_IDELR` / `DEFAULT_ICOL_WEIGHTS`, y los umbrales de categoría se comprueban en su borde exacto (85 / 70 / 55).
@@ -604,7 +668,8 @@ python -m pytest -v
 > git clone https://github.com/InnovaLab-2C-2026-Equipo-6/DataAnalyst.git /tmp/opencode/DataAnalyst
 > cd /tmp/opencode/DataAnalyst && git checkout 45abdfc   # versión auditada del 02/11
 > ```
-> Sin el clon, la suite da **128 passed, 19 skipped**; con el clon, **147 passed, 0 skipped**.
+> Sin el clon, la suite da **244 passed, 19 skipped**; con el clon se ejecutan
+> además los 19 casos de la matriz API.
 
 ---
 

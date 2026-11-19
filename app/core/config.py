@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     data_api_timeout: float = 5.0
     data_cache_ttl: int = 300
 
+    # Refresca los snapshots de IDELR/ICOL al terminar una carga manual. Si no
+    # hay DATABASE_URL configurada, la carga sigue funcionando sin snapshot.
+    auto_snapshot_after_upload: bool = True
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @property

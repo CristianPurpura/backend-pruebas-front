@@ -1,4 +1,5 @@
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import HTTPException
 from sqlalchemy import text
@@ -19,6 +20,35 @@ def _ensure_engine() -> async_sessionmaker[AsyncSession] | None:
         _engine = create_async_engine(settings.database_url, pool_pre_ping=True)
         _session_factory = async_sessionmaker(_engine, expire_on_commit=False)
     return _session_factory
+
+
+def is_db_configured() -> bool:
+    """True si hay `DATABASE_URL` y el engine pudo construirse."""
+    return _ensure_engine() is not None
+
+
+@asynccontextmanager
+async def session_scope() -> AsyncIterator[AsyncSession]:
+    """Sesión corta para tareas en segundo plano (snapshot post-carga)."""
+    factory = _ensure_engine()
+    if factory is None:
+        raise RuntimeError("DATABASE_URL no configurada: revisar .env / variables de entorno.")
+    async with factory() as session:
+        yield session
+
+
+async def get_db_opcional() -> AsyncGenerator[AsyncSession | None, None]:
+    """Igual que `get_db`, pero devuelve `None` si la base no está configurada.
+
+    Se usa en endpoints que pueden degradar a un cálculo en vivo cuando no hay
+    persistencia disponible (por ejemplo, las series históricas).
+    """
+    factory = _ensure_engine()
+    if factory is None:
+        yield None
+        return
+    async with factory() as session:
+        yield session
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
@@ -67,4 +97,12 @@ def reset_engine() -> None:
     _session_factory = None
 
 
-__all__: list[str] = ["get_db", "get_db_requerida", "async_check_db", "reset_engine"]
+__all__: list[str] = [
+    "async_check_db",
+    "get_db",
+    "get_db_opcional",
+    "get_db_requerida",
+    "is_db_configured",
+    "reset_engine",
+    "session_scope",
+]

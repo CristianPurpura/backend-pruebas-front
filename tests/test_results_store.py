@@ -394,6 +394,19 @@ def test_history_filtra_por_pais(client_con_db):
     assert all(fila["pais"] == "URY" for fila in cuerpo["resultados"])
 
 
+def test_latest_devuelve_el_ultimo_snapshot_de_cada_combinacion(client_con_db):
+    client_con_db.post_sync("/api/v1/employability/snapshot")
+    response = client_con_db.get_sync("/api/v1/employability/latest?tipo=ICOL&pais=URY")
+
+    assert response.status_code == 200
+    cuerpo = response.json()
+    assert cuerpo["tipo"] == "ICOL"
+    assert cuerpo["total"] == 20
+    assert all(fila["pais"] == "URY" for fila in cuerpo["resultados"])
+    assert all("payload" not in fila for fila in cuerpo["resultados"])
+    assert cuerpo["fecha_snapshot"] is not None
+
+
 def test_history_rechaza_filtros_invalidos(client_con_db):
     """Un tipo o país fuera de catálogo responde 400."""
     assert client_con_db.get_sync("/api/v1/employability/history?tipo=XXX").status_code == 400

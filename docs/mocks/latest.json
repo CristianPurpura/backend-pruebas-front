@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-11-18T10:00:00+00:00",
+  "tipo": "ICOL",
+  "fecha_snapshot": "2026-11-11T12:00:00+00:00",
+  "total": 2,
+  "resultados": [
+    {
+      "tipo": "ICOL",
+      "pais": "URY",
+      "anio": 2024,
+      "ocupacion_id": "OCUP_01",
+      "valor": 87.76,
+      "categoria": "Oportunidad Excepcional",
+      "cobertura_pct": null,
+      "metodologia_version": "idelr-icol-2026-11",
+      "calculado_en": "2026-11-11T12:00:00+00:00"
+    },
+    {
+      "tipo": "ICOL",
+      "pais": "URY",
+      "anio": 2024,
+      "ocupacion_id": "OCUP_02",
+      "valor": 62.4,
+      "categoria": "Oportunidad Moderada",
+      "cobertura_pct": null,
+      "metodologia_version": "idelr-icol-2026-11",
+      "calculado_en": "2026-11-11T12:00:00+00:00"
+    }
+  ]
+}

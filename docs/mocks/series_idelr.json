@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-11-18T10:00:00+00:00",
+  "tipo": "IDELR",
+  "fuente": "processed",
+  "detalle": "1 archivo(s) normalizado(s) leídos de data/processed/.",
+  "filtros": {
+    "tipo": "IDELR",
+    "pais": "ARG",
+    "ocupacion": null,
+    "anio_desde": 2022,
+    "anio_hasta": 2024
+  },
+  "total": 3,
+  "puntos": [
+    {
+      "pais": "ARG",
+      "ocupacion_id": null,
+      "periodo": "2022",
+      "anio": 2022,
+      "fecha_calculo": null,
+      "valor": 52.15,
+      "categoria": "BASE",
+      "tendencia": "BASE",
+      "cobertura_pct": 100.0,
+      "metodologia_version": null
+    },
+    {
+      "pais": "ARG",
+      "ocupacion_id": null,
+      "periodo": "2023",
+      "anio": 2023,
+      "fecha_calculo": null,
+      "valor": 54.3,
+      "categoria": "CRECIMIENTO",
+      "tendencia": "CRECIMIENTO",
+      "cobertura_pct": 100.0,
+      "metodologia_version": null
+    },
+    {
+      "pais": "ARG",
+      "ocupacion_id": null,
+      "periodo": "2024",
+      "anio": 2024,
+      "fecha_calculo": null,
+      "valor": 54.9,
+      "categoria": "ESTABILIDAD",
+      "tendencia": "ESTABILIDAD",
+      "cobertura_pct": 100.0,
+      "metodologia_version": null
+    }
+  ]
+}

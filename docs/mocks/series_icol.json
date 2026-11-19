@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-11-18T10:00:00+00:00",
+  "tipo": "ICOL",
+  "fuente": "database",
+  "detalle": "2 snapshot(s) ICOL leídos de la base de datos.",
+  "filtros": {
+    "tipo": "ICOL",
+    "pais": "URY",
+    "ocupacion": "OCUP_01",
+    "anio_desde": null,
+    "anio_hasta": null
+  },
+  "total": 2,
+  "puntos": [
+    {
+      "pais": "URY",
+      "ocupacion_id": "OCUP_01",
+      "periodo": "2026-11-04",
+      "anio": 2024,
+      "fecha_calculo": "2026-11-04T12:00:00+00:00",
+      "valor": 80.0,
+      "categoria": "Alta Oportunidad",
+      "tendencia": "BASE",
+      "cobertura_pct": null,
+      "metodologia_version": "idelr-icol-2026-11"
+    },
+    {
+      "pais": "URY",
+      "ocupacion_id": "OCUP_01",
+      "periodo": "2026-11-11",
+      "anio": 2024,
+      "fecha_calculo": "2026-11-11T12:00:00+00:00",
+      "valor": 87.76,
+      "categoria": "Oportunidad Excepcional",
+      "tendencia": "CRECIMIENTO",
+      "cobertura_pct": null,
+      "metodologia_version": "idelr-icol-2026-11"
+    }
+  ]
+}
