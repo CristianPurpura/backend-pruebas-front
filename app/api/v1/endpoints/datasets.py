@@ -2,8 +2,10 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, File, HTTPException, Query, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, HTTPException, Query, UploadFile
 
+from app.core import database
+from app.core.config import get_settings
 from app.schemas.dataset import DatasetUploadResponse, QuarantineRow
 from app.services.normalization import (
     NORMALIZED_COLUMNS,
@@ -18,12 +20,14 @@ from app.services.parsers.dataset_parser import (
     SCHEMA_COMMON,
     parse_dataset,
 )
+from app.services.persistence import snapshot_service
 
 router = APIRouter()
 
 
 @router.post("/upload", response_model=DatasetUploadResponse)
 def upload_dataset(
+    background_tasks: BackgroundTasks,
     file: Annotated[UploadFile, File(...)],
     persist: Annotated[bool, Query(description="Escribir el resultado en disco")] = True,
 ) -> DatasetUploadResponse:
@@ -51,6 +55,18 @@ def upload_dataset(
         if result.valid:
             output_path = write_normalized(result.valid, parsed.filename)
         quarantine_path = write_quarantine(result.quarantine, parsed.filename)
+
+    settings = get_settings()
+    snapshot_programado = bool(
+        persist
+        and result.valid
+        and settings.auto_snapshot_after_upload
+        and database.is_db_configured()
+    )
+    if snapshot_programado:
+        # Sin bloquear la respuesta: si el snapshot falla, la carga ya quedó
+        # persistida y el error solo se registra en logs.
+        background_tasks.add_task(snapshot_service.generar_snapshot_seguro)
 
     status = "ok" if not result.warnings and not result.quarantine else "ok_with_warnings"
     message = (
@@ -82,5 +98,6 @@ def upload_dataset(
         ],
         output_path=str(output_path) if output_path else None,
         quarantine_path=str(quarantine_path) if quarantine_path else None,
+        snapshot_programado=snapshot_programado,
         message=message,
     )

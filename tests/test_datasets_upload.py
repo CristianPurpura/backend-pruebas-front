@@ -449,3 +449,87 @@ def test_persist_false_no_escribe_archivos(client, output_dirs):
     assert body["output_path"] is None
     assert not processed.exists()
     assert not quarantine.exists()
+
+
+# ---------------------------------------------------------------------------
+# Snapshot automático post-carga (#65)
+# ---------------------------------------------------------------------------
+def test_upload_programa_snapshot_si_hay_db(client, monkeypatch):
+    """Con DB configurada, la carga encola el snapshot sin bloquear la respuesta."""
+    from app.api.v1.endpoints import datasets as datasets_endpoint
+    from app.core.config import get_settings
+
+    llamadas: list[bool] = []
+
+    async def _snapshot():
+        llamadas.append(True)
+
+    monkeypatch.setenv("AUTO_SNAPSHOT_AFTER_UPLOAD", "true")
+    get_settings.cache_clear()
+    monkeypatch.setattr(datasets_endpoint.database, "is_db_configured", lambda: True)
+    monkeypatch.setattr(
+        datasets_endpoint.snapshot_service,
+        "generar_snapshot_seguro",
+        _snapshot,
+    )
+
+    response = upload(client, "con_snapshot.csv", make_csv(build_rows()))
+
+    assert response.status_code == 200
+    assert response.json()["snapshot_programado"] is True
+    assert llamadas == [True]
+
+
+def test_upload_no_programa_snapshot_sin_db(client, monkeypatch):
+    """Sin DB la carga sigue funcionando y no intenta generar snapshots."""
+    from app.api.v1.endpoints import datasets as datasets_endpoint
+    from app.core.config import get_settings
+
+    llamadas: list[bool] = []
+
+    async def _snapshot():
+        llamadas.append(True)
+
+    monkeypatch.setenv("AUTO_SNAPSHOT_AFTER_UPLOAD", "true")
+    get_settings.cache_clear()
+    monkeypatch.setattr(datasets_endpoint.database, "is_db_configured", lambda: False)
+    monkeypatch.setattr(
+        datasets_endpoint.snapshot_service,
+        "generar_snapshot_seguro",
+        _snapshot,
+    )
+
+    response = upload(client, "sin_db.csv", make_csv(build_rows()))
+
+    assert response.status_code == 200
+    assert response.json()["snapshot_programado"] is False
+    assert llamadas == []
+
+
+def test_persist_false_no_programa_snapshot(client, monkeypatch):
+    """`?persist=false` no escribe datos ni tiene sentido que actualice snapshots."""
+    from app.api.v1.endpoints import datasets as datasets_endpoint
+    from app.core.config import get_settings
+
+    llamadas: list[bool] = []
+
+    async def _snapshot():
+        llamadas.append(True)
+
+    monkeypatch.setenv("AUTO_SNAPSHOT_AFTER_UPLOAD", "true")
+    get_settings.cache_clear()
+    monkeypatch.setattr(datasets_endpoint.database, "is_db_configured", lambda: True)
+    monkeypatch.setattr(
+        datasets_endpoint.snapshot_service,
+        "generar_snapshot_seguro",
+        _snapshot,
+    )
+
+    response = client.post(
+        "/api/v1/datasets/upload?persist=false",
+        files={"file": ("sin_persistir.csv", make_csv(build_rows()), "text/csv")},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["snapshot_programado"] is False
+    assert llamadas == []

@@ -31,6 +31,7 @@ class DatasetUploadResponse(BaseModel):
     quarantine: list[QuarantineRow] = Field(default_factory=list)
     output_path: str | None = None
     quarantine_path: str | None = None
+    snapshot_programado: bool = False
     message: str
 
 

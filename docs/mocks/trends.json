@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-11-18T10:00:00+00:00",
+  "tipo": "IDELR",
+  "epsilon_pct": 1.0,
+  "fuente": "processed",
+  "detalle": "1 archivo(s) normalizado(s) leídos de data/processed/.",
+  "total": 3,
+  "tendencias": [
+    {
+      "tipo": "IDELR",
+      "pais": "ARG",
+      "ocupacion_id": null,
+      "periodo_actual": "2024",
+      "periodo_previo": "2023",
+      "valor_actual": 54.9,
+      "valor_previo": 54.3,
+      "variacion_pct": 1.1,
+      "tendencia": "CRECIMIENTO",
+      "icono": "🟢"
+    },
+    {
+      "tipo": "IDELR",
+      "pais": "CHL",
+      "ocupacion_id": null,
+      "periodo_actual": "2024",
+      "periodo_previo": "2023",
+      "valor_actual": 68.4,
+      "valor_previo": 68.5,
+      "variacion_pct": -0.15,
+      "tendencia": "ESTABILIDAD",
+      "icono": "🟡"
+    },
+    {
+      "tipo": "IDELR",
+      "pais": "URY",
+      "ocupacion_id": null,
+      "periodo_actual": "2024",
+      "periodo_previo": "2023",
+      "valor_actual": 70.1,
+      "valor_previo": 72.5,
+      "variacion_pct": -3.31,
+      "tendencia": "DISMINUCION",
+      "icono": "🔴"
+    }
+  ]
+}
