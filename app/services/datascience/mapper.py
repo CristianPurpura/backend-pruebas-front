@@ -71,6 +71,24 @@ def _lista_texto(valor: Any) -> list[str]:
     return []
 
 
+def _filtrar_items(items: list[Any], filtros: dict[str, Any]) -> list[Any]:
+    """Aplica filtros de país y sector en memoria (necesario en modo reference)."""
+    pais = filtros.get("pais")
+    sector = filtros.get("sector")
+    resultado = items
+    if pais:
+        pais_norm = str(pais).strip().upper()
+        resultado = [
+            item for item in resultado if item.pais.strip().upper() == pais_norm
+        ]
+    if sector:
+        sector_norm = str(sector).strip().lower()
+        resultado = [
+            item for item in resultado if item.sector.strip().lower() == sector_norm
+        ]
+    return resultado
+
+
 def mapear_brechas(fila: dict[str, Any]) -> SkillItem:
     """Convierte una fila de `brechas_y_habilidades` en `SkillItem`."""
     pais = _texto(fila.get("pais_codigo_iso3")).upper()
@@ -137,6 +155,8 @@ def respuesta_brechas(
 ) -> SkillsResponse:
     """Arma la respuesta de `/skills` a partir del payload de Data."""
     items = [mapear_brechas(fila) for fila in _lista(payload, CLAVE_BRECHAS)]
+    if fuente == "reference":
+        items = _filtrar_items(items, filtros)
     return SkillsResponse(
         meta=DataSourceMeta(fuente=fuente, actualizado=actualizado),
         filtros=filtros,
@@ -153,6 +173,8 @@ def respuesta_comparativa(
 ) -> GapsResponse:
     """Arma la respuesta de `/gaps` a partir del payload de Data."""
     items = [mapear_comparativa(fila) for fila in _lista(payload, CLAVE_COMPARATIVA)]
+    if fuente == "reference":
+        items = _filtrar_items(items, filtros)
     return GapsResponse(
         meta=DataSourceMeta(fuente=fuente, actualizado=actualizado),
         filtros=filtros,
